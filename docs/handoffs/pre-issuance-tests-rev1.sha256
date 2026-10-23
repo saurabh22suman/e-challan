@@ -1,0 +1,55 @@
+# Pre-issuance batch planner-owned acceptance baseline — REVISION 1 (read-only)
+#
+# Prepared 2026-10-07 by the planner/test-owner session for the bounded batch
+# F-04 + I-01 + I-05 (specs/005-pre-issuance; brief docs/handoffs/pre-issuance-batch.md).
+# Owner-authorised batch preparation; independent preparation confirmation is
+# required before implementation.
+#
+# This manifest is NEW and separate. It does not modify, replace or extend any
+# earlier baseline:
+#   docs/handoffs/S-01-tests.sha256            11 entries
+#   docs/handoffs/F-01-tests.sha256            14 entries
+#   docs/handoffs/F-01-corrections-tests.sha256 10 entries
+#   docs/handoffs/F-02-tests.sha256            24 entries (rev 5)
+#   docs/handoffs/F-03-tests.sha256            9 entries (rev 2)
+# All must continue to verify unchanged. The F-04 shell replaces the S-01
+# foundation screens, so this batch deliberately revises the tablet/admin
+# foundation component and browser suites, the F-02 auth suites' shell headings and
+# idle field, the R4 lazy-route paths and the api-proxy health check. Those files
+# are frozen here at their revised content; the historical manifests will report
+# the documented delta and are not regenerated.
+#
+# Entries: the new and revised acceptance, the feature spec/plan, the read-only
+# authority documents and the test harness configs. Production files are
+# deliberately NOT frozen; the implementer may change them under the prepared
+# handoff. Do not regenerate this manifest to fix a failure.
+87bf5c273c61f16c35f46551d865eec77b334ab68e1c47c783303a7e90b8dee9  packages/contracts/test/pre-issuance.test.ts
+c5aace13456d42ccd3ef9b4bc9335415c8f868a1b2fce427f646d1e5c07f11f8  apps/api/tests/unit/pre-issuance-rules.test.ts
+379cf5af78d99c312d780dbcf18ee14c96b91f37fae1b8f689b9b198d7e6a350  apps/api/tests/integration/pre-issuance.test.ts
+7270ba90def112be1e507c6722ce1353c05f3202b4d0ccfb0584025c39ae2d4f  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+2c53479108e379f3568c9f38d1eea1f4166b351fb8c4561b6dac7817d9e8aff3  apps/tablet/src/__tests__/pre-issuance-repeat.test.tsx
+c590153d30b72163ba8a7dd971964601f951e44816cbb1075b48e2c0e29b71b8  apps/tablet/e2e/pre-issuance.spec.ts
+0694673614ed6f37e08613efd67b8c39361699caa7dc3dcb21d9887119551920  apps/tablet/src/__tests__/foundation.test.tsx
+1c876d8cd0bfa284a21cfe6aa63e54a3d709bc3a836d879444f8b345e03d0cfe  apps/admin/src/__tests__/foundation.test.tsx
+66a868a4aacec0eb64d7b64b61d0cb2ed5cd856f9faf98e348e1ef4f8453f6ac  apps/tablet/e2e/foundation.spec.ts
+7c2290204ec839a65b2ecc28f59c5f0b362f90830abd3f62691aeedea5de75e4  apps/admin/e2e/foundation.spec.ts
+8a543cd6d6e9b11c1bb2b8710a5a7059e3f08dac78591c92f0d3a7cd295e49ce  tests/e2e/api-proxy.spec.ts
+e602ff24bc578c3b99f6d97c295e051e93d2b0b2feac26c6a6d029ee19e3ad82  apps/tablet/src/__tests__/f02-auth.test.tsx
+5d0d08e8ee49ceff7a56f9e245afe91106d6359199218dafa0ceb01f13706431  apps/admin/src/__tests__/f02-auth.test.tsx
+044610040eb174f85e807314b420c9913d505de19f60fb88e6cee7e0e57e655e  apps/tablet/e2e/f02-auth.spec.ts
+1a3caa3d48065a6fe8442e74c98da525b6a90504cb6c7a4cec13d0cb26faeb3e  apps/admin/e2e/f02-auth.spec.ts
+6a4de6e7df3133730d14727a3dfc6ab67c0a0ede6dcf07c29eec7467d3367983  tests/foundation/test_review_corrections.py
+f024e04d8a06ecad1f120b497e39f21452491475b810bca85017f182d41be8aa  specs/005-pre-issuance/spec.md
+a7f1cb253535e587b6931b053e65b6f43e541dd5fb9655d550c340344912c792  specs/005-pre-issuance/plan.md
+cf6e939724eb3dc50532c274ccf6045fb676202c07b91ec1f00cb43f53bf69cb  docs/eChallan_replacement_spec.md
+c33a459c8e7ffb1f46defd3a5baf24defc7c7bc4b5d9733f4b0c282f6e41ff57  docs/eChallan_replacement_spec_v0.2.md
+348d4788840446bdc4113c5e35428e2d0c93fd770ffb39963ceeb234354276f1  docs/decisions.md
+ab51aa44ebf007f09e07b391ec550c312f6e06555cb6ba5eaa787edc11885990  docs/test-cases.md
+2918d41545f269295f45670690a13892a0cffc2e524b736225dcdbbaf9515159  docs/eChallan_PRD.md
+a0e82cfbdefd2312cc4ec6df506d6d46160d8e4a0fad477d653a79452b30a989  docs/eChallan_DESIGN.md
+15ec04488cd3a6c107a4fe0dc7d8f091b7f36cc894fe4fb72336f6759b228ac7  docs/handoffs/pre-issuance-batch.md
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json
+0d4a44a3aa71a9d62b0a92de87513e731fe77475edd1805861efca45f7d02324  apps/api/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/tablet/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/admin/vitest.config.ts
+26f615c59fe968f0591008a7919374916be4e4249eae23353defb4e88badc67e  packages/contracts/vitest.config.ts

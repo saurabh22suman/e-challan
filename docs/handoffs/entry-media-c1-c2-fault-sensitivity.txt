@@ -1,0 +1,16 @@
+=== FAULT: C1 immediate cancel teardown removed ===
+--- with fault ---
+      Tests  2 failed (2)
+--- restored ---
+      Tests  2 passed (2)
+=== FAULT: C2 parent notification removed ===
+--- with fault ---
+      Tests  3 failed (3)
+--- restored ---
+      Tests  3 passed (3)
+=== FAULT: C2 stroke hydration invalidation removed ===
+--- with fault ---
+      Tests  1 failed | 2 passed (3)
+--- restored ---
+      Tests  3 passed (3)
+=== DONE ===

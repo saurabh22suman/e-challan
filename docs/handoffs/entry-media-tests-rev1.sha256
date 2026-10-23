@@ -1,0 +1,28 @@
+# Entry-media batch planner-owned acceptance baseline — REVISION 1 (read-only)
+#
+# Prepared 2026-10-15 by the planner/test-owner session for the bounded
+# R1–R5 + I-02 + I-03 batch (specs/006-camera-signature;
+# brief docs/handoffs/entry-media-batch.md; prepared record
+# docs/handoffs/entry-media-prepared.md). E-02 / E-03 owner approval
+# 2026-10-15; the missing independent preparation confirmation is
+# disclosed at docs/implementation-plan.md and matches the bounded
+# pre-issuance override pattern. No assertion is weakened, skipped or
+# narrowed.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-15) initial entry-media checkpoint: contracts test
+#                   for E-02 / E-03 limits and the canonical summary
+#                   revision, three tablet component tests for the R1–R5
+#                   corrections, the new lazy photo + signature + refusal
+#                   components, and one browser smoke spec for the
+#                   camera/signature lazy route. R1–R5 corrections to the
+#                   existing entry flow live alongside the pre-issuance
+#                   rev 3 manifest.
+d5dbd0a34bea5a599ff54cc458a8e2d6a5e15125b3902b1abe4caac40ecd5aff  specs/006-camera-signature/spec.md
+3d6ae6c7dfb605d17c1cc004912fe5684002d34ee8c3aa90f49d0e532a2cc16d  specs/006-camera-signature/plan.md
+8be7a2a16c733bbf2955ae33a89f64f2c47f445abe8689594da02deb588956ec  specs/006-camera-signature/tasks.md
+73e88ee16cb9b1d1aa71743c63163c3ba931fec57d6fe8ee8934876fffe4016b  packages/contracts/test/issuance.test.ts
+022f4b3944654575a8dd0ec49b500d8973fb780f74f3f54eaa8a086c61ed772f  apps/tablet/src/__tests__/corrections.test.tsx
+d1e0a22ab262ee356fd97af44f5b036f019df06a88a0cbcf537fbec49f0625ee  apps/tablet/src/__tests__/camera-capture.test.tsx
+b5ac198767b0b9d3f16a755c730097ab07659ad9949a3d1bfaf40410c27b5f98  apps/tablet/src/__tests__/signature.test.tsx
+fb8d916a5496ac48f6e1b3c06549862fe738ef9111216cb699b6fc1c2b79cdb0  apps/tablet/e2e/camera-signature.spec.ts

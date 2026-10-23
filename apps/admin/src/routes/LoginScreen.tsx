@@ -1,0 +1,140 @@
+import { useState, type FormEvent } from 'react';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { IDLE_TIMEOUT_SECONDS } from '@echallan/contracts';
+import { SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { GENERIC_SIGN_IN_FAILURE } from '../auth/api';
+import { useSession } from '../auth/session';
+
+/**
+ * Dashboard sign-in screen (restyled under B-09).
+ *
+ * Statically labelled fields and visible error feedback. The action is the navy
+ * primary rather than the reserved green, because signing in does not commit a
+ * challan.
+ */
+export default function LoginScreen() {
+  const { signIn, notice } = useSession();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError(null);
+    if (username.trim() === '' || password.trim() === '') {
+      setError('Enter your username and password.');
+      if (username.trim() === '') document.getElementById('username')?.focus();
+      else document.getElementById('password')?.focus();
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await signIn(username, password);
+      // The password leaves component state as soon as it is no longer needed and
+      // is never stored anywhere.
+      setPassword('');
+    } catch (cause) {
+      setPassword('');
+      setError(
+        cause instanceof Error && cause.message !== '' ? cause.message : GENERIC_SIGN_IN_FAILURE,
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Card sx={{ width: '100%', maxWidth: 460 }}>
+      <Box
+        sx={{
+          backgroundColor: tokens.navy,
+          borderBottom: `3px solid ${tokens.blue}`,
+          padding: `${SPACING.xl} ${SPACING.xl} ${SPACING.lg}`,
+        }}
+      >
+        <Typography component="h1" variant="h1" sx={{ color: tokens.surface }}>
+          e-Challan dashboard sign-in
+        </Typography>
+        <Typography variant="body2" sx={{ color: tokens.onNavy.subtitle, mt: SPACING.xs }}>
+          Use the account given by your supervisor.
+        </Typography>
+      </Box>
+      <CardContent sx={{ padding: SPACING.xl }}>
+        <form noValidate onSubmit={(event) => void submit(event)}>
+          <Stack spacing={SPACING.lg}>
+            <div>
+              <InputLabel htmlFor="username">Username</InputLabel>
+              <TextField
+                id="username"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                autoComplete="username"
+                fullWidth
+              />
+            </div>
+
+            <div>
+              <InputLabel htmlFor="password">Password</InputLabel>
+              <TextField
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                fullWidth
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          onClick={() => setShowPassword((previous) => !previous)}
+                          edge="end"
+                          sx={{
+                            minWidth: TOUCH_TARGET_MIN.desktopAction,
+                            minHeight: TOUCH_TARGET_MIN.desktopAction,
+                          }}
+                        >
+                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </div>
+
+            {(error ?? notice) !== null && (
+              <Alert severity="error" role="alert">
+                {error ?? notice}
+              </Alert>
+            )}
+
+            <Button type="submit" variant="contained" disabled={submitting}>
+              {submitting ? 'Signing in…' : 'Sign in'}
+            </Button>
+
+            <Typography variant="caption" color="text.secondary">
+              Supervisor and admin accounts only. Sessions end after{' '}
+              {IDLE_TIMEOUT_SECONDS.Supervisor / 60} minutes without activity.
+            </Typography>
+          </Stack>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}

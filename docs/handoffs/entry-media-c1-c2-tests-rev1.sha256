@@ -1,0 +1,20 @@
+# Entry-media C1/C2 correction acceptance baseline — planner-owned (read-only)
+#
+# Prepared 2026-10-18. Source: docs/reviews/entry-media-v1-v6-rereview.md and
+# docs/handoffs/entry-media-c1-c2-prepared.md. The three new acceptance files
+# are frozen at their prepared (pre-implementation) state; the remaining
+# entries are unchanged regression anchors and the demo fixture. Do not edit
+# acceptance files after preparation; a revised baseline requires a documented
+# planner correction and reviewer confirmation.
+#
+b901fa3e096ac6cda2fd206d71e4e7f06c9ce7fa8a3e5d199f8b2f18255f4c55  apps/tablet/src/__tests__/photo-cancel-play.test.tsx
+ba852b559db362310282cdf5d512110e97b9d7ad364c04817dc16d0c01f8533a  apps/tablet/src/__tests__/signature-invalidation.test.tsx
+8049fce3f7b31d4178bce84e0ff22bce94e7ec2ce789e4dd37c29f1ecbc92a37  apps/tablet/e2e/entry-media-invalidation.spec.ts
+e42da6a7473cd959b114449ec6794a8bc9a184553fac3552604c859a4200af0e  docs/handoffs/entry-media-c1-c2-prepared.md
+c868ddd2f774e285c06aec1cac4d8fdce165b3e5a46b2f4d0e9668c18cdb4c91  docs/handoffs/ux-00-readiness.md
+bc1ab3a365a681d73d448a965f716d4d914913eb6fc45423750b583f5a70cc67  apps/tablet/src/__tests__/camera-capture.test.tsx
+dac31f27d36ccdcac76d49dd5de20d5431e559d465d6fe7ba0a618eb3164a1b0  apps/tablet/src/__tests__/signature.test.tsx
+9a0f814462a8b8d7e2358b6e62782b58664e271abcb7814ffaa7ac77d4378342  apps/tablet/e2e/camera-signature.spec.ts
+2db3f90dcd5dc8b943648b9b640562181db405697043f9f347fdd5456f322541  apps/tablet/e2e/signature-probe.spec.ts
+ecff7082f5cb8f9e18f3297a19d65022838940ea43ea4f5a1d39d08d0418dfe0  apps/tablet/e2e/preview-binding.spec.ts
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json

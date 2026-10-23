@@ -1,0 +1,32 @@
+# Review/user-administration slice planner baseline — REVISION 2, 2026-10-21.
+#
+# REVISION HISTORY
+#   rev 1 initial preparation. Archived byte-for-byte at
+#         docs/handoffs/009-review-admin-basics-tests-rev1.sha256.
+#   rev 2 (2026-10-21) documented planner corrections made during implementation:
+#         - integration expectations now use the seeded location label
+#           ("Demo industrial campus — main entrance");
+#         - component label matchers account for MUI's required asterisk and the
+#           combined "No seatbelt (Minor)" text node;
+#         - browser reset fields use exact accessible names to distinguish the
+#           two password inputs;
+#         - list-failure assertion uses the API's real message;
+#         - F-04 foundation assertions move from the removed empty state to the
+#           real list/empty surface.
+#         No acceptance condition was removed or weakened. The assertion changes
+#         are selector/copy corrections for the new surface; the security and
+#         scope assertions are unchanged.
+#
+# Read-only acceptance inputs. Any further revision is a numbered planner correction.
+# Existing historical manifests are not regenerated.
+b12db7db21017d62e4ee1536db2f6c2d367193f437183b6ac2530002465541b9  packages/contracts/test/operations.test.ts
+845f12962fbe32096b860abe4d5e8ba7b411e176c06c4362ace563b8d6b2fb7d  apps/api/tests/unit/password.test.ts
+b56be739805899fcd4438645f9180d6bca5c120da74974dc76f4f51e3bf71c32  apps/api/tests/integration/challan-review.test.ts
+1577b6b260e3559303112d6c66bd400048715ae2a5aae92d84bb23abb788eee9  apps/admin/src/__tests__/operations.test.tsx
+3041c8e434db690c410624a9484e2e5420f31c464c8e076dda017b3bb9ba878c  apps/admin/e2e/review-admin.spec.ts
+318c9f50f079bbf1465ef07bca9b039d09f8c3a073578acf8abd57f4386c6014  apps/admin/src/__tests__/foundation.test.tsx
+382ec5fef5d824caedcf29e91dd807ce44cb2b665250f37f35e267284f1e524f  apps/admin/e2e/foundation.spec.ts
+96387fdb4536edb7096808d660efdd9fb7d986ca79c32cddee00d28ddc4cddad  apps/admin/e2e/inclusive-ux.spec.ts
+81813f2813d0249cd263d2d3b8abc9c10c539a5f01e9d3e6fc2b270b50eee9ec  specs/009-review-admin-basics/spec.md
+8b8920b675204988b8eed4daf9a830cca28461bd958d46e9fc95c4d296ddf09b  specs/009-review-admin-basics/plan.md
+62aee8e36f5d727b929eb7487c5845f52387a3640b65cc36c3284a4ef58c29f7  specs/009-review-admin-basics/tasks.md

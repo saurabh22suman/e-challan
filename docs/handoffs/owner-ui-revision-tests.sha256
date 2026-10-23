@@ -1,0 +1,51 @@
+# B-08/B-09 revision test baseline (read-only)
+
+Owner-authorised UI revision of 2026-10-17 (docs/decisions.md B-08 and B-09):
+searchable vehicle dropdown over the session location's registry, one-off new
+vehicle entry, and the full visual restyle.
+
+This file records the **revised** acceptance baseline. It is a documented
+planner correction, not an implementer edit of history:
+
+- `apps/tablet/src/__tests__/pre-issuance-entry.test.tsx` — the ENT-02
+  no-request-below-three-characters case now distinguishes the dropdown's
+  open/click list request (empty `q`, B-08) from a typed search; the retry case
+  separates the list request from the search request; two new cases cover the
+  list-on-open and the one-off new-vehicle flow (provenance null). No assertion
+  was weakened or removed.
+- `apps/api/tests/integration/pre-issuance.test.ts` — the empty-query 400 case
+  is now the B-08 list-mode case (200, scoped, registration-ordered); one- and
+  two-character searches still assert 400 `invalid_request`.
+- `apps/tablet/e2e/pre-issuance.spec.ts` — the three pre-existing journeys are
+  untouched; two new journeys cover the scoped dropdown and the one-off new
+  vehicle.
+- `apps/tablet/vitest.config.ts` — `testTimeout` raised to 15s because the
+  dropdown renders per debounced keystroke in jsdom; every assertion is intact.
+- `packages/contracts/src/preIssuance.ts` — contract for the list mode
+  (optional/empty `query`, `REGISTRY_LIST_LIMIT`); the non-empty three-character
+  minimum is unchanged.
+- `tests/e2e/api-proxy.spec.ts` and `apps/tablet/e2e/camera-signature.spec.ts`
+  are recorded unchanged for traceability.
+- `apps/tablet/e2e/preview-binding.spec.ts` and
+  `apps/tablet/e2e/signature-probe.spec.ts` (page-completion pass, same day):
+  the redesigned capture step's viewfinder is taller, so the signature canvas
+  can start below the 720px fold; both probes now call
+  `scrollIntoViewIfNeeded()` before measuring raw mouse geometry, exactly as a
+  human signer would. No assertion was changed.
+
+Verification on the frozen state (2026-10-17): format check, lint, typecheck,
+unit suites (42 + 101 + 14 + 69), integration 103, e2e 38, build, tablet-size
+149348 B gzip (threshold 250000) — all pass.
+
+Independent review of this revision remains required; nothing here is a review
+approval.
+
+c4f7436818583007a6f98144161011a81ec8e4184dd5b4097b1d01e353d6313f  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+9d479f56a9c7a3a58b849172b85c7a2b07b570f7bd02e2974d1665265b9fbacb  apps/tablet/e2e/pre-issuance.spec.ts
+48aa8ec3b3cbd4931e5f47affaa524b53ff5a85ede1919795db6d01950c0f610  apps/api/tests/integration/pre-issuance.test.ts
+0811d7935084ad6789d6afe9fa364e1a7cc8f811bd8b36d0dc3cde12b0d3fd7e  apps/tablet/vitest.config.ts
+7f313decdc6200333a2191673cf42364af343f4dd5297450244654eda913fe8e  packages/contracts/src/preIssuance.ts
+8a543cd6d6e9b11c1bb2b8710a5a7059e3f08dac78591c92f0d3a7cd295e49ce  tests/e2e/api-proxy.spec.ts
+9a0f814462a8b8d7e2358b6e62782b58664e271abcb7814ffaa7ac77d4378342  apps/tablet/e2e/camera-signature.spec.ts
+ecff7082f5cb8f9e18f3297a19d65022838940ea43ea4f5a1d39d08d0418dfe0  apps/tablet/e2e/preview-binding.spec.ts
+2db3f90dcd5dc8b943648b9b640562181db405697043f9f347fdd5456f322541  apps/tablet/e2e/signature-probe.spec.ts

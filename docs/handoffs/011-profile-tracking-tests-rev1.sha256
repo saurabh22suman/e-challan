@@ -1,0 +1,11 @@
+# Profile/tracking planner baseline, 2026-10-21.
+# Read-only acceptance inputs. Any revision is a numbered planner correction.
+a94854a3891a35918c3e1aaccaf8f1c3f415eef8cc97f5e34872174b1c5c109d  packages/contracts/test/profile.test.ts
+f893db7b59a6f54e687c887b72e377a55fd40e356f6c525a36baa82490819836  apps/api/tests/integration/profile.test.ts
+41f9ecf85ba89cd98a61ccd7451afbc557d53ffcb5071245612f3729fe7dd209  apps/admin/src/__tests__/profile.test.tsx
+dd7c565b5370d2d5fc0b108552d684aca0593fbb72d26bf4348b82e9a7668d05  apps/tablet/src/__tests__/profile.test.tsx
+e1a86ee9f6fb19e076a868aafeb0f75ed6afd3d159d153ba594647a34e1cc5fd  apps/admin/e2e/profile.spec.ts
+a990a2e6d6543b8147becbc1b8c67eb77867c3ed65bd7887d71c079f945fcff5  apps/tablet/e2e/profile.spec.ts
+40a87205a548823eab17c0b7c2cc3e3cf9992b864ce1feed23a12ed815f8ffc5  specs/011-profile-tracking/spec.md
+2fd2b92679446e1ccc16172cff5f79af16c26c75ffd4f68b44742bcca8604ef1  specs/011-profile-tracking/plan.md
+ec6ec6ce77a5ee8fd22b6e1f67b9a8a265f7910d6be1a5a45bcacdc80e3ee4d3  specs/011-profile-tracking/tasks.md

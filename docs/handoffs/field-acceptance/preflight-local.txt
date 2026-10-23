@@ -1,0 +1,26 @@
+Field-acceptance preflight against http://127.0.0.1:5173
+
+WARN secure context — http://127.0.0.1:5173 is localhost (browser-secure but not trusted HTTPS)
+PASS tablet HTML reachable — HTTP 200
+PASS API /api/health — HTTP 200 {"status":"ok"}
+PASS API /api/health/ready — HTTP 200 {"status":"ok","database":"ok"}
+PASS synthetic marshal login — HTTP 200
+PASS session identity is Marshal — HTTP 200 role Marshal
+PASS catalogue violation-types — HTTP 200, 6 active
+PASS catalogue departments — HTTP 200, 5 active
+PASS catalogue contractors — HTTP 200, 3 active
+PASS catalogue locations — HTTP 200, 2 active
+PASS catalogue gates — HTTP 200, 2 active
+PASS catalogue vehicle-types — HTTP 200, 6 active
+PASS asset welcome-full.webp — HTTP 200, 35418 B
+PASS asset check-details.webp — HTTP 200, 27228 B
+PASS asset processing.webp — HTTP 200, 25870 B
+PASS asset success.webp — HTTP 200, 26860 B
+PASS asset error.webp — HTTP 200, 25970 B
+PASS asset connection.webp — HTTP 200, 36794 B
+
+17 PASS, 1 WARN, 0 FAIL
+
+This preflight cannot verify the rear camera, gloves, sunlight, rotation
+hardware, signature feel or human comprehension. Those require
+device-checklist.md and scenarios.md. It is not device/user acceptance.

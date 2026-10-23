@@ -1,0 +1,49 @@
+# F-01 correction baseline (planner-owned, additive)
+#
+# Prepared 2026-10-02 after docs/reviews/F-01.md returned CHANGES_REQUIRED.
+#
+# Revision history (both revisions happened BEFORE any implementer started, so no
+# implementer ever received a superseded draft):
+#   rev 1 - first correction suite draft. Superseded, never handed over.
+#   rev 2 - corrected an R3 assertion that inserted an unassociated post (which
+#           would have fought the correct posts.gate_id NOT NULL fix) and replaced
+#           an unsafe RegExp object-matcher with a strict SQLSTATE assertion.
+#           See the addendum in docs/handoffs/F-01-corrections-prepared.md.
+#   rev 3 - current. docs/reviews/F-01-correction-preparation.md found the
+#           normalised-lookup query normalised the literal $1 instead of the
+#           table column and was not a bound query, and found the suite was not
+#           self-contained. The lookup now compares the canonicalised table column
+#           against a canonicalised, properly bound parameter, every diagnostic
+#           mutation runs in its own rolled-back transaction, and the RED evidence
+#           distinguishes accepted-invalid-data failures from missing-column
+#           failures. See docs/handoffs/F-01-corrections-prepared.md.
+#   rev 4 - current. docs/reviews/F-01-correction-followup.md required an isolated
+#           unclaimed-gate location-consistency case, an explicit cardinality
+#           decision (many posts per gate, NOT one-post-per-gate), a real
+#           legacy-0002 upgrade test refusing an ambiguous mapping, and a corrected
+#           mutation interpretation that does not demand a redundant constraint fail
+#           independently. Adds f01-legacy-upgrade.test.ts. See Addendum 3.
+#
+# This file is ADDITIVE: docs/handoffs/F-01-tests.sha256 and its 14 entries remain
+# authoritative and byte-identical, as do all original acceptance assertions.
+# Verify BOTH manifests before implementing and before reviewing.
+#   rev 5 - current. docs/reviews/F-01-latest-correction-review.md required a
+#           positive legacy shared-gate upgrade case and a repair of the complete
+#           migration path. Planner-approved compatibility amendment (Addendum 4):
+#           0003 drops the never-approved posts_gate_id_unique statement;
+#           0005 becomes DROP CONSTRAINT IF EXISTS. Pre-amendment hashes:
+#             90de4cdced192d0386a5f3b533b3b7795c8b28151976978a47541120576f5a58  0003
+#             0e39b800a9bfb6eb835869e6be6172d94da1e577cea1af20c8daecd5f0707bf0  0005
+#           Already-applied databases are unaffected: drizzle selects pending
+#           migrations by folderMillis, not content hash, so the ledger retains the
+#           pre-amendment hashes as the audit trail of this amendment.
+b5892b74f7b4bdfdf30c2007d03a6b772fb7d369c101b5d15802aae106b19e1b  docs/handoffs/F-01-tests.sha256
+fecb63c192c7be58bfd4d02a162520600e48b2bf6c70be1fd94330a30feecba1  docs/reviews/F-01.md
+6d22ddb3eba787415ccd4989501638486591d5dbb4892cd945986aad9889088e  docs/handoffs/F-01-corrections-request.md
+b7e605ba9f44df4ba7e6bf18858f748824629861a586fc56c82e10ec6a716f96  docs/reviews/F-01-correction-preparation.md
+f2fea273ccf9d1cf386d239ad8992242d88920e03b810b79314332d865ebbcbf  docs/reviews/F-01-correction-followup.md
+46bc4af2712667af4b574fec641677ef9a137a11af818ecb8e04ef44f664c92c  docs/reviews/F-01-latest-correction-review.md
+54210ee5e665903e41e17e5b4cb33014dc14cdb81aa55fedfce8f2350588fc87  apps/api/tests/integration/f01-corrections.test.ts
+30259aee37f3fa35ac88c58dd0ad93319bc1b5d64c8a5ccc9a842475b7571a70  apps/api/tests/integration/f01-legacy-upgrade.test.ts
+7073a832e980086f43b8146184693d110c2fd3db9f50c200b464bde32a59d015  apps/api/drizzle/0003_certain_zarda.sql
+1ecb200a01ad41294d4a432a59a0187321819d38b51b02ffa1130be0ddba097f  apps/api/drizzle/0005_complex_captain_flint.sql

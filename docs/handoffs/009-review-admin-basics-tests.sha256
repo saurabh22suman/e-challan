@@ -1,0 +1,24 @@
+# Review/user-administration slice planner baseline — REVISION 3, 2026-10-21.
+#
+# REVISION HISTORY
+#   rev 1 initial preparation; rev 2 selector/copy corrections (archived at
+#         docs/handoffs/009-review-admin-basics-tests-rev2.sha256; rev 1 is the
+#         earlier archive).
+#   rev 3 additive profile/tracking contract: challan detail now requires
+#         `issuedBy`; the review-history heading becomes Tracking history. Fixtures
+#         and the browser heading assertion are updated. No review, scope, security
+#         or transition assertion was removed or weakened.
+#
+# Read-only acceptance inputs. Any further revision is a numbered correction.
+# Existing historical manifests are not regenerated.
+4594b482abbe64f90ff43fd6898b76a4d0686a152aa55c80e2cb42cd09fcf00b  packages/contracts/test/operations.test.ts
+845f12962fbe32096b860abe4d5e8ba7b411e176c06c4362ace563b8d6b2fb7d  apps/api/tests/unit/password.test.ts
+4750e461d70f3b02b985047cac3bfa3cb39697035b34ccc07a590fb04976986c  apps/api/tests/integration/challan-review.test.ts
+02d836e8c35ad370d3bb60e8cbe49307b3d0f076f379c97d9586cf3ea599cac9  apps/admin/src/__tests__/operations.test.tsx
+f75da9d8f949f5ec8105960428f443d5ab1133b8d7924fc762ca47dde47fdc2d  apps/admin/e2e/review-admin.spec.ts
+318c9f50f079bbf1465ef07bca9b039d09f8c3a073578acf8abd57f4386c6014  apps/admin/src/__tests__/foundation.test.tsx
+382ec5fef5d824caedcf29e91dd807ce44cb2b665250f37f35e267284f1e524f  apps/admin/e2e/foundation.spec.ts
+96387fdb4536edb7096808d660efdd9fb7d986ca79c32cddee00d28ddc4cddad  apps/admin/e2e/inclusive-ux.spec.ts
+81813f2813d0249cd263d2d3b8abc9c10c539a5f01e9d3e6fc2b270b50eee9ec  specs/009-review-admin-basics/spec.md
+8b8920b675204988b8eed4daf9a830cca28461bd958d46e9fc95c4d296ddf09b  specs/009-review-admin-basics/plan.md
+62aee8e36f5d727b929eb7487c5845f52387a3640b65cc36c3284a4ef58c29f7  specs/009-review-admin-basics/tasks.md

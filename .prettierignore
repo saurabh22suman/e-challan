@@ -1,0 +1,18 @@
+node_modules
+dist
+coverage
+pnpm-lock.yaml
+playwright-report
+test-results
+# Playwright MCP browser-tool artifacts (snapshots, screenshots, console logs)
+.playwright-mcp
+
+# Planner-owned and read-only inputs. The implementer must never reformat these:
+# docs/handoffs/S-01-tests.sha256 records their SHA-256 hashes, and AGENTS.md /
+# docs/ are loaded as project instructions and planning records.
+docs/
+specs/
+.specify/
+tests/foundation/
+AGENTS.md
+opencode.json

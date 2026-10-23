@@ -1,0 +1,46 @@
+# Inclusive UX revamp batch acceptance baseline — REVISION 2 (read-only)
+#
+# 2026-10-19: correction baseline per docs/reviews/inclusive-ux.md (R1-R7).
+# Revision 2 adds the new media spec and the two correction records; changed
+# tests are listed in docs/handoffs/inclusive-ux-corrections-prepared.md, and
+# rev 1 is archived byte-for-byte at inclusive-ux-tests-rev1.sha256. Departing
+# copy is limited to the R5 truthful chip and the R2 restored-capture
+# presentation plus same-message disambiguation; no behavioural assertion was
+# weakened. Do not edit acceptance files after this freeze; a further revised
+# baseline requires a documented planner correction and reviewer confirmation.
+#
+3c2ad0d5589da11375a1326f96ea10723e2b4c7676dce70b952c4b26d0e72fb3  apps/tablet/e2e/inclusive-ux.spec.ts
+eed9df4731027ee2c4abe29ee66af66255e4578ca1d472c4d33c8ec1d455ac27  apps/tablet/e2e/inclusive-ux-media.spec.ts
+ba4dc4f11e3a0210bf2071122f86a0571db51b026fc86276637d82b8e930c867  apps/admin/e2e/inclusive-ux.spec.ts
+74f0d3be299ed9a2fa0e8500a1fe5f4335da6bd6b1b61d1d9d030d258ecd57e0  apps/tablet/e2e/deferred-response.spec.ts
+ea1e9388832fb4e813aa3e2d5f47868cc92761ea03b4d9dfdce4c276830c7f56  apps/tablet/e2e/pre-issuance.spec.ts
+466dce2b43e546f60e2d591e5c91eb85a61dea750d7dcdf39828a695657d6d30  apps/tablet/e2e/preview-binding.spec.ts
+566b1bcbc0672a6f23b004e6f60046ec31cc4615c9026a9dae3eeb6b1dda9cff  apps/tablet/e2e/signature-probe.spec.ts
+4f19ec9b3d4f45af310f99085b8deecfcb44a3c1279a421a87f6e09d5800df75  apps/tablet/e2e/camera-signature.spec.ts
+f4a02dc01f556fc80513c043acc6a13437fb0baea4e1421a4a94919122c8af7f  apps/tablet/e2e/foundation.spec.ts
+3df8b55d1a03ec65d1d3bf3337eb43fd8c34ca8f9cc4a2b8a3997562df33e5d2  apps/tablet/e2e/entry-media-invalidation.spec.ts
+2a653480122be714b5740ceff3c05751868d18e2248efee23141b96a2585f45f  apps/tablet/e2e/f02-auth.spec.ts
+2412efa004633725398c83e1fcf5c9e83f43c1e3885dd5755c74faf29fbf4db0  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+7e22548889caae9e23e5c637bd03a6fc430383e452c83c3ece7c1a7f8c10913f  apps/tablet/src/__tests__/pre-issuance-repeat.test.tsx
+8ff40fc3db057a1b81274fce0bfd72f14f890901a4c36663fe3c5bc21e68d2f8  apps/tablet/src/__tests__/foundation.test.tsx
+d99640bfacee23dbd496755b36a7cd25aca9e9af54672054deaedb86d7fe16bc  apps/tablet/src/__tests__/f02-auth.test.tsx
+7437d4f783d7193cfcd826fb929f896b501cac810167ee9804946bd1bd706601  apps/tablet/src/__tests__/signature.test.tsx
+b901fa3e096ac6cda2fd206d71e4e7f06c9ce7fa8a3e5d199f8b2f18255f4c55  apps/tablet/src/__tests__/photo-cancel-play.test.tsx
+db42f2c9e4caf1d30282f69feab23945cb641ff98705b1a7878e2a01bb06a06b  apps/tablet/src/__tests__/signature-invalidation.test.tsx
+76f4cc4f1194dfe0b644d5bf3d81cc52a89ca01170742870cd85a36e4e6a4198  apps/admin/e2e/f02-auth.spec.ts
+70b4a1cc6f358d4600b18ddf6281c36924213e1e9a200fbea63a90dde9075c26  apps/admin/e2e/foundation.spec.ts
+918f47b19fab4c6b66160dc8b10f3701e590eaf719c3a5802cdbd412c0a448a5  apps/admin/src/__tests__/foundation.test.tsx
+64dc80b178807523cb7e5d5de3a78458a6bdb472863317c053ada1e94c4bcffc  apps/admin/src/__tests__/f02-auth.test.tsx
+65916e26c8b5cd69b97563ae53aa5aaec2d7c7c2798e12cbd49170be69bd1a1f  docs/handoffs/inclusive-ux-batch.md
+d1b78a0baadeac929510199fb53d1aadd9357b19dea9bedd2332e2bbf9ac8760  docs/handoffs/inclusive-ux-prepared.md
+d63bfa7fd0fd89bf98404781252b41557ff8d2778c15d66fc079a17f32bc32f6  docs/handoffs/inclusive-ux.md
+700023de785adf87c0d9d9253b1499f2314248e669bc97d5ffd43b1a196ab205  docs/handoffs/inclusive-ux-corrections-prepared.md
+ba83c5527251223c0d22359d5b784c0c113f743e2dd5c3d73785c8cc8ba8eeb1  docs/handoffs/inclusive-ux-corrections.md
+c868ddd2f774e285c06aec1cac4d8fdce165b3e5a46b2f4d0e9668c18cdb4c91  docs/handoffs/ux-00-readiness.md
+23e0f93e3544798637665ce1390e506f81dd1ac8a94b3dca78b107aef334085c  docs/handoffs/entry-media-c1-c2.md
+f0a0de60525ab3354e603685ea32a7c3c7932bd8e00bd665a314ab2dc879c767  docs/handoffs/entry-media-c1-c2-prepared.md
+4b6e7f756798e975dfc85d79078e98022363a477bd0d2e9f75d039c1d246297b  docs/handoffs/inclusive-ux-fault-sensitivity.sh
+3e3d52438cf1b3551b181c7336229f839f0ca6b3ba4a3563972b5294466505c1  docs/handoffs/inclusive-ux-fault-sensitivity.txt
+40ccc45707e2d47043c8d92f15846c657039d909999e1383e502170852c49a1d  specs/007-inclusive-ux/spec.md
+80cad017564b9e48e9362ed0b2e030a59be6535e269b3d90713e8d5f7baee823  specs/007-inclusive-ux/plan.md
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json

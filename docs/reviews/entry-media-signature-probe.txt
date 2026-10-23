@@ -1,0 +1,64 @@
+import { test, expect, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+const credentials = JSON.parse(readFileSync('tests/fixtures/f02-demo-credentials.json', 'utf8')).marshal;
+
+async function openPad(page: Page) {
+  await page.goto('/');
+  await page.getByLabel(/username/i).fill(credentials.username);
+  await page.getByLabel(/password/i).fill(credentials.password);
+  await page.getByRole('button', { name: /sign in|log in/i }).click();
+  await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
+  await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+  await page.getByLabel('Driver name').fill('Kavita Joshi');
+  await page.getByLabel('Department', { exact: true }).selectOption({ label: 'Logistics' });
+  await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });
+  await page.getByRole('checkbox', { name: 'Not wearing a seat belt' }).check();
+  await page.getByRole('button', { name: 'Review summary' }).click();
+  await expect(page.getByRole('heading', { name: 'Driver summary' })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  const canvas = page.getByTestId('signature-canvas');
+  await expect(canvas).toBeVisible();
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('missing canvas geometry');
+  await page.mouse.move(box.x + 30, box.y + 70);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 180, box.y + 130, { steps: 15 });
+  await page.mouse.up();
+  await expect(page.getByTestId('signature-confirm')).toBeEnabled();
+  await page.getByTestId('signature-confirm').click();
+}
+
+async function inkPixels(page: Page) {
+  return page.getByTestId('signature-canvas').evaluate((node) => {
+    const canvas = node as HTMLCanvasElement;
+    const pixels = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data;
+    let ink = 0;
+    for (let i = 0; i < pixels.length; i += 4) {
+      if (pixels[i + 3] > 0 && pixels[i] < 200 && pixels[i + 1] < 200 && pixels[i + 2] < 200) ink++;
+    }
+    return ink;
+  });
+}
+
+test('review probe: same-size resize preserves ink or invalidates signature', async ({ page }) => {
+  await openPad(page);
+  expect(await inkPixels(page)).toBeGreaterThan(0);
+  await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+  const ink = await inkPixels(page);
+  const enabled = await page.getByTestId('signature-confirm').isEnabled();
+  console.log('REVIEW same-size resize', { ink, enabled });
+  expect(ink > 0 || !enabled).toBe(true);
+});
+
+test('review probe: remounted captured signature has visible ink', async ({ page }) => {
+  await openPad(page);
+  expect(await inkPixels(page)).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Back to summary' }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page.getByTestId('signature-canvas')).toBeVisible();
+  const ink = await inkPixels(page);
+  const enabled = await page.getByTestId('signature-confirm').isEnabled();
+  console.log('REVIEW remounted signature', { ink, enabled });
+  expect(ink > 0 || !enabled).toBe(true);
+});

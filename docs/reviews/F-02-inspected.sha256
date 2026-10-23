@@ -1,0 +1,13 @@
+# F-02 inspected snapshot, 2026-10-04. CHANGES_REQUIRED, not accepted.
+fbfc5c159a8aa3b93a5a6cd7648081b5c885ac1962225279e4977b9e75299c89  docs/handoffs/F-02-tests.sha256
+060937a00998f9279c35d0bc112b7d87da082d651eae8ac795c19264d349a70e  docs/handoffs/F-02.md
+b507d791d573075640189182a363cd893d373be64950452208f8ea5134ce4074  packages/contracts/src/auth.ts
+7781d253a9f5708c86baaa60160b5952416ab7c909162d90aabe2cdeb9664d88  apps/api/src/app.ts
+614adc70b151f296dda3ddc013f67de34c48e8497c88a770f8a62c63641400aa  apps/api/src/auth/config.ts
+fc8754ecde4c730d3ad9a4c042856557d89adae624e8a2ea0e50d2508fbfdc15  apps/api/src/auth/session.ts
+2f8c0921f105001863dea96d3cade1e35df0cc4b5992b62465f5d4c941a7e37a  apps/api/src/auth/service.ts
+d2fb1490cee04b5dae536f68fa807e05d54c2bdf169e72c3b50e0bdf5aef0352  apps/api/src/auth/routes.ts
+be2bded56e3d24e9585ecedce7a244c23a06199b2a79fd626f259605cf1893ef  apps/tablet/src/auth/session.tsx
+f55655f64a4d44cf33f5f5ef59956b881f7602b4959fc7172ad97f43bade3f2c  apps/admin/src/auth/session.tsx
+0287e46477defe351c29d6c4a1525763206ab6fdeee9819c50283872d4c8237c  apps/tablet/src/App.tsx
+471639aedf7b0d7f1ff4059671e28f5b063d58caaa5709f376eace75a30ffbf1  apps/admin/src/App.tsx

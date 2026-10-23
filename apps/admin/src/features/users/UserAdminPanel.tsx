@@ -1,0 +1,760 @@
+import { useEffect, useMemo, useState } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Typography from '@mui/material/Typography';
+import type { AdminUser } from '@echallan/contracts';
+import { ErrorSummary, Notice, SPACING, StatusChip, tokens } from '@echallan/theme';
+import {
+  deactivateUser,
+  listLocations,
+  listUsers,
+  OperationsApiError,
+  reactivateUser,
+  resetUserPassword,
+  type LocationOption,
+} from '../../api/operations';
+import CreateUserDialog from './CreateUserDialog';
+
+/**
+ * Admin-only user management: create, deactivate ("remove"), reactivate and
+ * reset. Deactivation is the approved removal model (PRD E5.3); no hard delete
+ * is offered. The signed-in Admin cannot deactivate their own account.
+ */
+
+const MIN_PASSWORD_LENGTH = 12;
+
+interface ResetPasswordDialogProps {
+  token: string;
+  target: AdminUser;
+  currentUserId: string;
+  onClose: () => void;
+  onSuccess: (target: AdminUser) => void;
+  onSelfReset: () => void;
+}
+
+function ResetPasswordDialog({
+  token,
+  target,
+  currentUserId,
+  onClose,
+  onSuccess,
+  onSelfReset,
+}: ResetPasswordDialogProps) {
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [errors, setErrors] = useState<{ password?: string; confirmation?: string }>({});
+  const [failure, setFailure] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorNonce, setErrorNonce] = useState(0);
+
+  function submit(event: React.FormEvent): void {
+    event.preventDefault();
+    const nextErrors: typeof errors = {};
+    if (password.trim().length < MIN_PASSWORD_LENGTH) {
+      nextErrors.password = `Use at least ${MIN_PASSWORD_LENGTH} characters.`;
+    }
+    if (confirmation !== password) {
+      nextErrors.confirmation = 'The passwords do not match.';
+    }
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      setErrorNonce((previous) => previous + 1);
+      return;
+    }
+    setFailure(null);
+    setSubmitting(true);
+    resetUserPassword(token, target.id, password)
+      .then(() => {
+        onSuccess(target);
+        if (target.id === currentUserId) onSelfReset();
+      })
+      .catch((error: unknown) => {
+        setFailure(
+          error instanceof OperationsApiError ? error.message : 'The password could not be reset.',
+        );
+      })
+      .finally(() => setSubmitting(false));
+  }
+
+  useEffect(() => {
+    if (errorNonce === 0) return;
+    document.querySelector<HTMLElement>('[data-testid="error-summary"]')?.focus();
+  }, [errorNonce]);
+
+  function focusField(id: string): void {
+    const element = document.getElementById(id);
+    if (element instanceof HTMLElement) {
+      element.focus();
+      element.scrollIntoView?.({ block: 'center' });
+    }
+  }
+
+  const errorItems = [
+    ...(errors.password === undefined
+      ? []
+      : [{ id: 'reset-password-new', message: 'New password' }]),
+    ...(errors.confirmation === undefined
+      ? []
+      : [{ id: 'reset-password-confirmation', message: 'Confirm new password' }]),
+  ];
+
+  return (
+    <Dialog open onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="reset-password-title">
+      <DialogTitle id="reset-password-title" component="h2">
+        Reset password
+      </DialogTitle>
+      <DialogContent dividers>
+        <Stack
+          id="reset-password-form"
+          component="form"
+          spacing={SPACING.lg}
+          onSubmit={submit}
+          noValidate
+        >
+          <Typography variant="body1">
+            Set a new password for {target.displayName} ({target.username}). Their live sessions
+            will be revoked.
+          </Typography>
+          {failure !== null && (
+            <Notice severity="error" role="alert">
+              {failure}
+            </Notice>
+          )}
+          <ErrorSummary
+            key={errorNonce}
+            items={errorItems}
+            onNavigate={(item) => focusField(item.id)}
+          />
+          <TextField
+            id="reset-password-new"
+            label="New password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            error={errors.password !== undefined}
+            helperText={errors.password ?? `At least ${MIN_PASSWORD_LENGTH} characters.`}
+            fullWidth
+            required
+          />
+          <TextField
+            id="reset-password-confirmation"
+            label="Confirm new password"
+            type="password"
+            autoComplete="new-password"
+            value={confirmation}
+            onChange={(event) => setConfirmation(event.target.value)}
+            error={errors.confirmation !== undefined}
+            helperText={errors.confirmation}
+            fullWidth
+            required
+          />
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={submitting}>
+          Cancel
+        </Button>
+        <Button form="reset-password-form" type="submit" variant="contained" disabled={submitting}>
+          Reset password
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+interface DeactivateDialogProps {
+  target: AdminUser;
+  onClose: () => void;
+  onConfirm: () => void;
+  submitting: boolean;
+  failure: string | null;
+}
+
+function DeactivateDialog({
+  target,
+  onClose,
+  onConfirm,
+  submitting,
+  failure,
+}: DeactivateDialogProps) {
+  return (
+    <Dialog open onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="deactivate-user-title">
+      <DialogTitle id="deactivate-user-title" component="h2">
+        Deactivate user
+      </DialogTitle>
+      <DialogContent dividers>
+        <Stack spacing={SPACING.md}>
+          <Typography variant="body1">
+            Deactivate {target.displayName} ({target.username})? The account is retained, but the
+            user cannot sign in and all live sessions end. History is not deleted.
+          </Typography>
+          {failure !== null && (
+            <Notice severity="error" role="alert">
+              {failure}
+            </Notice>
+          )}
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={submitting}>
+          Cancel
+        </Button>
+        <Button color="error" variant="contained" onClick={onConfirm} disabled={submitting}>
+          Deactivate user
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+interface UserAdminPanelProps {
+  token: string;
+  currentUserId: string;
+  onSelfReset: () => void;
+}
+
+export default function UserAdminPanel({ token, currentUserId, onSelfReset }: UserAdminPanelProps) {
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [locations, setLocations] = useState<LocationOption[]>([]);
+  const [locationsError, setLocationsError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [actionFailure, setActionFailure] = useState<string | null>(null);
+  const [resetTarget, setResetTarget] = useState<AdminUser | null>(null);
+  const [deactivateTarget, setDeactivateTarget] = useState<AdminUser | null>(null);
+  const [deactivating, setDeactivating] = useState(false);
+  const [deactivateFailure, setDeactivateFailure] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | AdminUser['role']>('all');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkAction, setBulkAction] = useState<{
+    verb: 'deactivate' | 'reactivate';
+    ids: string[];
+  } | null>(null);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkFailure, setBulkFailure] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    listUsers(token)
+      .then((resolved) => {
+        if (!cancelled) setUsers(resolved);
+      })
+      .catch((failure: unknown) => {
+        if (cancelled) return;
+        setError(
+          failure instanceof OperationsApiError
+            ? failure.message
+            : 'The user list could not be loaded.',
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, reloadKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLocationsError(null);
+    listLocations(token)
+      .then((resolved) => {
+        if (!cancelled) setLocations(resolved);
+      })
+      .catch(() => {
+        if (!cancelled) setLocationsError('The location catalogue could not be loaded.');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  function refresh(message: string): void {
+    setNotice(message);
+    setActionFailure(null);
+    setReloadKey((value) => value + 1);
+  }
+
+  function reactivate(user: AdminUser): void {
+    setActionFailure(null);
+    reactivateUser(token, user.id)
+      .then(() => refresh(`User reactivated: ${user.displayName} (${user.username}).`))
+      .catch((failure: unknown) => {
+        setActionFailure(
+          failure instanceof OperationsApiError
+            ? failure.message
+            : 'The user could not be reactivated.',
+        );
+      });
+  }
+
+  function confirmDeactivate(): void {
+    if (deactivateTarget === null) return;
+    setDeactivating(true);
+    setDeactivateFailure(null);
+    deactivateUser(token, deactivateTarget.id)
+      .then(() => {
+        const target = deactivateTarget;
+        setDeactivateTarget(null);
+        refresh(`User deactivated: ${target.displayName} (${target.username}). Account retained.`);
+      })
+      .catch((failure: unknown) => {
+        setDeactivateFailure(
+          failure instanceof OperationsApiError
+            ? failure.message
+            : 'The user could not be deactivated.',
+        );
+      })
+      .finally(() => setDeactivating(false));
+  }
+
+  const compact = useMediaQuery('(max-width:1199.95px)');
+  const filteredUsers = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return users.filter((user) => {
+      if (roleFilter !== 'all' && user.role !== roleFilter) return false;
+      if (activeFilter === 'active' && !user.isActive) return false;
+      if (activeFilter === 'inactive' && user.isActive) return false;
+      if (term === '') return true;
+      return (
+        user.username.toLowerCase().includes(term) ||
+        user.displayName.toLowerCase().includes(term) ||
+        user.locationLabels.some((label) => label.toLowerCase().includes(term))
+      );
+    });
+  }, [activeFilter, roleFilter, search, users]);
+
+  const selectableUsers = filteredUsers.filter((user) => user.id !== currentUserId);
+  const selectedUsers = users.filter(
+    (user) => user.id !== currentUserId && selectedIds.has(user.id),
+  );
+  const selectedActive = selectedUsers.filter((user) => user.isActive);
+  const selectedInactive = selectedUsers.filter((user) => !user.isActive);
+
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [search, roleFilter, activeFilter, reloadKey]);
+
+  async function runBulkAction(): Promise<void> {
+    if (bulkAction === null) return;
+    setBulkBusy(true);
+    setBulkFailure(null);
+    try {
+      for (const id of bulkAction.ids) {
+        if (bulkAction.verb === 'deactivate') await deactivateUser(token, id);
+        else await reactivateUser(token, id);
+      }
+      setBulkAction(null);
+      setSelectedIds(new Set());
+      refresh(
+        `${bulkAction.ids.length} user(s) ${bulkAction.verb === 'deactivate' ? 'deactivated' : 'reactivated'}.`,
+      );
+    } catch (failure) {
+      setBulkFailure(
+        failure instanceof OperationsApiError
+          ? failure.message
+          : 'The bulk action could not be completed.',
+      );
+    } finally {
+      setBulkBusy(false);
+    }
+  }
+
+  function toggleSelected(id: string): void {
+    setSelectedIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function renderActions(user: AdminUser) {
+    const self = user.id === currentUserId;
+    return (
+      <Stack direction="row" spacing={SPACING.sm} sx={{ flexWrap: 'wrap', alignItems: 'center' }}>
+        <Button
+          size="small"
+          sx={{ whiteSpace: 'nowrap' }}
+          aria-label={`Reset password for ${user.username}`}
+          onClick={() => {
+            setNotice(null);
+            setResetTarget(user);
+          }}
+        >
+          Reset password
+        </Button>
+        {user.isActive ? (
+          <Button
+            size="small"
+            color="error"
+            sx={{ whiteSpace: 'nowrap' }}
+            aria-label={`Deactivate ${user.username}`}
+            disabled={self}
+            onClick={() => {
+              setDeactivateFailure(null);
+              setDeactivateTarget(user);
+            }}
+          >
+            Deactivate
+          </Button>
+        ) : (
+          <Button
+            size="small"
+            sx={{ whiteSpace: 'nowrap' }}
+            aria-label={`Reactivate ${user.username}`}
+            onClick={() => reactivate(user)}
+          >
+            Reactivate
+          </Button>
+        )}
+        {self && (
+          <Typography variant="caption" sx={{ color: tokens.muted }}>
+            You cannot deactivate your own account.
+          </Typography>
+        )}
+      </Stack>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader
+        title={
+          <Typography component="h2" variant="h2">
+            Users
+          </Typography>
+        }
+        subheader="Create users, deactivate or reactivate them, and reset passwords."
+      />
+      <CardContent>
+        <Stack spacing={SPACING.lg}>
+          <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
+            <Button variant="contained" onClick={() => setCreating(true)}>
+              Create user
+            </Button>
+            <Typography variant="body2" sx={{ color: tokens.muted }}>
+              Removal is deactivation: accounts and history are retained.
+            </Typography>
+          </Stack>
+
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
+            <TextField
+              label="Search users"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              sx={{ flex: 1 }}
+            />
+            <TextField
+              select
+              label="Role"
+              value={roleFilter}
+              onChange={(event) => setRoleFilter(event.target.value as 'all' | AdminUser['role'])}
+              sx={{ minWidth: 160 }}
+            >
+              <MenuItem value="all">All roles</MenuItem>
+              <MenuItem value="Marshal">Marshal</MenuItem>
+              <MenuItem value="Supervisor">Supervisor</MenuItem>
+              <MenuItem value="Admin">Admin</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Account status"
+              value={activeFilter}
+              onChange={(event) =>
+                setActiveFilter(event.target.value as 'all' | 'active' | 'inactive')
+              }
+              sx={{ minWidth: 170 }}
+            >
+              <MenuItem value="all">All accounts</MenuItem>
+              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="inactive">Inactive</MenuItem>
+            </TextField>
+          </Stack>
+
+          {selectedUsers.length > 0 && (
+            <Stack direction="row" spacing={SPACING.md} sx={{ flexWrap: 'wrap' }}>
+              <Typography variant="body2" sx={{ color: tokens.muted, alignSelf: 'center' }}>
+                {selectedUsers.length} selected
+              </Typography>
+              <Button
+                size="small"
+                color="error"
+                disabled={selectedActive.length === 0}
+                onClick={() => {
+                  setBulkFailure(null);
+                  setBulkAction({
+                    verb: 'deactivate',
+                    ids: selectedActive.map((user) => user.id),
+                  });
+                }}
+              >
+                Deactivate selected
+              </Button>
+              <Button
+                size="small"
+                disabled={selectedInactive.length === 0}
+                onClick={() => {
+                  setBulkFailure(null);
+                  setBulkAction({
+                    verb: 'reactivate',
+                    ids: selectedInactive.map((user) => user.id),
+                  });
+                }}
+              >
+                Reactivate selected
+              </Button>
+            </Stack>
+          )}
+
+          {notice !== null && (
+            <Notice severity="success" role="status">
+              {notice}
+            </Notice>
+          )}
+          {error !== null && (
+            <Notice severity="error" role="status">
+              {error}
+            </Notice>
+          )}
+          {actionFailure !== null && (
+            <Notice severity="error" role="alert">
+              {actionFailure}
+            </Notice>
+          )}
+
+          {loading ? (
+            <CircularProgress aria-label="Loading users" />
+          ) : filteredUsers.length === 0 && error === null ? (
+            <Notice severity="info" role="status">
+              {users.length === 0 ? 'No users are recorded yet.' : 'No users match these filters.'}
+              <Button onClick={() => setCreating(true)} sx={{ ml: SPACING.md }}>
+                Create user
+              </Button>
+            </Notice>
+          ) : compact ? (
+            <Stack spacing={SPACING.md}>
+              {filteredUsers.map((user) => (
+                <Box
+                  key={user.id}
+                  sx={{
+                    border: `1px solid ${tokens.line}`,
+                    borderRadius: 2,
+                    padding: SPACING.md,
+                    backgroundColor: tokens.surface,
+                  }}
+                >
+                  <Stack spacing={SPACING.sm}>
+                    <Stack
+                      direction="row"
+                      spacing={SPACING.sm}
+                      sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
+                    >
+                      <Stack direction="row" spacing={SPACING.sm} sx={{ alignItems: 'center' }}>
+                        {user.id !== currentUserId && (
+                          <Checkbox
+                            slotProps={{ input: { 'aria-label': `Select ${user.username}` } }}
+                            checked={selectedIds.has(user.id)}
+                            onChange={() => toggleSelected(user.id)}
+                          />
+                        )}
+                        <Box>
+                          <Typography
+                            variant="body1"
+                            sx={{ fontFamily: 'monospace', fontWeight: 700 }}
+                          >
+                            {user.username}
+                          </Typography>
+                          <Typography variant="body2">{user.displayName}</Typography>
+                        </Box>
+                      </Stack>
+                      <StatusChip label={user.isActive ? 'Active' : 'Inactive'} />
+                    </Stack>
+                    <Typography variant="caption" sx={{ color: tokens.muted }}>
+                      {user.role} ·{' '}
+                      {user.locationLabels.length === 0
+                        ? 'No locations'
+                        : user.locationLabels.join(', ')}
+                    </Typography>
+                    {renderActions(user)}
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
+          ) : (
+            <TableContainer>
+              <Table aria-label="Users">
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        slotProps={{ input: { 'aria-label': 'Select all visible users' } }}
+                        checked={
+                          selectableUsers.length > 0 &&
+                          selectableUsers.every((user) => selectedIds.has(user.id))
+                        }
+                        indeterminate={
+                          selectableUsers.some((user) => selectedIds.has(user.id)) &&
+                          !selectableUsers.every((user) => selectedIds.has(user.id))
+                        }
+                        onChange={(event) => {
+                          setSelectedIds(
+                            event.target.checked
+                              ? new Set(selectableUsers.map((user) => user.id))
+                              : new Set(),
+                          );
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>Username</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Role</TableCell>
+                    <TableCell>Active</TableCell>
+                    <TableCell>Locations</TableCell>
+                    <TableCell align="right">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredUsers.map((user) => (
+                    <TableRow key={user.id} hover>
+                      <TableCell padding="checkbox">
+                        {user.id !== currentUserId && (
+                          <Checkbox
+                            slotProps={{ input: { 'aria-label': `Select ${user.username}` } }}
+                            checked={selectedIds.has(user.id)}
+                            onChange={() => toggleSelected(user.id)}
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell sx={{ fontFamily: 'monospace' }}>{user.username}</TableCell>
+                      <TableCell>{user.displayName}</TableCell>
+                      <TableCell>{user.role}</TableCell>
+                      <TableCell>{user.isActive ? 'Yes' : 'No'}</TableCell>
+                      <TableCell sx={{ color: tokens.muted }}>
+                        {user.locationLabels.length === 0 ? 'None' : user.locationLabels.join(', ')}
+                      </TableCell>
+                      <TableCell align="right">{renderActions(user)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Stack>
+      </CardContent>
+
+      {creating && (
+        <CreateUserDialog
+          token={token}
+          locations={locations}
+          locationsError={locationsError}
+          onClose={() => setCreating(false)}
+          onCreated={(created) => {
+            setCreating(false);
+            refresh(`User created: ${created.displayName} (${created.username}).`);
+          }}
+        />
+      )}
+
+      {resetTarget !== null && (
+        <ResetPasswordDialog
+          token={token}
+          target={resetTarget}
+          currentUserId={currentUserId}
+          onClose={() => setResetTarget(null)}
+          onSuccess={(reset) => {
+            setResetTarget(null);
+            setNotice(
+              `Password reset for ${reset.displayName} (${reset.username}). Their sessions were revoked.`,
+            );
+          }}
+          onSelfReset={onSelfReset}
+        />
+      )}
+
+      {bulkAction !== null && (
+        <Dialog
+          open
+          onClose={() => setBulkAction(null)}
+          fullWidth
+          maxWidth="sm"
+          aria-labelledby="bulk-users-title"
+        >
+          <DialogTitle id="bulk-users-title" component="h2">
+            {bulkAction.verb === 'deactivate'
+              ? 'Deactivate selected users'
+              : 'Reactivate selected users'}
+          </DialogTitle>
+          <DialogContent dividers>
+            <Stack spacing={SPACING.md}>
+              <Typography variant="body1">
+                Apply this change to {bulkAction.ids.length} selected account(s)? Deactivation
+                retains accounts and history; reactivation restores sign-in.
+              </Typography>
+              {bulkFailure !== null && (
+                <Notice severity="error" role="alert">
+                  {bulkFailure}
+                </Notice>
+              )}
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setBulkAction(null)} disabled={bulkBusy}>
+              Cancel
+            </Button>
+            <Button
+              color={bulkAction.verb === 'deactivate' ? 'error' : 'primary'}
+              variant="contained"
+              onClick={() => void runBulkAction()}
+              disabled={bulkBusy}
+            >
+              {bulkBusy
+                ? 'Applying…'
+                : bulkAction.verb === 'deactivate'
+                  ? 'Deactivate'
+                  : 'Reactivate'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+
+      {deactivateTarget !== null && (
+        <DeactivateDialog
+          target={deactivateTarget}
+          submitting={deactivating}
+          failure={deactivateFailure}
+          onClose={() => setDeactivateTarget(null)}
+          onConfirm={confirmDeactivate}
+        />
+      )}
+    </Card>
+  );
+}

@@ -1,0 +1,43 @@
+# Local PostgreSQL 16 for the S-01 foundation. Demo and test databases are
+# separate containers, ports and volumes so a test reset can never touch demo data.
+# No production credentials: challan/challan is a local-only fixture password.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: echallan-db
+    environment:
+      POSTGRES_USER: challan
+      POSTGRES_PASSWORD: challan
+      POSTGRES_DB: echallan_demo
+    ports:
+      - '127.0.0.1:5432:5432'
+    volumes:
+      - echallan-demo-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U challan -d echallan_demo']
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+  db-test:
+    image: postgres:16-alpine
+    container_name: echallan-db-test
+    environment:
+      POSTGRES_USER: challan
+      POSTGRES_PASSWORD: challan
+      POSTGRES_DB: echallan_test
+    ports:
+      - '127.0.0.1:5433:5432'
+    volumes:
+      - echallan-test-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U challan -d echallan_test']
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+
+volumes:
+  echallan-demo-data:
+  echallan-test-data:

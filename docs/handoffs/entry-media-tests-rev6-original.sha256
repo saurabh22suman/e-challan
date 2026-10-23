@@ -1,0 +1,56 @@
+# Entry-media batch planner-owned acceptance baseline — REVISION 6 (read-only)
+#
+# Prepared 2026-10-16 by the planner/test-owner session for the F1–F7
+# correction run. The active rev 6 records the actual current state of the
+# test files; the historical rev 1 / rev 2 / rev 3 / rev 4 / rev 5 manifests
+# remain archived.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-15) original. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev1.sha256.
+#   rev 2   (2026-10-15) corrections handoff. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev2-original.sha256.
+#   rev 3   (2026-10-16) CR-01/02/03/04/05/08/09. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev3-original.sha256.
+#   rev 4   (2026-10-16) CR-correction run. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev4-original.sha256.
+#   rev 5   (2026-10-16) R1–R7. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev5-original.sha256.
+#   rev 6   (2026-10-16) F1–F7 correction run for
+#                   docs/reviews/entry-media-r1-r7-review.md. F1: the
+#                   SignaturePadLib instance is created exactly once at
+#                   mount; the local capture state no longer re-runs
+#                   the mount effect and re-clears the pad. F2:
+#                   rehydration decodes under a generation token;
+#                   in-flight decodes are dropped on Clear, resize,
+#                   summary change or unmount; Confirm is only
+#                   enabled after a successful decode actually
+#                   renders the image. F3: the unified review
+#                   generation token covers both validation and
+#                   preview; material edits bump the same counter.
+#                   F6: the adopted probe type-checks under the
+#                   repository's strict indexed-access settings without
+#                   disabled rules. The probe now passes against a
+#                   real Pointer Events stroke. F7 evidence is the
+#                   matching manifest, the probe and the
+#                   test-results/signature-probe-* artifacts.
+#
+# Historical baselines remain archived and are not regenerated.
+53739381c588df03b84e98ff974a5a31ec8dcf8af70bd2a98b97c28c79711d16  apps/tablet/src/__tests__/corrections.test.tsx
+c20ce2edd20c6ba6b7ff6eddfea7c6c979616234b6f7fd3f577adc1a661041d1  apps/tablet/src/__tests__/camera-capture.test.tsx
+dac31f27d36ccdcac76d49dd5de20d5431e559d465d6fe7ba0a618eb3164a1b0  apps/tablet/src/__tests__/signature.test.tsx
+1d0ee8a66c2a0a59322ad8062e480cc053ac01a6c88bf0d38a2b434e198fce85  apps/tablet/src/__tests__/pre-issuance-repeat.test.tsx
+2e04d53a27fbfbdbd06991165f50158f9bd42e0a142a0342906ceceb973b8317  apps/tablet/src/__tests__/foundation.test.tsx
+7f0923f95304f1e52e863beefb92289651f4e07fe3f59466236e880bfe6cdeb9  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+4fad4943df9c121a173361bb1c915ed42fe58c2ed2e105f434359ca1899f4f0f  apps/tablet/src/features/photos/PhotoCapture.tsx
+e485b41751d73768b268e6e0176d502f4c81a4ddc2b5be2157a766323a975e7c  apps/tablet/src/features/photos/encoder.ts
+5ce5ce6a7c871b18a2801c15524b5a0b546f38520c40c40d6fa4c48c912ae3ed  apps/tablet/src/features/signature/SignaturePad.tsx
+5a1c16d090d836d12c1d59e5244c9d073fc018a3e3cccb4c57c0c01b7aa5c7b5  apps/tablet/src/features/signature/RefusalForm.tsx
+9eb35e0d0b8edc534aa0c0d0123496709d94490a2f8d713884e6050099732b4a  apps/tablet/src/features/issuance/useLookupController.ts
+f4f48c84152a29a2650dda20246792a485c9d154f78acb1d34e5fe139ee294b3  apps/tablet/src/features/issuance/useCatalogues.ts
+5adf9979aa5518ab400cdbb0599054dd9889607f120266bc9df59442a146d1ae  apps/tablet/src/features/issuance/useDraftRevision.ts
+939069aeee5f2c0a54cb3cb1ba44c9ec984c45b9c8f843c1397e88dada8d9d8f  apps/tablet/src/features/issuance/serverErrors.ts
+d7a36b1d6e0f385e6245ae73dfe7f904d1e59455bf201ea57074a2a7316b3f51  apps/tablet/src/routes/EntryFlow.tsx
+308b63a8c72f141f19efd19fbc14a8f6e4a0f7fa0243efc9c554968852d0e449  apps/tablet/e2e/foundation.spec.ts
+1d894236dcbc2063756ce1a67f6c78dc7c56205c13ba1f969db3dc5aa9dcb1fc  apps/tablet/e2e/pre-issuance.spec.ts
+0b965de119f6e5e5c3addbceacd66a9c316289ad78e38058508c68941c8e4e92  apps/tablet/e2e/signature-probe.spec.ts

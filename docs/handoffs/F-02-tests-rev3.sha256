@@ -1,0 +1,84 @@
+# F-02 planner-owned acceptance baseline — REVISION 3 (read-only)
+#
+# Prepared 2026-10-04 by the planner/test-owner session, after the independent
+# implementation review (docs/reviews/F-02.md, CHANGES_REQUIRED) and the
+# revision-2 preparation re-review (docs/reviews/F-02-preparation-revision-2.md,
+# Q1-Q4). F-01 remains accepted; its historical result is unchanged.
+#
+# REVISION HISTORY
+#   rev 1  2026-10-03  20 entries. Superseded.
+#   rev 2  2026-10-03  24 entries; verified 24/24 at the implementation review.
+#                   ARCHIVED byte-for-byte at docs/handoffs/F-02-tests-rev2.sha256.
+#                   The archive's own SHA-256 is
+#                   fbfc5c159a8aa3b93a5a6cd7648081b5c885ac1962225279e4977b9e75299c89,
+#                   exactly the value recorded for the active manifest in
+#                   docs/reviews/F-02-inspected.sha256 — so the archive is provably
+#                   the manifest the independent reviewer inspected.
+#                   Do not regenerate the archive. Running sha256sum -c on it now
+#                   yields 15 OK / 9 FAILED: the nine failures are precisely the
+#                   planner-owned artifacts this revision legitimately corrects.
+#   rev 3 follow-up (same day, still unapproved): a review follow-up closed two
+#                   test-strength gaps before the independent preparation re-review:
+#                   the R3 integration candidates are now asserted as EXACT stored
+#                   sets with explicit exclusions (fabricated/unauthorised options
+#                   fail), and the tablet R3 test now uses a selection-consistent
+#                   success fixture plus no-pre-selection, no-extra-option and
+#                   credentials-retained assertions. The integration test, tablet
+#                   auth suite and the feature spec/plan were refreshed again; the
+#                   mutation evidence is in docs/handoffs/F-02-prepared.md.
+#   rev 3  2026-10-04  24 entries, same paths, 9 refreshes. Changes only:
+#                   - Corrected Q1 (explicit credential injection into every auth
+#                     test factory plus a fail-closed-when-omitted case), Q3 (root
+#                     /challans/:id path with a known-record control read) and Q4
+#                     (distinct usernames, valid control, required role_mismatch)
+#                     in apps/api/tests/integration/f02-auth.test.ts.
+#                   - Corrected Q2 (form-based authenticated precondition, token
+#                     required on session lookup, storage isolation) in both
+#                     foundation component suites.
+#                   - Added R1 (client role boundary, fresh and restored), R2
+#                     (stale restoration ordering around login and logout) and R3
+#                     (tablet explicit context selection) to both client auth
+#                     suites.
+#                   - Added R1 browser refusal journeys (real API sessions, fresh
+#                     and restored) to both auth browser specs.
+#                   - Reconciled the ambiguous-context contract, zero-shift
+#                     refusal, malformed-ID handling, client role/ordering rules
+#                     and storage seam in specs/003-demo-auth/spec.md and
+#                     refreshed the plan for the correction batch.
+#
+# Earlier baselines remain unchanged and must continue to verify:
+#   docs/handoffs/S-01-tests.sha256            11 entries
+#   docs/handoffs/F-01-tests.sha256            14 entries
+#   docs/handoffs/F-01-corrections-tests.sha256 10 entries
+# docs/reviews/F-01-accepted.sha256 still reports 28/33, with exactly the five
+# documented F-02 extensions diverging and no F-01 source regression.
+#
+# Mutable implementation evidence (docs/handoffs/F-02.md, feature tasks.md) and the
+# writable configuration files are deliberately excluded.
+#
+# Do not regenerate this manifest to fix a failure. Any further revision is a
+# numbered rev with its own recorded reason.
+8907a52d0fd2c56c2ad73316666aeaea46fbcba8c64b7326754e2603562432e6  apps/api/tests/unit/f02-auth-config.test.ts
+05e4a7cf341b732c5053f2da8dc33b1b6e575daa63fa66f1fe1d36d7ba0ab778  apps/api/tests/integration/f02-auth.test.ts
+2e327ee0a0c2fa5bb947303e19b0e0c20db22ccc93deb5d6c6616490c8a56837  apps/tablet/src/__tests__/f02-auth.test.tsx
+e1c9a858b796713da63073fc88a2729e5cfeb0e8ee34c59da2cf022c51a92e40  apps/admin/src/__tests__/f02-auth.test.tsx
+d74fa8f1e209e8218da9671dfc8799e83c73401bbb03d368aa6572a6b18c0e13  apps/tablet/e2e/f02-auth.spec.ts
+4af5ae9e66d270a93597007d5c70f5e5e509d1b27d76817f77a5f35e46b189d3  apps/admin/e2e/f02-auth.spec.ts
+35b3f5cd7a5da263dd128948fb2694879e135a18ed6e029335f3280cef4f8710  apps/tablet/src/__tests__/foundation.test.tsx
+d86fe602527f3d8f3292b71c508d0f46b28f79fe95507830516237de0fe4b3c4  apps/admin/src/__tests__/foundation.test.tsx
+e5bd78f98d6266899db0666bc49913f93e4857ee412648a178f8639df40ee50e  apps/tablet/e2e/foundation.spec.ts
+f7118277dfcbe85497973b3e086ce9e62c6c6a2ad59fd6f07c15a78b262a5665  apps/admin/e2e/foundation.spec.ts
+87a6e08b24e63695537fb91cd8179ce2d290a5993e4665a880aeb356e61a38d7  tests/e2e/api-proxy.spec.ts
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json
+e0ee62d34049c5e6023894f0798cbc4bf230123e1816ddf79548417efc69dac0  specs/003-demo-auth/spec.md
+1b90cd2b2ff0e698410f64e9b12d65cf2b859c28bf13df9d695750bd22925166  specs/003-demo-auth/plan.md
+c33a459c8e7ffb1f46defd3a5baf24defc7c7bc4b5d9733f4b0c282f6e41ff57  docs/eChallan_replacement_spec_v0.2.md
+1b9c5f41c689c4b636f2cb89d815284273b0afce1f2b1ae361ec35b6aa5b6f01  docs/handoffs/demo-env-login-decision.md
+c936593bf67259906dcc037499d69143f567693a933ee5c791b07259ea58c797  docs/handoffs/F-01-prepared.md
+b5892b74f7b4bdfdf30c2007d03a6b772fb7d369c101b5d15802aae106b19e1b  docs/handoffs/F-01-tests.sha256
+3ec134660562754a50311b4ae45ac83bf0fa2533159492a18980c1d44f1abfd8  docs/handoffs/F-01-corrections-tests.sha256
+0530904baefed76e6e55925341e488254d1b84e6fc55869dbdcc9b05a998a31e  docs/reviews/F-01-final.md
+969cf986a3f49b83e460e69c181bed3cfe6125e3153148090d0eb9727ed317b6  docs/reviews/F-01-accepted.sha256
+0d4a44a3aa71a9d62b0a92de87513e731fe77475edd1805861efca45f7d02324  apps/api/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/tablet/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/admin/vitest.config.ts

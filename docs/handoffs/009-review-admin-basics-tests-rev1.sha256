@@ -1,0 +1,14 @@
+# Review/user-administration slice planner baseline, 2026-10-21.
+# Read-only acceptance inputs. Any revision is a numbered planner correction.
+# Existing historical manifests are not regenerated.
+651a85df5a4b90556ae6317fa41ce195a09ff7eec3d7bdcf248962e6824feaba  packages/contracts/test/operations.test.ts
+845f12962fbe32096b860abe4d5e8ba7b411e176c06c4362ace563b8d6b2fb7d  apps/api/tests/unit/password.test.ts
+103564430cad5ba14b5e0049297855a8d9bd82afb55fc5a27f8cc23f0c0fcd43  apps/api/tests/integration/challan-review.test.ts
+5e575f15aaaec95b7b456bb6d05cf0fad2a6335d7a72266bf43c9d1e04bb28a4  apps/admin/src/__tests__/operations.test.tsx
+2bc848b72035ccfd391a472af57d5e0259557dbe1e08bd43be9f96b466a562a8  apps/admin/e2e/review-admin.spec.ts
+cc20e2d23f1a2f956e9354971754553a10465566100f1bfe041fec3066249212  apps/admin/src/__tests__/foundation.test.tsx
+382ec5fef5d824caedcf29e91dd807ce44cb2b665250f37f35e267284f1e524f  apps/admin/e2e/foundation.spec.ts
+96387fdb4536edb7096808d660efdd9fb7d986ca79c32cddee00d28ddc4cddad  apps/admin/e2e/inclusive-ux.spec.ts
+81813f2813d0249cd263d2d3b8abc9c10c539a5f01e9d3e6fc2b270b50eee9ec  specs/009-review-admin-basics/spec.md
+8b8920b675204988b8eed4daf9a830cca28461bd958d46e9fc95c4d296ddf09b  specs/009-review-admin-basics/plan.md
+7e727b8e00141aa6bc90e74dad9ef8fd7a6208dc8cf5e2464b912ba5fc5637a2  specs/009-review-admin-basics/tasks.md

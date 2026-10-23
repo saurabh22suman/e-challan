@@ -1,0 +1,121 @@
+# Dokploy stack for the e-Challan demo.
+#
+# Dokploy configuration:
+#   Compose path: docker-compose.dokploy.yml
+#   Domains:      admin  -> container port 80
+#                 tablet -> container port 80
+#   Do not add a public domain for api or db.
+#
+# Dokploy injects the Traefik labels for the two web services; this file keeps
+# them on dokploy-network and lets Dokploy do the routing.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: '${POSTGRES_USER:-echallan}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}'
+      POSTGRES_DB: '${POSTGRES_DB:-echallan_demo}'
+    volumes:
+      - echallan-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - internal
+
+  api:
+    build:
+      context: .
+      dockerfile: deploy/docker/api.Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: 'postgresql://${POSTGRES_USER:-echallan}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-echallan_demo}'
+      PORT: '3001'
+      HOST: '0.0.0.0'
+      API_ORIGIN: '${API_ORIGIN:-http://api:3001}'
+      EVIDENCE_ROOT: /data/evidence
+      DEMO_MARSHAL_USERNAME: '${DEMO_MARSHAL_USERNAME:?DEMO_MARSHAL_USERNAME is required}'
+      DEMO_MARSHAL_PASSWORD: '${DEMO_MARSHAL_PASSWORD:?DEMO_MARSHAL_PASSWORD is required}'
+      DEMO_SUPERVISOR_USERNAME: '${DEMO_SUPERVISOR_USERNAME:?DEMO_SUPERVISOR_USERNAME is required}'
+      DEMO_SUPERVISOR_PASSWORD: '${DEMO_SUPERVISOR_PASSWORD:?DEMO_SUPERVISOR_PASSWORD is required}'
+      DEMO_ADMIN_USERNAME: '${DEMO_ADMIN_USERNAME:?DEMO_ADMIN_USERNAME is required}'
+      DEMO_ADMIN_PASSWORD: '${DEMO_ADMIN_PASSWORD:?DEMO_ADMIN_PASSWORD is required}'
+    volumes:
+      - echallan-evidence:/data/evidence
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3001/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    networks:
+      - internal
+
+  admin:
+    build:
+      context: .
+      dockerfile: deploy/docker/web.Dockerfile
+      args:
+        APP: admin
+    restart: unless-stopped
+    ports:
+      - '80'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/']
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - internal
+      - dokploy-network
+
+  tablet:
+    build:
+      context: .
+      dockerfile: deploy/docker/web.Dockerfile
+      args:
+        APP: tablet
+    restart: unless-stopped
+    ports:
+      - '80'
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/']
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - internal
+      - dokploy-network
+
+volumes:
+  echallan-db-data:
+  echallan-evidence:
+
+networks:
+  internal:
+    driver: bridge
+  dokploy-network:
+    external: true

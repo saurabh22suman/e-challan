@@ -1,0 +1,58 @@
+=== FAULT: lookup abort removed ===
+--- with fault ---
+      Tests  1 failed | 14 passed (15)
+--- restored ---
+      Tests  15 passed (15)
+=== FAULT: server error mapping removed ===
+--- with fault ---
+      Tests  1 failed | 14 passed (15)
+--- restored ---
+      Tests  15 passed (15)
+=== FAULT: summary revision drops remarks ===
+--- with fault ---
+      Tests  1 failed | 16 passed (17)
+--- restored ---
+      Tests  17 passed (17)
+=== FAULT: V1 parent revision effect removed ===
+--- with fault ---
+  1 failed
+--- restored ---
+  1 passed (4.5s)
+=== FAULT: V2 full preview-change gate removed ===
+--- with fault ---
+  1 failed
+--- restored ---
+  1 passed (3.9s)
+=== FAULT: encoder hard-max check loosened ===
+--- with fault ---
+      Tests  1 failed | 4 passed (5)
+--- restored ---
+      Tests  5 passed (5)
+=== FAULT: signature resize always writes backing dimensions ===
+--- with fault ---
+  1 failed
+--- restored ---
+  1 passed (4.3s)
+=== DONE ===
+=== FAULT: deferred-response stale guards (combined) ===
+--- notes ---
+Individual removal of the 6 revision guards alone: deferred-response.spec.ts still passes
+  (the reviewRequestRef token guard catches the stale response).
+Individual removal of the 3 reviewRequestRef guards alone: deferred-response.spec.ts still passes
+  (the liveRevisionRef guard catches the stale response).
+Combined removal of reviewRequestRef + liveRevisionRef + livePreviewRequestRef guards (12 sites)
+  is required to expose the stale-response path:
+--- with fault (combined) ---
+  2 failed
+    [tablet] › apps/tablet/e2e/deferred-response.spec.ts:42:1 › a deferred validation response cannot advance an edited draft to the summary
+    [tablet] › apps/tablet/e2e/deferred-response.spec.ts:78:1 › a deferred preview response cannot advance an edited draft to the summary
+--- restored ---
+  2 passed (6.4s)
+=== DONE ===
+=== FAULT: encoder hard-dimension cap removed ===
+--- with fault ---
+  1 failed
+    [tablet] › apps/tablet/e2e/encoder-decode.spec.ts › caps a 3840x2160 gradient to 1920x1080 and lands under the 300 KB target
+  3 passed
+--- restored ---
+  4 passed (6.1s)

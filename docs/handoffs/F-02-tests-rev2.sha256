@@ -1,0 +1,74 @@
+# F-02 planner-owned acceptance baseline — REVISION 2 (read-only)
+#
+# Prepared 2026-10-03 by the planner/test-owner session, after F-01 passed
+# independent review (docs/reviews/F-01-final.md, PASS).
+#
+# REVISION HISTORY
+#   rev 1  2026-10-03  20 entries. Superseded: it froze `.env.example` and
+#                   `playwright.config.ts` while simultaneously instructing the
+#                   implementer to edit both, and it did not freeze the five
+#                   pre-existing suites that were revised during the combined
+#                   preparation correction (docs/reviews/F-02-preparation.md,
+#                   finding P1). It also predated the P3/P4/P5 corrections to the
+#                   six F-02 acceptance files, the addendum and the feature spec,
+#                   so seven of its entries no longer matched.
+#   rev 2  2026-10-03  24 entries. Changes only, no re-implementation:
+#                   - REMOVED `.env.example` and `playwright.config.ts`
+#                     (writable implementation configuration; see the ownership
+#                     table in specs/003-demo-auth/spec.md).
+#                   - ADDED `tests/fixtures/f02-demo-credentials.json` (committed
+#                     synthetic demo-only credential fixture, finding P6) and the
+#                     five pre-existing suites revised to establish a genuine
+#                     authenticated precondition (finding P2):
+#                       apps/tablet/src/__tests__/foundation.test.tsx
+#                       apps/admin/src/__tests__/foundation.test.tsx
+#                       apps/tablet/e2e/foundation.spec.ts
+#                       apps/admin/e2e/foundation.spec.ts
+#                       tests/e2e/api-proxy.spec.ts
+#                     Every original label, touch-target, health-contract,
+#                     invalid-payload and route assertion in those five files is
+#                     preserved; only setup and precondition handling changed.
+#                   - REFRESHED the hashes of the seven rev-1 entries that the
+#                     correction batch legitimately changed.
+#
+# This manifest is NEW and separate. It does not modify, replace or extend any
+# earlier baseline:
+#   docs/handoffs/S-01-tests.sha256          11 entries  (foundation)
+#   docs/handoffs/F-01-tests.sha256          14 entries  (F-01 original approval)
+#   docs/handoffs/F-01-corrections-tests.sha256 10 entries (F-01 additive revisions)
+# All three must continue to verify unchanged. See the "Baseline verification"
+# section of docs/handoffs/F-02-prepared.md for the one documented divergence in
+# docs/reviews/F-01-accepted.sha256, which is a planning-document delta and is
+# NOT edited here or in that manifest.
+#
+# Mutable implementation evidence (docs/handoffs/F-02.md, feature tasks.md) is
+# deliberately EXCLUDED, as are the historical review reports and the writable
+# configuration files.
+#
+# Do not regenerate this manifest to fix a failure. Return test defects to the
+# planner with concrete evidence. Any further revision is a numbered rev with its
+# own recorded reason.
+8907a52d0fd2c56c2ad73316666aeaea46fbcba8c64b7326754e2603562432e6  apps/api/tests/unit/f02-auth-config.test.ts
+c43f8f0baa0e306d89aa14c6e8d5135168997582025e4698647403e1c138921e  apps/api/tests/integration/f02-auth.test.ts
+ac202c5aab50326e317d69ca42267c96bfa2c76862bd6fa48d15cd9d289b67ae  apps/tablet/src/__tests__/f02-auth.test.tsx
+7fc9d42c7cbad971c9c5e09f2c5a7a72b7b279bf62e33f949aca2020fc8d2871  apps/admin/src/__tests__/f02-auth.test.tsx
+699218923e9bdb18c1e43a5535ef80cbd0185b0c9f5362950e79b07839a82131  apps/tablet/e2e/f02-auth.spec.ts
+6f79f744d093e4633aa777be4ad009bb1092cb7999cb1c2d57c9e40c7881785b  apps/admin/e2e/f02-auth.spec.ts
+ef5d60c2474b44ecd91b5d4c6b42f29e92f255bf97cabb89385beea0df00d5df  apps/tablet/src/__tests__/foundation.test.tsx
+ceb73c234132b39e2a1092ecbf012e70935c4168501cd29bf1085083f6a1b931  apps/admin/src/__tests__/foundation.test.tsx
+e5bd78f98d6266899db0666bc49913f93e4857ee412648a178f8639df40ee50e  apps/tablet/e2e/foundation.spec.ts
+f7118277dfcbe85497973b3e086ce9e62c6c6a2ad59fd6f07c15a78b262a5665  apps/admin/e2e/foundation.spec.ts
+87a6e08b24e63695537fb91cd8179ce2d290a5993e4665a880aeb356e61a38d7  tests/e2e/api-proxy.spec.ts
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json
+a069bf2116f839b9a982bf8f4e1b2e8738549a9fd7169ec17c764802c5591de6  specs/003-demo-auth/spec.md
+a4325096a2f41dc86c354a31363f2591c8a04b0313b16a7b4a69cceb80ff91e0  specs/003-demo-auth/plan.md
+c33a459c8e7ffb1f46defd3a5baf24defc7c7bc4b5d9733f4b0c282f6e41ff57  docs/eChallan_replacement_spec_v0.2.md
+1b9c5f41c689c4b636f2cb89d815284273b0afce1f2b1ae361ec35b6aa5b6f01  docs/handoffs/demo-env-login-decision.md
+c936593bf67259906dcc037499d69143f567693a933ee5c791b07259ea58c797  docs/handoffs/F-01-prepared.md
+b5892b74f7b4bdfdf30c2007d03a6b772fb7d369c101b5d15802aae106b19e1b  docs/handoffs/F-01-tests.sha256
+3ec134660562754a50311b4ae45ac83bf0fa2533159492a18980c1d44f1abfd8  docs/handoffs/F-01-corrections-tests.sha256
+0530904baefed76e6e55925341e488254d1b84e6fc55869dbdcc9b05a998a31e  docs/reviews/F-01-final.md
+969cf986a3f49b83e460e69c181bed3cfe6125e3153148090d0eb9727ed317b6  docs/reviews/F-01-accepted.sha256
+0d4a44a3aa71a9d62b0a92de87513e731fe77475edd1805861efca45f7d02324  apps/api/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/tablet/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/admin/vitest.config.ts

@@ -1,0 +1,45 @@
+# F-03 planner-owned acceptance baseline — REVISION 2 (read-only)
+#
+# Prepared 2026-10-05 by the planner/test-owner session for finding M1 in
+# docs/reviews/F-03.md: the returned master contracts did not enforce their kind,
+# and the unit acceptance contradicted the frozen spec by accepting a department
+# with a severity. No production change is authorised by this revision.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-05) the first F-03 checkpoint. ARCHIVED byte-for-byte at
+#                   docs/handoffs/F-03-tests-rev1.sha256; the archive's own SHA-256
+#                   is 2c808615aba136d01cce28cca430ca742c97eba9df03c46aea770de7e3a33a54,
+#                   exactly the value pinned in docs/reviews/F-03.md. Do not
+#                   regenerate the archive. Running sha256sum -c on it now yields
+#                   7 OK / 2 FAILED: the two failures are the artifacts this
+#                   revision corrects.
+#   rev 2   (2026-10-05) 9 entries, same paths, 2 refreshes. Changes only:
+#                   - The contradictory "department with severity is valid"
+#                     assertion is replaced by strict kind-specific rejection cases:
+#                     wrong-kind fields on simple, violation and gate records, a
+#                     missing kind-defining field, and a list whose record kind
+#                     disagrees with the list kind.
+#                   - Positive coverage for all six legitimate variants, records
+#                     and homogeneous lists, is added.
+#                   - The feature spec now states the strict, symmetric kind rules
+#                     and list homogeneity explicitly.
+#                   The real-DB integration suite and the create/update request
+#                   validation are unchanged and must stay green.
+#
+# Other baselines remain unchanged and must continue to verify:
+#   docs/handoffs/S-01-tests.sha256            11 entries
+#   docs/handoffs/F-01-tests.sha256            14 entries
+#   docs/handoffs/F-01-corrections-tests.sha256 10 entries
+#   docs/handoffs/F-02-tests.sha256            separate F-02 baseline (rev 5)
+#
+# Do not regenerate this manifest to fix a failure. Any further revision is a
+# numbered rev with its own recorded reason.
+23f4db52ac57402581b2f022d10d09b08f77103e2a4cb8fee0ee17be2e20dee3  apps/api/tests/unit/f03-master-contracts.test.ts
+4a6903526ac146810231975e325a3a5a4df9ea602892c454ae8bf086f1ada70c  apps/api/tests/integration/f03-master-data.test.ts
+1e12e24c2c81a612b5382663e77ece807456c2b54df7fa91fd4b955ac3041b75  specs/004-master-data/spec.md
+29cdfcdf14c80dc695681e24a2c30c25eafa209516947b2ed055606253b7b241  specs/004-master-data/plan.md
+cf6e939724eb3dc50532c274ccf6045fb676202c07b91ec1f00cb43f53bf69cb  docs/eChallan_replacement_spec.md
+348d4788840446bdc4113c5e35428e2d0c93fd770ffb39963ceeb234354276f1  docs/decisions.md
+ab51aa44ebf007f09e07b391ec550c312f6e06555cb6ba5eaa787edc11885990  docs/test-cases.md
+2918d41545f269295f45670690a13892a0cffc2e524b736225dcdbbaf9515159  docs/eChallan_PRD.md
+0d4a44a3aa71a9d62b0a92de87513e731fe77475edd1805861efca45f7d02324  apps/api/vitest.config.ts

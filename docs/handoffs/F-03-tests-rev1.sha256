@@ -1,0 +1,34 @@
+# F-03 planner-owned acceptance baseline — REVISION 1 (read-only)
+#
+# Prepared 2026-10-05 by the planner/test-owner session for F-03 (master-data API
+# and historical meaning). Owner override: F-03 was prepared and implemented in one
+# compressed session at the owner's explicit direction while F-02's independent C1
+# implementation review is still owed; the owner-override disclosure is in
+# docs/implementation-plan.md and docs/handoffs/F-03-prepared.md.
+#
+# This manifest is NEW and separate. It does not modify, replace or extend any
+# earlier baseline:
+#   docs/handoffs/S-01-tests.sha256            11 entries
+#   docs/handoffs/F-01-tests.sha256            14 entries
+#   docs/handoffs/F-01-corrections-tests.sha256 10 entries
+#   docs/handoffs/F-02-tests.sha256            24 entries (revision 4)
+# All must continue to verify unchanged.
+#
+# Entries: the F-03 acceptance files, the F-03 feature spec/plan, the read-only
+# authority documents (approved replacement specification, decision register, PRD
+# and acceptance-case catalogue) and the API vitest harness config. Production
+# files are deliberately NOT frozen here; the implementer may change them under the
+# prepared handoff.
+#
+# Mutable implementation evidence (docs/handoffs/F-03.md, feature tasks.md) is
+# excluded. Do not regenerate this manifest to fix a failure. Any revision is a
+# numbered rev with its own recorded reason.
+2cf063e1c433e78704c33e9b5de955908a936f84ada8fccd74aa7377bac063e7  apps/api/tests/unit/f03-master-contracts.test.ts
+4a6903526ac146810231975e325a3a5a4df9ea602892c454ae8bf086f1ada70c  apps/api/tests/integration/f03-master-data.test.ts
+fb221d8d7191a2185f8a6c58c50799269f4a362e71ccbd4bbd74e7ff54d07424  specs/004-master-data/spec.md
+29cdfcdf14c80dc695681e24a2c30c25eafa209516947b2ed055606253b7b241  specs/004-master-data/plan.md
+cf6e939724eb3dc50532c274ccf6045fb676202c07b91ec1f00cb43f53bf69cb  docs/eChallan_replacement_spec.md
+348d4788840446bdc4113c5e35428e2d0c93fd770ffb39963ceeb234354276f1  docs/decisions.md
+ab51aa44ebf007f09e07b391ec550c312f6e06555cb6ba5eaa787edc11885990  docs/test-cases.md
+2918d41545f269295f45670690a13892a0cffc2e524b736225dcdbbaf9515159  docs/eChallan_PRD.md
+0d4a44a3aa71a9d62b0a92de87513e731fe77475edd1805861efca45f7d02324  apps/api/vitest.config.ts

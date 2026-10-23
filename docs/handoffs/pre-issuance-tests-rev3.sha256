@@ -1,0 +1,61 @@
+# Pre-issuance batch planner-owned acceptance baseline — REVISION 3 (read-only)
+#
+# Prepared 2026-10-15 by the planner/test-owner session during the R1–R5 + I-02
+# + I-03 bounded implementation run (entry-media batch). Revision 3 corrects
+# the {changed} metadata placeholder recorded in revision 2 with the actual
+# expected counts from the pre-issuance implementation evidence (178 unit,
+# 102 PostgreSQL integration, 25 browser, 27 foundation checks; tablet
+# initial JS 147 603 B gzip). No assertion was weakened, skipped or
+# narrowed, and the historical rev 1 / rev 2 manifests remain intact.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-07) the first batch checkpoint. ARCHIVED byte-for-byte at
+#                   docs/handoffs/pre-issuance-tests-rev1.sha256. The owner
+#                   authorised implementation before an independent preparation
+#                   confirmation was recorded; that override is disclosed in
+#                   docs/implementation-plan.md and docs/handoffs/pre-issuance.md.
+#   rev 2   (2026-10-07) archived byte-for-byte at
+#                   docs/handoffs/pre-issuance-tests-rev2.sha256. Recorded
+#                   {changed} placeholder and refreshed hashes; the placeholder
+#                   is removed by this revision.
+#   rev 3   (2026-10-15) same 30 paths; {changed} replaced with actual
+#                   expected counts (178 / 102 / 25 / 27 / 147 603 B). New
+#                   R1–R5 test surface lives in
+#                   apps/tablet/src/__tests__/corrections.test.tsx and is
+#                   recorded in docs/handoffs/entry-media-tests.sha256.
+#                   The original 30 acceptance files are not modified.
+#
+# Historical baselines remain archived and are not regenerated:
+#   S-01-tests.sha256, F-01-tests.sha256, F-01-corrections-tests.sha256,
+#   F-02-tests.sha256 (rev 5), F-03-tests.sha256 (rev 2).
+2116ced5f14be86fc1511c0d98f13ddd38811f7e7eb88e78de3ce74a4cf7f6ec  packages/contracts/test/pre-issuance.test.ts
+c5aace13456d42ccd3ef9b4bc9335415c8f868a1b2fce427f646d1e5c07f11f8  apps/api/tests/unit/pre-issuance-rules.test.ts
+1ddff3f897a63b2ddce3cb17606e72d61fd6e672bf5503e69d75da5b21668347  apps/api/tests/integration/pre-issuance.test.ts
+7f0923f95304f1e52e863beefb92289651f4e07fe3f59466236e880bfe6cdeb9  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+2ef314d0180245aa7dd93896462de9949a3444fe35534ac1f3fc3f1cac03db7e  apps/tablet/src/__tests__/pre-issuance-repeat.test.tsx
+5c01658d322bc087f94b4441ca98868f29ae549449f770cab5ecc557b8c619a8  apps/tablet/e2e/pre-issuance.spec.ts
+0694673614ed6f37e08613efd67b8c39361699caa7dc3dcb21d9887119551920  apps/tablet/src/__tests__/foundation.test.tsx
+1c876d8cd0bfa284a21cfe6aa63e54a3d709bc3a836d879444f8b345e03d0cfe  apps/admin/src/__tests__/foundation.test.tsx
+cf4e60990d476763aee6163287ec865c891b757ec07445ecc1ab3929cc47dde8  apps/tablet/e2e/foundation.spec.ts
+7c2290204ec839a65b2ecc28f59c5f0b362f90830abd3f62691aeedea5de75e4  apps/admin/e2e/foundation.spec.ts
+8a543cd6d6e9b11c1bb2b8710a5a7059e3f08dac78591c92f0d3a7cd295e49ce  tests/e2e/api-proxy.spec.ts
+fba4289c06ae073be46fe67c9a969f4fe91a35bc0286491df6754e239b9f08f4  apps/tablet/src/__tests__/f02-auth.test.tsx
+5d0d08e8ee49ceff7a56f9e245afe91106d6359199218dafa0ceb01f13706431  apps/admin/src/__tests__/f02-auth.test.tsx
+044610040eb174f85e807314b420c9913d505de19f60fb88e6cee7e0e57e655e  apps/tablet/e2e/f02-auth.spec.ts
+1a3caa3d48065a6fe8442e74c98da525b6a90504cb6c7a4cec13d0cb26faeb3e  apps/admin/e2e/f02-auth.spec.ts
+6a4de6e7df3133730d14727a3dfc6ab67c0a0ede6dcf07c29eec7467d3367983  tests/foundation/test_review_corrections.py
+f024e04d8a06ecad1f120b497e39f21452491475b810bca85017f182d41be8aa  specs/005-pre-issuance/spec.md
+a7f1cb253535e587b6931b053e65b6f43e541dd5fb9655d550c340344912c792  specs/005-pre-issuance/plan.md
+afde39b034d72cef557ce92b4e79107f9934eab882dbb1577191995b5e354d3e  specs/005-pre-issuance/tasks.md
+cf6e939724eb3dc50532c274ccf6045fb676202c07b91ec1f00cb43f53bf69cb  docs/eChallan_replacement_spec.md
+c33a459c8e7ffb1f46defd3a5baf24defc7c7bc4b5d9733f4b0c282f6e41ff57  docs/eChallan_replacement_spec_v0.2.md
+348d4788840446bdc4113c5e35428e2d0c93fd770ffb39963ceeb234354276f1  docs/decisions.md
+ab51aa44ebf007f09e07b391ec550c312f6e06555cb6ba5eaa787edc11885990  docs/test-cases.md
+2918d41545f269295f45670690a13892a0cffc2e524b736225dcdbbaf9515159  docs/eChallan_PRD.md
+a0e82cfbdefd2312cc4ec6df506d6d46160d8e4a0fad477d653a79452b30a989  docs/eChallan_DESIGN.md
+15ec04488cd3a6c107a4fe0dc7d8f091b7f36cc894fe4fb72336f6759b228ac7  docs/handoffs/pre-issuance-batch.md
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json
+0d4a44a3aa71a9d62b0a92de87513e731fe77475edd1805861efca45f7d02324  apps/api/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/tablet/vitest.config.ts
+d7af23680730ce722c45f28f6b7f577cc71a7fa2a4ccdc098d97ac85a360c49a  apps/admin/vitest.config.ts
+26f615c59fe968f0591008a7919374916be4e4249eae23353defb4e88badc67e  packages/contracts/vitest.config.ts

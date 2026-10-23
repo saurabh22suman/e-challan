@@ -1,0 +1,9 @@
+# Admin user-management planner baseline, 2026-10-21.
+# Read-only acceptance inputs. Any revision is a numbered planner correction.
+e7c357bd13b6b4958d2744ce0e37161f6848d1207acdb81fc7035e26d56ef42a  packages/contracts/test/user-management.test.ts
+b6caee8e80816163871a3a88eca39f4368b21ff25e4b37134e0a4980dee2ab87  apps/api/tests/integration/admin-user-management.test.ts
+818a63d1f7ebd9a6ac9710b025a377010bf0abde594b8f586a89f388a282731c  apps/admin/src/__tests__/user-management.test.tsx
+8f61eec467ec9b2307516d3912179524f679de8193d6e1d09cbfd65f922294e7  apps/admin/e2e/user-management.spec.ts
+3ec4e2f464e294f49af18f859b99606579e30af6bd472b4faf6dc6e925be9295  specs/010-user-management/spec.md
+1123455fd8d02a8dfa2cca7d7c25985f80175dbb381230fc9538a00467b46c6b  specs/010-user-management/plan.md
+f19e8efbb78410c61846ea0676fbde17961efc6183a8725e88accb27bffdf270  specs/010-user-management/tasks.md

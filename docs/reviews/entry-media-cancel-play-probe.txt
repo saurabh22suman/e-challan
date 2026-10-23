@@ -1,0 +1,32 @@
+import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, expect, it, vi } from 'vitest';
+import PhotoCapture from '../features/photos/PhotoCapture';
+
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
+
+it('review: cancelling acquired camera stops tracks without waiting for play', async () => {
+  let finishPlay!: () => void;
+  const play = vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(
+    () => new Promise<void>((resolve) => { finishPlay = resolve; }),
+  );
+  vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => undefined);
+  const stop = vi.fn();
+  const stream = { getTracks: () => [{ stop }] } as unknown as MediaStream;
+  const getUserMedia = vi.fn().mockResolvedValue(stream);
+  const user = userEvent.setup();
+  render(<PhotoCapture getUserMedia={getUserMedia} />);
+  await user.click(screen.getByTestId('photo-start-camera'));
+  expect(play).toHaveBeenCalledTimes(1);
+  expect((screen.getByTestId('photo-video') as HTMLVideoElement).srcObject).toBe(stream);
+  try {
+    await user.click(screen.getByTestId('photo-cancel-acquire'));
+    expect(stop).toHaveBeenCalled();
+    expect((screen.getByTestId('photo-video') as HTMLVideoElement).srcObject).toBeNull();
+  } finally {
+    finishPlay();
+  }
+});

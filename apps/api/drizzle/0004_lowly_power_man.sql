@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ALTER COLUMN "gate_id" SET NOT NULL;

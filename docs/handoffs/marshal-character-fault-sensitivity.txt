@@ -1,0 +1,22 @@
+Marshal character fault sensitivity (MC-04/MC-06)
+Date: 2026-10-19. Reproduced with docs/handoffs/marshal-character-fault-sensitivity.sh
+(disposable copy at /tmp/opencode/e-challan-fault-app, Vite on port 5273,
+workspace API on 3001; workspace source was never modified).
+
+Fault injected in the disposable copy:
+  formCharacter: validation error state mapped to 'connection' instead of 'error'
+
+Observed RED (expected):
+  pnpm exec playwright test -c test-results/playwright-fault.config.ts \
+    -g "validation errors use the concerned"
+  1 failed: expect(getByTestId('marshal-error')).toBeVisible() - element not found
+  (apps/tablet/e2e/marshal-character.spec.ts:233)
+
+Fault reverted in the same copy; same command observed GREEN:
+  1 passed (1.7s)
+
+Script output:
+  fault injected
+  fault RED confirmed: marshal-error not rendered (see /tmp/e-challan-fault-red.log)
+  fault reverted
+  reverted GREEN confirmed (see /tmp/e-challan-fault-green.log)

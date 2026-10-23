@@ -1,0 +1,64 @@
+# Entry-media batch planner-owned acceptance baseline — REVISION 9 (read-only)
+#
+# rev 9 (2026-10-16): V6 completion. Adds real camera lifecycle tests
+# (camera-capture.test.tsx, 9 tests), deferred EntryFlow response tests
+# (deferred-response.spec.ts), the fault-sensitivity evidence files and
+# the approved target/hard-max encoder policy note. The reviewed
+# checkpoint states remain archived byte-for-byte: rev4-original.sha256
+# (CR-rereview state) and rev6-original.sha256 (F1-F7 review state).
+# Rev 5 / rev 7 / rev 8 were unreviewed intermediate states superseded
+# within this same session.
+#
+# Prepared 2026-10-16 by the planner/test-owner session for the V6
+# completion run. The active rev 8 records the actual current state of the
+# acceptance files and restores the protected inventory (feature
+# spec/plan/tasks and the issuance contract test) that the review flagged
+# as missing from the earlier revisions. The historical rev 1 – rev 7
+# manifests remain archived and are not regenerated.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-15) original.
+#   rev 2   (2026-10-15) corrections handoff.
+#   rev 3   (2026-10-16) CR-01/02/03/04/05/08/09.
+#   rev 4   (2026-10-16) CR-correction run.
+#   rev 5   (2026-10-16) R1–R7.
+#   rev 6   (2026-10-16) F1–F7.
+#   rev 7   (2026-10-16) V1–V6 correction run.
+#   rev 8   (2026-10-16) V6 completion run. Adds the decoded
+#                   synthetic-image acceptance
+#                   (apps/tablet/e2e/encoder-decode.spec.ts) and the
+#                   approved target/hard-maximum encoder policy
+#                   (encoder.ts). Restores the protected inventory:
+#                   specs/006-camera-signature/{spec,plan,tasks}.md
+#                   and packages/contracts/test/issuance.test.ts.
+#                   Records the disposable-copy fault-sensitivity
+#                   evidence in docs/handoffs/entry-media.md.
+#
+# Historical baselines remain archived and are not regenerated.
+d5dbd0a34bea5a599ff54cc458a8e2d6a5e15125b3902b1abe4caac40ecd5aff  specs/006-camera-signature/spec.md
+3d6ae6c7dfb605d17c1cc004912fe5684002d34ee8c3aa90f49d0e532a2cc16d  specs/006-camera-signature/plan.md
+8be7a2a16c733bbf2955ae33a89f64f2c47f445abe8689594da02deb588956ec  specs/006-camera-signature/tasks.md
+73e88ee16cb9b1d1aa71743c63163c3ba931fec57d6fe8ee8934876fffe4016b  packages/contracts/test/issuance.test.ts
+53739381c588df03b84e98ff974a5a31ec8dcf8af70bd2a98b97c28c79711d16  apps/tablet/src/__tests__/corrections.test.tsx
+bc1ab3a365a681d73d448a965f716d4d914913eb6fc45423750b583f5a70cc67  apps/tablet/src/__tests__/camera-capture.test.tsx
+dac31f27d36ccdcac76d49dd5de20d5431e559d465d6fe7ba0a618eb3164a1b0  apps/tablet/src/__tests__/signature.test.tsx
+1d0ee8a66c2a0a59322ad8062e480cc053ac01a6c88bf0d38a2b434e198fce85  apps/tablet/src/__tests__/pre-issuance-repeat.test.tsx
+2e04d53a27fbfbdbd06991165f50158f9bd42e0a142a0342906ceceb973b8317  apps/tablet/src/__tests__/foundation.test.tsx
+7f0923f95304f1e52e863beefb92289651f4e07fe3f59466236e880bfe6cdeb9  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+7e11d1823474a1ea723a41bc2910212b5fa021633933fb6696803daf445c291e  apps/tablet/src/features/photos/PhotoCapture.tsx
+7f88dcdf1401de40af7570e6aac8aecd195d43f1a4da849fb556cdd6658c1e0f  apps/tablet/src/features/photos/encoder.ts
+34ff98c248ad09c13cab662be974cf5395a2a192eb2b4d744ff2857b9b5ad9c3  apps/tablet/src/features/signature/SignaturePad.tsx
+5a1c16d090d836d12c1d59e5244c9d073fc018a3e3cccb4c57c0c01b7aa5c7b5  apps/tablet/src/features/signature/RefusalForm.tsx
+9eb35e0d0b8edc534aa0c0d0123496709d94490a2f8d713884e6050099732b4a  apps/tablet/src/features/issuance/useLookupController.ts
+f4f48c84152a29a2650dda20246792a485c9d154f78acb1d34e5fe139ee294b3  apps/tablet/src/features/issuance/useCatalogues.ts
+5adf9979aa5518ab400cdbb0599054dd9889607f120266bc9df59442a146d1ae  apps/tablet/src/features/issuance/useDraftRevision.ts
+939069aeee5f2c0a54cb3cb1ba44c9ec984c45b9c8f843c1397e88dada8d9d8f  apps/tablet/src/features/issuance/serverErrors.ts
+e3f4c9fff7a630f752247ce52f668adb95bf08c556508db2262493c043cfbbbb  apps/tablet/src/routes/EntryFlow.tsx
+308b63a8c72f141f19efd19fbc14a8f6e4a0f7fa0243efc9c554968852d0e449  apps/tablet/e2e/foundation.spec.ts
+1d894236dcbc2063756ce1a67f6c78dc7c56205c13ba1f969db3dc5aa9dcb1fc  apps/tablet/e2e/pre-issuance.spec.ts
+0b965de119f6e5e5c3addbceacd66a9c316289ad78e38058508c68941c8e4e92  apps/tablet/e2e/signature-probe.spec.ts
+80070085743f850a21d2d33619c403aef15eae4d306d5c1c12b6c2f922cf4384  apps/tablet/e2e/preview-binding.spec.ts
+8db30d11e096924c7130c41e450a0d1b0632f30003c555fa4e54c6e1e6aafe81  apps/tablet/e2e/encoder-decode.spec.ts
+6e1bf97da043d80f00541b5191f6dee7033b01e3ba030b9d9540baf9a07b4443  apps/tablet/e2e/deferred-response.spec.ts
+4157383a4937a3af9f62d3617763fca6fa19b1f4af3204ae606fb4a32b600a7b  docs/handoffs/entry-media-fault-sensitivity.txt
+99bafcb4d83badf6f3d555909f2f5e5e64912dd2d950d987690aa877fd643e34  docs/handoffs/entry-media-fault-sensitivity.sh

@@ -1,0 +1,140 @@
+name: foundation-gates
+
+# S-01 executable development foundation (SET-01 - SET-04).
+#
+# Every gate the constitution requires for a change to be considered verifiable
+# runs here, fail-fast and without continue-on-error: planner-owned foundation
+# checks, format, lint (including the import-boundary gate), typecheck, unit
+# tests, production builds, the tablet initial-JS budget, real-PostgreSQL
+# integration tests and real-browser journeys.
+#
+# F-02 runtime credentials and acceptance wiring are separate concerns:
+#  - Runtime: a process that starts the API with real operator credentials needs the
+#    six DEMO_* values (repository secrets here). Missing values stop the process.
+#  - Acceptance: `pnpm run test:e2e` starts the API with the committed synthetic
+#    fixture (tests/fixtures/f02-demo-credentials.json) through the Playwright
+#    webServer env, so the browser-journey step does NOT depend on the repository
+#    secrets. The demo credentials below are declared for any step that imports a
+#    real environment; they are not required by the browser gate.
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: foundation-gates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: format, lint, typecheck, test, build, browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        # The demo database used by db:migrate/db:seed:demo.
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: challan
+          POSTGRES_PASSWORD: challan
+          POSTGRES_DB: echallan_demo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U challan -d echallan_demo"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+      postgres-test:
+        # A separate postgres instance for TEST_DATABASE_URL. The integration
+        # runner refuses any database whose name does not end in _test.
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: challan
+          POSTGRES_PASSWORD: challan
+          POSTGRES_DB: echallan_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U challan -d echallan_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      DATABASE_URL: postgresql://challan:challan@127.0.0.1:5432/echallan_demo
+      TEST_DATABASE_URL: postgresql://challan:challan@127.0.0.1:5433/echallan_test
+      PORT: '3001'
+      API_ORIGIN: http://127.0.0.1:3001
+      VITE_API_ORIGIN: http://127.0.0.1:3001
+      # F-02 demo role accounts. The API refuses to start without them, so they are
+      # required secrets, never committed values. See .env.example.
+      DEMO_MARSHAL_USERNAME: ${{ secrets.DEMO_MARSHAL_USERNAME }}
+      DEMO_MARSHAL_PASSWORD: ${{ secrets.DEMO_MARSHAL_PASSWORD }}
+      DEMO_SUPERVISOR_USERNAME: ${{ secrets.DEMO_SUPERVISOR_USERNAME }}
+      DEMO_SUPERVISOR_PASSWORD: ${{ secrets.DEMO_SUPERVISOR_PASSWORD }}
+      DEMO_ADMIN_USERNAME: ${{ secrets.DEMO_ADMIN_USERNAME }}
+      DEMO_ADMIN_PASSWORD: ${{ secrets.DEMO_ADMIN_PASSWORD }}
+      CI: 'true'
+      PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm 11.22.0
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.22.0
+          run_install: false
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.2'
+          cache: pnpm
+
+      - name: Install workspace dependencies from the lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Provision the Playwright chromium browser and system libraries
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Planner-owned foundation acceptance checks (SET-01 to SET-04)
+        run: pnpm run test:foundation
+
+      - name: Formatting
+        run: pnpm run format:check
+
+      - name: Lint and import-boundary gate
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Unit tests
+        run: pnpm run test
+
+      - name: Production builds
+        run: pnpm run build
+
+      - name: Tablet initial-JS budget
+        run: pnpm run check:tablet-size
+
+      - name: Apply development-database migrations
+        run: pnpm run db:migrate
+
+      - name: Seed the synthetic demo fixture
+        run: pnpm run db:seed:demo
+
+      - name: Seed the synthetic demo domain (users, posts, shifts, challans)
+        run: pnpm run db:seed:domain
+
+      - name: Integration tests against real PostgreSQL
+        run: pnpm run test:integration
+
+      - name: Browser journeys against the real API and database
+        run: pnpm run test:e2e

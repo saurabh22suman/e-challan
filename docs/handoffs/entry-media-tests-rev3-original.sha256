@@ -1,0 +1,36 @@
+# Entry-media batch planner-owned acceptance baseline — REVISION 3 (read-only)
+#
+# Prepared 2026-10-16 by the planner/test-owner session for the bounded
+# R1–R5 + I-02 + I-03 correction run. Independent review
+# (docs/reviews/entry-media-corrections.md) is CHANGES_REQUIRED; this
+# revision captures the current state honestly. Historical manifests
+# (rev 1, rev 2) remain archived and are not regenerated.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-15) original. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev1.sha256.
+#   rev 2   (2026-10-15) the corrections handoff claimed this; ARCHIVED
+#                   byte-for-byte at
+#                   docs/handoffs/entry-media-tests-rev2-original.sha256.
+#                   The reviewer's manifest hash is identical to rev 1
+#                   (the same file was checked), so the correction run
+#                   was never actually frozen.
+#   rev 3   (2026-10-16) CR-01/02/03/04/05/08/09 acceptance and code
+#                   corrections; rev 1 / rev 2 are restored and remain
+#                   preserved. New tests, fixture corrections and
+#                   component hydration are added. The reviewer
+#                   explicitly observed "Active entry-media manifest
+#                   is still REVISION 1, with exactly the original
+#                   manifest SHA-256" — this is correct; rev 2 was
+#                   a copy of rev 1 with no new acceptance.
+#                   This rev 3 archive is byte-for-byte of the
+#                   previous rev 2 (which the review verified).
+#                   Subsequent rev 4 records the actual code/test
+#                   freeze.
+#
+# Historical baselines remain archived and are not regenerated:
+#   entry-media-tests-rev1.sha256, entry-media-tests-rev2-original.sha256.
+53739381c588df03b84e98ff974a5a31ec8dcf8af70bd2a98b97c28c79711d16  apps/tablet/src/__tests__/corrections.test.tsx
+c20ce2edd20c6ba6b7ff6eddfea7c6c979616234b6f7fd3f577adc1a661041d1  apps/tablet/src/__tests__/camera-capture.test.tsx
+dac31f27d36ccdcac76d49dd5de20d5431e559d465d6fe7ba0a618eb3164a1b0  apps/tablet/src/__tests__/signature.test.tsx
+1bb7cd03bf856736601cd9c38ead0f8bf49aaef85ac76cb45a35547d8d120c0a  apps/tablet/e2e/camera-signature.spec.ts

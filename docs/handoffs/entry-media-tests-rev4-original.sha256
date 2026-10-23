@@ -1,0 +1,51 @@
+# Entry-media batch planner-owned acceptance baseline — REVISION 4 (read-only)
+#
+# Prepared 2026-10-16 by the planner/test-owner session for the bounded
+# R1–R5 + I-02 + I-03 CR-correction run. Independent review
+# (docs/reviews/entry-media-corrections.md) is CHANGES_REQUIRED; this
+# revision captures the actual current state. Historical manifests
+# (rev 1, rev 2, rev 3) remain archived.
+#
+# REVISION HISTORY
+#   rev 1   (2026-10-15) original. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev1.sha256.
+#   rev 2   (2026-10-15) corrections handoff. ARCHIVED byte-for-byte at
+#                   docs/handoffs/entry-media-tests-rev2-original.sha256.
+#                   The reviewer's manifest hash is identical to rev 1
+#                   (the same file was checked), so the correction
+#                   run was never actually frozen.
+#   rev 3   (2026-10-16) CR-01/02/03/04/05/08/09 acceptance and code
+#                   corrections. ARCHIVED at
+#                   docs/handoffs/entry-media-tests-rev3-original.sha256.
+#                   Records the previous correction run; rev 4
+#                   supersedes with the actual frozen code/test state.
+#   rev 4   (2026-10-16) CR-01/02/03/04/05/08/09 acceptance recorded
+#                   in docs/handoffs/entry-media.md; this manifest
+#                   records the actual code/test freeze.
+#                   R1–R5 corrections, I-02 PhotoCapture hydration,
+#                   I-03 SignaturePad hydration and revision
+#                   invalidation, RefusalForm onChange/onInvalidate
+#                   separation, identifier font applied to the actual
+#                   <input>, EntryFlow live-refs for stale-response
+#                   rejection, CR-02 acknowledgement bound to current
+#                   duplicate information.
+#
+# Historical baselines remain archived and are not regenerated.
+53739381c588df03b84e98ff974a5a31ec8dcf8af70bd2a98b97c28c79711d16  apps/tablet/src/__tests__/corrections.test.tsx
+c20ce2edd20c6ba6b7ff6eddfea7c6c979616234b6f7fd3f577adc1a661041d1  apps/tablet/src/__tests__/camera-capture.test.tsx
+dac31f27d36ccdcac76d49dd5de20d5431e559d465d6fe7ba0a618eb3164a1b0  apps/tablet/src/__tests__/signature.test.tsx
+1d0ee8a66c2a0a59322ad8062e480cc053ac01a6c88bf0d38a2b434e198fce85  apps/tablet/src/__tests__/pre-issuance-repeat.test.tsx
+2e04d53a27fbfbdbd06991165f50158f9bd42e0a142a0342906ceceb973b8317  apps/tablet/src/__tests__/foundation.test.tsx
+7f0923f95304f1e52e863beefb92289651f4e07fe3f59466236e880bfe6cdeb9  apps/tablet/src/__tests__/pre-issuance-entry.test.tsx
+571983503e469883a14968cfc5bd5d75662556d401ca4d1c7abacbb7cdeae563  apps/tablet/src/features/photos/PhotoCapture.tsx
+64f70159ae3c8208c334f6e8c9eb9c3e789f56b7a9710312063b86896597a456  apps/tablet/src/features/photos/encoder.ts
+9613a6265bb2afbfc6cc695da2be21aa43d00da57283abe494089598a4240b61  apps/tablet/src/features/signature/SignaturePad.tsx
+5a1c16d090d836d12c1d59e5244c9d073fc018a3e3cccb4c57c0c01b7aa5c7b5  apps/tablet/src/features/signature/RefusalForm.tsx
+9eb35e0d0b8edc534aa0c0d0123496709d94490a2f8d713884e6050099732b4a  apps/tablet/src/features/issuance/useLookupController.ts
+f4f48c84152a29a2650dda20246792a485c9d154f78acb1d34e5fe139ee294b3  apps/tablet/src/features/issuance/useCatalogues.ts
+5adf9979aa5518ab400cdbb0599054dd9889607f120266bc9df59442a146d1ae  apps/tablet/src/features/issuance/useDraftRevision.ts
+939069aeee5f2c0a54cb3cb1ba44c9ec984c45b9c8f843c1397e88dada8d9d8f  apps/tablet/src/features/issuance/serverErrors.ts
+a4acbb11477dd46b6c0f5f2f50c1c0bd126a7ca3307bf25eaf3aa9a8124f0a73  apps/tablet/src/routes/EntryFlow.tsx
+308b63a8c72f141f19efd19fbc14a8f6e4a0f7fa0243efc9c554968852d0e449  apps/tablet/e2e/foundation.spec.ts
+1d894236dcbc2063756ce1a67f6c78dc7c56205c13ba1f969db3dc5aa9dcb1fc  apps/tablet/e2e/pre-issuance.spec.ts
+9a0f814462a8b8d7e2358b6e62782b58664e271abcb7814ffaa7ac77d4378342  apps/tablet/e2e/camera-signature.spec.ts

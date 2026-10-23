@@ -1,0 +1,46 @@
+# F-02/F-03 accepted snapshot, independent PASS on 2026-10-07.
+# Review: docs/reviews/F-03-m1-f02-b1-implementation.md.
+# Individual frozen acceptance/spec/fixture hashes are in the two active baselines.
+# Historical S-01/F-01 baselines and F-02/F-03 archives are retained unchanged.
+# No installed dependencies, generated artifacts or operator secrets are included.
+2ec28de88b67b0ba8899ac952288f6cf2590bd19c111219bbdc28472e2f18a83  packages/contracts/src/auth.ts
+6d6bcf7f8b038b553c52d92d0bd779f95a17efe8719669571e8128aa0b018c81  packages/contracts/src/masters.ts
+d2af4732f95168b1202bc245a3b37751b05cfe747237e6819123d715fdffebb1  packages/contracts/src/index.ts
+32575b69a1191593806c90467ebadea90bc8c51890e576de4d7cedfb6090be77  apps/api/src/app.ts
+05faa9a12bf31cf3a4b9ccfdc6b98620eb182d5c6c9466be147075f41c8dbc7d  apps/api/src/server.ts
+ce0e762ec10fc4593403fe4a88fa9b4f240f181f0d29c938650f1253d733d1bd  apps/api/src/auth/config.ts
+fc8754ecde4c730d3ad9a4c042856557d89adae624e8a2ea0e50d2508fbfdc15  apps/api/src/auth/session.ts
+0663896ae2813038c02dd38b5f45c482be030720b362fc5ede0f1216b07d03fc  apps/api/src/auth/service.ts
+b73d6af2289d1fdd8ab3dee0336451e26e1fff1018174333f25f74eff7bd2ee8  apps/api/src/auth/routes.ts
+aac68e8bad10381a896146eb4c06e2b49f36314e517c7b56613f1e5b46092725  apps/api/src/auth/guard.ts
+5ca507587bbf9de9cb436ded0b301bb7c3cd32590b90a80bddd886eaa281d4b9  apps/api/src/masters/service.ts
+2fa628386cd91ce6c4b245aaf6252caeba65b09443be515a2f0bbd16e1e0b1ab  apps/api/src/masters/routes.ts
+f2029e861cbd71792631a59a648184ddc797c4234c88ee0ebd9466b9d175dd70  apps/api/src/db/schema.ts
+d7391cfc6ddc11e433b0d864806cbffeaa99e734e6891cc1460b2894a23a7f5f  apps/api/drizzle/0006_narrow_shinko_yamashiro.sql
+f465b91f6e125cce80f580b01404cbbc1ac71b9c4bcb4059d93a6fcff11034af  apps/api/drizzle/meta/0006_snapshot.json
+c88619803b7d070266187084d80e8bdd7f5421da494019fbb63e8d4fa9937418  apps/api/drizzle/meta/_journal.json
+0287e46477defe351c29d6c4a1525763206ab6fdeee9819c50283872d4c8237c  apps/tablet/src/App.tsx
+beb461e7bb003f06bbd8e576ba9bda479905bcc238f7fae30602840651ae7503  apps/tablet/src/auth/api.ts
+cb14a7746900b0268d8a3800db6bd03e5d9d020a7cec2019df6afd743a62eb2d  apps/tablet/src/auth/session.tsx
+7e3d90403a0aa4e0e3b33c38c9930d4842170c027a9b47d0659666a11b03b734  apps/tablet/src/auth/unsentState.ts
+f6344ab90d005b35fa1e300a0757ee22b1fbc4aa9944f7a881129940e7e55cab  apps/tablet/src/routes/LoginScreen.tsx
+b7cfc28af02977e9ba9afac59ebe152d30426b855cbe8b7d26a2fc2fb2ad2a0d  apps/tablet/src/routes/FoundationScreen.tsx
+7efc17f3d1e3ddeec04c397e198ea35a3022ea58091eb55e71dd916b2ffdab6f  apps/tablet/src/test/setup.ts
+471639aedf7b0d7f1ff4059671e28f5b063d58caaa5709f376eace75a30ffbf1  apps/admin/src/App.tsx
+7d27e57954dd815a0886f3acc8fdf646712e93b09feb0f3ff1b55d153ddfaaff  apps/admin/src/auth/api.ts
+89410660cbc45f7d0067611ce6cbe3f2e028f715b7121dd034af3465e55df901  apps/admin/src/auth/session.tsx
+6cf25b5e6db42efc34da7f022d6fbde9e93edd8862489978af0008d439587a1e  apps/admin/src/routes/LoginScreen.tsx
+decc39ce11e3c3fb6caffd51d7115915bbb21f39b83c0dfb54a33eb58a9cbc1c  .env.example
+ec85b5086b071aa3f6947cf8b254a8985414adcc73a8f1e239dc6713a965e9ac  playwright.config.ts
+babe895236637c6e3905663b4866d5f188a02690d65d997ee882f96af45bca90  .github/workflows/ci.yml
+0053a0a5ac5ea635d3a115fb8163052d3d24118cb070a8dbbafec91f584bdbba  README.md
+ded602a67603b7ab91d9cf9a35a437718b04780772436b8634d56634009bada6  docs/handoffs/F-02-tests.sha256
+d8f1b1d36c16584359fd0359100df93312f83586d1be0204f031e44cfc1755c2  docs/handoffs/F-03-tests.sha256
+21752ad04dc1009d85eb68ca59586bdee2e9a7fd7e46a735e715b9c6e764fe30  docs/handoffs/F-02.md
+d108791c6aab50966dc02292644d63e7a5154082808454d2c9313cbaa6d19b99  docs/handoffs/F-03.md
+40734dc58839203b74024b9522d1126c3f680f62da8e9db717415f825ffe3a3a  docs/handoffs/F-02-prepared.md
+70f3a079c0a138f7513a9f76ff1b8cce6f7e5ac7d71ea280d2170056ba1bfffe  docs/handoffs/F-03-prepared.md
+945acc692f5796b4e918a24c5891f9567b037e43c69c2b14e93838a5366834e8  specs/003-demo-auth/tasks.md
+122621c50b8a80a0b23ce9c3df6518a3b451f7362caddd96ce7ba9297d6945f4  specs/004-master-data/tasks.md
+20e1061336df7d37268938fd6b78cd569e4454b5999c90793d5acefa5e74bf62  docs/implementation-plan.md
+c4fa0e8e3c1aa8212d0074c17a5b0cf81c200087ffc524be772f92f0b6762300  docs/reviews/F-03-m1-f02-b1-implementation.md

@@ -1,0 +1,25 @@
+# Entry-media C1/C2 correction acceptance baseline — REVISION 2 (read-only)
+#
+# Prepared 2026-10-18. Source: docs/reviews/entry-media-v1-v6-rereview.md and
+# docs/handoffs/entry-media-c1-c2-prepared.md (see its "Baseline revision
+# rev 2" section). Revision 2 adds the remount/parent-capture unit case and one
+# pending-decode assertion discovered during implementation, and records the
+# Prettier whitespace normalization applied before this revision was finalized;
+# no assertion was weakened or removed. rev 1 is archived byte-for-byte at
+# docs/handoffs/entry-media-c1-c2-tests-rev1.sha256. The three acceptance files
+# are frozen at this prepared state; the remaining entries are unchanged
+# regression anchors and the demo fixture. Do not edit acceptance files after
+# preparation; a further revised baseline requires a documented planner
+# correction and reviewer confirmation.
+#
+b901fa3e096ac6cda2fd206d71e4e7f06c9ce7fa8a3e5d199f8b2f18255f4c55  apps/tablet/src/__tests__/photo-cancel-play.test.tsx
+afb6ecd0c59bc9193e6c880156e0cc5854eac2cd0a84e4da25f9e8b3b927015f  apps/tablet/src/__tests__/signature-invalidation.test.tsx
+8049fce3f7b31d4178bce84e0ff22bce94e7ec2ce789e4dd37c29f1ecbc92a37  apps/tablet/e2e/entry-media-invalidation.spec.ts
+f0a0de60525ab3354e603685ea32a7c3c7932bd8e00bd665a314ab2dc879c767  docs/handoffs/entry-media-c1-c2-prepared.md
+c868ddd2f774e285c06aec1cac4d8fdce165b3e5a46b2f4d0e9668c18cdb4c91  docs/handoffs/ux-00-readiness.md
+bc1ab3a365a681d73d448a965f716d4d914913eb6fc45423750b583f5a70cc67  apps/tablet/src/__tests__/camera-capture.test.tsx
+dac31f27d36ccdcac76d49dd5de20d5431e559d465d6fe7ba0a618eb3164a1b0  apps/tablet/src/__tests__/signature.test.tsx
+9a0f814462a8b8d7e2358b6e62782b58664e271abcb7814ffaa7ac77d4378342  apps/tablet/e2e/camera-signature.spec.ts
+2db3f90dcd5dc8b943648b9b640562181db405697043f9f347fdd5456f322541  apps/tablet/e2e/signature-probe.spec.ts
+ecff7082f5cb8f9e18f3297a19d65022838940ea43ea4f5a1d39d08d0418dfe0  apps/tablet/e2e/preview-binding.spec.ts
+88cd67bac10089abc2ae4b91c3f5fc6b0871cb3503e379dfcf30e1f305c67b09  tests/fixtures/f02-demo-credentials.json

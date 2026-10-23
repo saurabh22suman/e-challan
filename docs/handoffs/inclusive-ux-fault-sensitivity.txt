@@ -1,0 +1,16 @@
+=== FAULT: error-summary focus removed ===
+--- with fault ---
+  1 failed
+--- restored ---
+  1 passed (4.1s)
+=== FAULT: picker arrow-key navigation removed ===
+--- with fault ---
+  1 failed
+--- restored ---
+  1 passed (3.6s)
+=== FAULT: carried-details disclosure removed ===
+--- with fault ---
+  1 failed
+--- restored ---
+  1 passed (4.2s)
+=== DONE ===

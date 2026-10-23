@@ -1,0 +1,5 @@
+13c128f9b03f3a19bcc1cbeca779c61ea722cd9337b6b1e4ccc3b6127dd024e8  apps/tablet/src/__tests__/marshal-character.test.tsx
+579ec84fd9fa420f92d597a0a77cd3c92bfcb37570f5806e868ea9c8504fb08e  apps/tablet/e2e/marshal-character.spec.ts
+1302df208cec2ce24212752e725e4ec8b932260ca36c1dd7b5a23931b2e9ed6c  apps/tablet/e2e/marshal-character-media.spec.ts
+fb5744e65dcc5a38ce58d2f045d8571f07170627eb680c39b536439ff87191ab  specs/008-marshal-character/spec.md
+0b4749d735cece31aacb2eb12052f4680d80f07b94d9d15507cf6c9fc0305408  docs/handoffs/marshal-character-prepared.md

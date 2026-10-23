@@ -1,0 +1,21 @@
+CHAR-01 fault sensitivity (catalogue failure classification)
+Date: 2026-10-19. Reproduced with
+docs/handoffs/marshal-character-char01-fault-sensitivity.sh (disposable copy of
+apps/tablet at /tmp/opencode/e-challan-char01-fault-app, symlinked
+node_modules; the workspace was never modified).
+
+Fault injected in the disposable copy:
+  if (!response.ok) return { kind: 'network' };   (the pre-correction behaviour)
+
+Observed RED (expected):
+  node_modules/.bin/vitest run src/__tests__/catalogue-errors.test.tsx -t "HTTP 500"
+  1 failed: AssertionError: expected 'network' to be 'service_error'
+
+Fault reverted in the same copy; the same command observed GREEN:
+  Test Files  1 passed (1)
+
+Script output:
+  fault injected: HTTP failures classified as network
+  fault RED confirmed: HTTP 500 classified as network (see /tmp/e-challan-char01-fault-red.log)
+  fault reverted
+  reverted GREEN confirmed (see /tmp/e-challan-char01-fault-green.log)

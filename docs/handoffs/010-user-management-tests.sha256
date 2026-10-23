@@ -1,0 +1,17 @@
+# Admin user-management planner baseline — REVISION 3, 2026-10-21.
+#
+# REVISION HISTORY
+#   rev 1 initial preparation; archived at ...-tests-rev1.sha256.
+#   rev 2 selector/204 corrections; archived at ...-tests-rev2.sha256.
+#   rev 3 adds the dialog-chrome browser assertion after the owner's UI feedback:
+#         Create and Deactivate dialog headers must match the card header's
+#         computed background/text colour. No behavioral condition was weakened.
+#
+# Read-only acceptance inputs. Any further revision is a numbered correction.
+3a55eaa32782c272035c15f756969029a3ba0eff3b5c0c96d838ac3a8e8f0e67  packages/contracts/test/user-management.test.ts
+064775923828218360aa9ca542be03367d9cdb0607d2ca4d9cfc5bf2e71f01a1  apps/api/tests/integration/admin-user-management.test.ts
+081869b431b700b6bd2f96bb61e8b233547eb9e38d6719a32cf355ff4c58d945  apps/admin/src/__tests__/user-management.test.tsx
+14c5be760f737a032b73980c53949034d8c52dcac1bf8514b173424f014300f8  apps/admin/e2e/user-management.spec.ts
+3ec4e2f464e294f49af18f859b99606579e30af6bd472b4faf6dc6e925be9295  specs/010-user-management/spec.md
+1123455fd8d02a8dfa2cca7d7c25985f80175dbb381230fc9538a00467b46c6b  specs/010-user-management/plan.md
+4875f44d6acdc2fbf006d7b5fc84afd16e08c03ca40b1f66261c1bf8c4c45206  specs/010-user-management/tasks.md

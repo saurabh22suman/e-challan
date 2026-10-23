@@ -1,0 +1,113 @@
+.marshal-character-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.marshal-character-layer[hidden] {
+  display: none;
+}
+
+.marshal-character-fade-in {
+  animation: marshal-fade-in 140ms ease-out 100ms both;
+}
+
+.marshal-character-enter {
+  animation: marshal-enter 220ms ease-out;
+}
+
+.marshal-character-previous {
+  animation: marshal-fade-out 100ms ease-out forwards;
+  pointer-events: none;
+}
+
+.marshal-character-processing {
+  animation:
+    marshal-fade-in 160ms ease-out,
+    marshal-breathe 2600ms ease-in-out 160ms infinite;
+}
+
+.marshal-character-processing-transition {
+  animation:
+    marshal-fade-in 140ms ease-out 100ms both,
+    marshal-breathe 2600ms ease-in-out 240ms infinite;
+}
+
+.marshal-character-success {
+  animation:
+    marshal-fade-in 160ms ease-out,
+    marshal-success 320ms ease-out 160ms 1;
+}
+
+.marshal-character-success-transition {
+  animation:
+    marshal-fade-in 140ms ease-out 100ms both,
+    marshal-success 320ms ease-out 240ms 1;
+}
+
+@keyframes marshal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes marshal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes marshal-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes marshal-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes marshal-success {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.04);
+  }
+  70% {
+    transform: scale(0.995);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marshal-character-layer {
+    animation: none !important;
+  }
+
+  .marshal-character-previous {
+    display: none !important;
+  }
+}

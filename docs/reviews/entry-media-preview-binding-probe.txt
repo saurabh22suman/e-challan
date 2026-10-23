@@ -1,0 +1,61 @@
+import { test, expect, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+const credentials = JSON.parse(readFileSync('tests/fixtures/f02-demo-credentials.json', 'utf8')).marshal;
+
+async function enterDraft(page: Page, duplicate: boolean) {
+  let previews = 0;
+  await page.route('**/challans/preview', async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    previews += 1;
+    body.occurrenceNumber = previews;
+    body.recommendedAction = previews === 1 ? 'warning_issued' : 'safety_counselling_completed';
+    body.duplicateWarning = { required: duplicate, matchedCount: duplicate ? 1 : 0 };
+    await route.fulfill({ response, json: body });
+  });
+  await page.goto('/');
+  await page.getByLabel(/username/i).fill(credentials.username);
+  await page.getByLabel(/password/i).fill(credentials.password);
+  await page.getByRole('button', { name: /sign in|log in/i }).click();
+  await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
+  await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+  await page.getByLabel('Driver name').fill('Kavita Joshi');
+  await page.getByLabel('Department', { exact: true }).selectOption({ label: 'Logistics' });
+  await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });
+  await page.getByRole('checkbox', { name: 'Not wearing a seat belt' }).check();
+  await page.getByRole('button', { name: 'Review summary' }).click();
+}
+
+test('review: changed server preview invalidates parent signature', async ({ page }) => {
+  await enterDraft(page, false);
+  await expect(page.getByRole('heading', { name: 'Driver summary' })).toBeVisible();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  const canvas = page.getByTestId('signature-canvas');
+  await expect(canvas).toBeVisible();
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error('canvas missing');
+  await page.mouse.move(box.x + 30, box.y + 70);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 180, box.y + 130, { steps: 15 });
+  await page.mouse.up();
+  await page.getByTestId('signature-confirm').click();
+  await page.getByRole('button', { name: 'Back to summary' }).click();
+  await expect(page.getByText('Driver signature captured.', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Review summary' }).click();
+  await expect(page.getByText('Occurrence 2.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Driver summary' })).toBeVisible();
+  await expect(page.getByText('Driver signature captured.', { exact: true })).toHaveCount(0);
+});
+
+test('review: changed occurrence renews duplicate acknowledgement before summary', async ({ page }) => {
+  await enterDraft(page, true);
+  await page.getByRole('checkbox', { name: 'I acknowledge the duplicate warning' }).check();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Driver summary' })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: 'Review summary' }).click();
+  await expect(page.getByText('Occurrence 2.', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Driver summary' })).toHaveCount(0);
+});

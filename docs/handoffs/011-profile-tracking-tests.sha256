@@ -1,0 +1,22 @@
+# Profile/tracking planner baseline — REVISION 2, 2026-10-21.
+#
+# REVISION HISTORY
+#   rev 1 initial preparation. Archived at
+#         docs/handoffs/011-profile-tracking-tests-rev1.sha256.
+#   rev 2 selector/fixture corrections after implementation:
+#         - admin profile assertions scope duplicate username/employee-ID text
+#           inside main and check for a password input, not the word in copy;
+#         - tablet profile fixture uses the profile session shape;
+#         - admin browser profile test checks for a password input.
+#         No acceptance condition was removed or weakened.
+#
+# Read-only acceptance inputs. Any further revision is a numbered correction.
+a94854a3891a35918c3e1aaccaf8f1c3f415eef8cc97f5e34872174b1c5c109d  packages/contracts/test/profile.test.ts
+f893db7b59a6f54e687c887b72e377a55fd40e356f6c525a36baa82490819836  apps/api/tests/integration/profile.test.ts
+d10df99c77910d6e2ee1c39a67d04e8a7c04cfd05c98042522cc230945da8674  apps/admin/src/__tests__/profile.test.tsx
+ecc872be0e213fb4a11f788226c21bb86d2cf4311280152d249f6d1d63201c19  apps/tablet/src/__tests__/profile.test.tsx
+9f73d472893fe20209c22d16f38c466d13af8d96883d3d3bb893ebbcb44d5350  apps/admin/e2e/profile.spec.ts
+a990a2e6d6543b8147becbc1b8c67eb77867c3ed65bd7887d71c079f945fcff5  apps/tablet/e2e/profile.spec.ts
+40a87205a548823eab17c0b7c2cc3e3cf9992b864ce1feed23a12ed815f8ffc5  specs/011-profile-tracking/spec.md
+2fd2b92679446e1ccc16172cff5f79af16c26c75ffd4f68b44742bcca8604ef1  specs/011-profile-tracking/plan.md
+29347d84edc900c162c0b47ed55d99cf61e0aab099566db8d6ffbd01c83cc91c  specs/011-profile-tracking/tasks.md
