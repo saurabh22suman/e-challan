@@ -9,6 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { AppThemeProvider, SPACING, tokens } from '@echallan/theme';
 import LoginScreen from './routes/LoginScreen';
+import HandoffToTablet from './auth/HandoffToTablet';
 import { SessionProvider, useSession } from './auth/session';
 
 const DashboardScreen = lazy(() => import('./routes/DashboardScreen'));
@@ -31,9 +32,14 @@ export default function App() {
 }
 
 function SessionGate() {
-  const { status } = useSession();
+  const { status, identity } = useSession();
 
-  if (status === 'authenticated') return <DashboardShell />;
+  if (status === 'authenticated') {
+    // The dashboard is the single sign-in page. A Marshal does not stay here;
+    // HandoffToTablet moves the authenticated session to the tablet origin.
+    if (identity?.user.role === 'Marshal') return <HandoffToTablet />;
+    return <DashboardShell />;
+  }
   return (
     <Box
       component="main"

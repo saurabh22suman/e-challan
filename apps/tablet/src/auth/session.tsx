@@ -34,15 +34,11 @@ const TOKEN_STORAGE_KEY = SESSION_STORAGE_KEY;
 export type SessionStatus = 'checking' | 'anonymous' | 'authenticated';
 
 /**
- * The marshal tablet admits **Marshal** sessions only. The boundary applies to a
- * fresh login and to a restored session, and the API's own role/scope enforcement
- * remains independently in force.
+ * The tablet accepts every approved role at the API boundary. The app shell sends
+ * Marshal identities to the field workspace and hands Supervisor/Admin identities
+ * back to the dashboard, so a single sign-in page can serve all three roles. The
+ * API's own role/scope enforcement remains independently in force.
  */
-const ALLOWED_ROLES: readonly string[] = ['Marshal'];
-
-/** Visible feedback when the signed-in account belongs to another surface. */
-const WRONG_SURFACE_MESSAGE = 'This account is not authorised for the marshal tablet.';
-
 export interface SignInContext {
   postId?: string;
   shiftId?: string;
@@ -55,6 +51,8 @@ export interface SessionValue {
   token: string | null;
   /** Set when a session was refused (for example, the wrong role). */
   notice: string | null;
+  /** True while a stored token is being validated against the API. */
+  restoring: boolean;
   /** Resolves on success; throws {@link AuthApiError} so the form can show why. */
   signIn: (username: string, password: string, context?: SignInContext) => Promise<void>;
   signOut: () => Promise<void>;
@@ -82,9 +80,11 @@ function writeStoredToken(token: string | null): void {
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   // Signed out is the initial, safe state: protected content is never rendered
-  // before the API has confirmed a session. A stored token is validated in the
-  // background and promotes the state when the server agrees.
+  // before the API has confirmed a session. `restoring` distinguishes "no token"
+  // from "a token is still being validated", so the single-login redirect waits
+  // for the restoration instead of racing it.
   const [status, setStatus] = useState<SessionStatus>('anonymous');
+  const [restoring, setRestoring] = useState(() => readStoredToken() !== null);
   const [identity, setIdentity] = useState<SessionResponse | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -108,6 +108,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setToken(null);
       setIdentity(null);
       setNotice(null);
+      setRestoring(false);
       setStatus('anonymous');
     };
     void fetchSession(token)
@@ -120,24 +121,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           setToken(null);
           setIdentity(null);
           setNotice(null);
+          setRestoring(false);
           setStatus('anonymous');
-          return;
-        }
-        if (!ALLOWED_ROLES.includes(resolved.user.role)) {
-          // A session for another surface is revoked, never rendered.
-          tokenRef.current = null;
-          writeStoredToken(null);
-          setToken(null);
-          setIdentity(null);
-          setNotice(WRONG_SURFACE_MESSAGE);
-          setStatus('anonymous');
-          if (token !== null) await signOutWithToken(token);
           return;
         }
         tokenRef.current = token;
         setToken(token);
         setIdentity(resolved);
         setNotice(null);
+        setRestoring(false);
         setStatus('authenticated');
       })
       .catch(failClosed);
@@ -149,14 +141,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(
     async (username: string, password: string, context: SignInContext = {}) => {
       const transition = ++transitionRef.current;
+      // A fresh attempt supersedes any in-flight restoration, including its
+      // redirect-suppression flag.
+      setRestoring(false);
       const result = await signInWithPassword({ username, password, ...context });
       if (transition !== transitionRef.current) return;
-      if (!ALLOWED_ROLES.includes(result.user.role)) {
-        // The API issued a real session, but this surface must not use it: revoke
-        // it and fail the sign-in rather than retaining a token we will not honour.
-        await signOutWithToken(result.token);
-        throw new AuthApiError(403, 'role_not_allowed', WRONG_SURFACE_MESSAGE);
-      }
       tokenRef.current = result.token;
       writeStoredToken(result.token);
       setToken(result.token);
@@ -184,13 +173,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setToken(null);
     setIdentity(null);
     setNotice(null);
+    setRestoring(false);
     setStatus('anonymous');
     if (token !== null) await signOutWithToken(token);
   }, []);
 
   const value = useMemo<SessionValue>(
-    () => ({ status, identity, token, notice, signIn, signOut }),
-    [status, identity, token, notice, signIn, signOut],
+    () => ({ status, identity, token, notice, restoring, signIn, signOut }),
+    [status, identity, token, notice, restoring, signIn, signOut],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

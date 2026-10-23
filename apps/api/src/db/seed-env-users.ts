@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { eq } from 'drizzle-orm';
 import {
@@ -7,9 +8,10 @@ import {
   type DemoCredentials,
   type DemoRole,
 } from '../auth/config.js';
-import { loadEnv } from '../env.js';
+import { DEMO_DATA_PATH, loadEnv } from '../env.js';
 import { createDb } from './client.js';
 import * as s from './schema.js';
+import { deterministicUuid } from './seed-domain-demo.js';
 
 /**
  * Bootstrap the accounts named by the DEMO_* environment variables.
@@ -40,10 +42,38 @@ export interface BootstrapUsersResult {
   existing: number;
 }
 
+/**
+ * Demo-fixture usernames map to the stable UUIDs the synthetic seed uses.
+ *
+ * The optional demo seed inserts `user_locations` and shift references with IDs
+ * derived from `docs/demo-data.json`; if the bootstrap created the same username
+ * under a random id first, the demo seed's foreign keys would fail. Using the
+ * fixture's deterministic id when the employee ID matches keeps both seeds
+ * composable. Custom operator usernames still get random ids.
+ */
+async function fixtureUserIds(): Promise<Map<string, string>> {
+  const ids = new Map<string, string>();
+  try {
+    const raw = await readFile(DEMO_DATA_PATH, 'utf8');
+    const fixture = JSON.parse(raw) as {
+      staff?: Array<{ id?: unknown; employeeId?: unknown }>;
+    };
+    for (const person of fixture.staff ?? []) {
+      if (typeof person.id === 'string' && typeof person.employeeId === 'string') {
+        ids.set(person.employeeId, deterministicUuid(`staff:${person.id}`));
+      }
+    }
+  } catch {
+    // The fixture is optional at runtime; a custom deployment simply gets random ids.
+  }
+  return ids;
+}
+
 export async function seedEnvUsers(
   connectionString: string,
   credentials: DemoCredentials,
 ): Promise<BootstrapUsersResult> {
+  const demoUserIds = await fixtureUserIds();
   const db = createDb(connectionString);
   try {
     return await db.orm.transaction(async (tx) => {
@@ -75,7 +105,7 @@ export async function seedEnvUsers(
         await tx
           .insert(s.users)
           .values({
-            id: randomUUID(),
+            id: demoUserIds.get(username) ?? randomUUID(),
             username,
             role,
             displayName: username,

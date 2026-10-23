@@ -72,6 +72,7 @@ services:
       dockerfile: deploy/docker/web.Dockerfile
       args:
         APP: admin
+        VITE_TABLET_ORIGIN: '${PUBLIC_TABLET_ORIGIN:?PUBLIC_TABLET_ORIGIN is required}'
     restart: unless-stopped
     ports:
       - '80'
@@ -94,6 +95,7 @@ services:
       dockerfile: deploy/docker/web.Dockerfile
       args:
         APP: tablet
+        VITE_ADMIN_ORIGIN: '${PUBLIC_ADMIN_ORIGIN:?PUBLIC_ADMIN_ORIGIN is required}'
     restart: unless-stopped
     ports:
       - '80'

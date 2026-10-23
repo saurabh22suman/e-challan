@@ -87,6 +87,29 @@ export const SessionResponseSchema = SessionIdentitySchema;
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
 
 /**
+ * One-time, short-lived code used to move an authenticated session between the
+ * admin portal and the tablet origin. The code is signed by the API and is not a
+ * session token; it expires quickly and the source session is revoked when the
+ * code is exchanged. It is carried in the URL fragment so it is never sent to a
+ * web server or written to access logs.
+ */
+export const HANDOFF_TTL_SECONDS = 60;
+export const HandoffCodeSchema = z.string().min(1).max(4096);
+export const CreateHandoffResponseSchema = z.strictObject({
+  code: HandoffCodeSchema,
+  expiresAt: z.iso.datetime(),
+});
+export type CreateHandoffResponse = z.infer<typeof CreateHandoffResponseSchema>;
+
+export const ExchangeHandoffRequestSchema = z.strictObject({
+  code: HandoffCodeSchema,
+});
+export type ExchangeHandoffRequest = z.infer<typeof ExchangeHandoffRequestSchema>;
+
+export const ExchangeHandoffResponseSchema = LoginResponseSchema;
+export type ExchangeHandoffResponse = z.infer<typeof ExchangeHandoffResponseSchema>;
+
+/**
  * Error body with a **stable machine-readable code**, so a client branches on
  * the code and never on prose. `message` is safe to display and must never carry
  * credential material.

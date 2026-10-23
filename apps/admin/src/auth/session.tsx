@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { SessionResponse } from '@echallan/contracts';
-import { AuthApiError, fetchSession, signInWithPassword, signOutWithToken } from './api';
+import { fetchSession, signInWithPassword, signOutWithToken } from './api';
 
 /**
  * Admin dashboard session state.
@@ -24,21 +24,18 @@ import { AuthApiError, fetchSession, signInWithPassword, signOutWithToken } from
  * client-side timer would invent a rule the specification does not state.
  */
 
-const TOKEN_STORAGE_KEY = 'echallan.admin.session-token';
+export const ADMIN_SESSION_STORAGE_KEY = 'echallan.admin.session-token';
+const TOKEN_STORAGE_KEY = ADMIN_SESSION_STORAGE_KEY;
 
 /** What the shell may render, decided only by the server's answer. */
 export type SessionStatus = 'checking' | 'anonymous' | 'authenticated';
 
 /**
- * The dashboard admits **Supervisor** and **Admin** sessions only. The boundary
- * applies to a fresh login and to a restored session, and the API's own role and
+ * The dashboard is the single sign-in page. It accepts every approved role and
+ * lets the app shell decide where the identity belongs: Supervisor/Admin stay in
+ * the dashboard, Marshal is handed off to the tablet. The API's own role and
  * scope enforcement remains independently in force.
  */
-const ALLOWED_ROLES: readonly string[] = ['Supervisor', 'Admin'];
-
-/** Visible feedback when the signed-in account belongs to another surface. */
-const WRONG_SURFACE_MESSAGE = 'This account is not authorised for the dashboard.';
-
 export interface SessionValue {
   status: SessionStatus;
   identity: SessionResponse | null;
@@ -46,7 +43,7 @@ export interface SessionValue {
   token: string | null;
   /** Set when a session was refused (for example, the wrong role). */
   notice: string | null;
-  /** Resolves on success; throws `AuthApiError` so the form can show why. */
+  /** Resolves on success; throws an auth API error so the form can show why. */
   signIn: (username: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -114,17 +111,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           setStatus('anonymous');
           return;
         }
-        if (!ALLOWED_ROLES.includes(resolved.user.role)) {
-          // A session for another surface is revoked, never rendered.
-          tokenRef.current = null;
-          writeStoredToken(null);
-          setToken(null);
-          setIdentity(null);
-          setNotice(WRONG_SURFACE_MESSAGE);
-          setStatus('anonymous');
-          if (token !== null) await signOutWithToken(token);
-          return;
-        }
         tokenRef.current = token;
         setToken(token);
         setIdentity(resolved);
@@ -142,12 +128,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     // The stored token is replaced only after the API has issued a new one.
     const result = await signInWithPassword({ username, password });
     if (transition !== transitionRef.current) return;
-    if (!ALLOWED_ROLES.includes(result.user.role)) {
-      // The API issued a real session, but this surface must not use it: revoke it
-      // and fail the sign-in rather than retaining a token we will not honour.
-      await signOutWithToken(result.token);
-      throw new AuthApiError(403, 'role_not_allowed', WRONG_SURFACE_MESSAGE);
-    }
     tokenRef.current = result.token;
     writeStoredToken(result.token);
     setToken(result.token);

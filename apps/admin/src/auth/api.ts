@@ -1,8 +1,10 @@
 import {
   ApiErrorSchema,
+  CreateHandoffResponseSchema,
   LoginRequestSchema,
   LoginResponseSchema,
   SessionResponseSchema,
+  type CreateHandoffResponse,
   type LoginRequest,
   type LoginResponse,
   type SessionResponse,
@@ -82,6 +84,57 @@ export async function signInWithPassword(request: LoginRequest): Promise<LoginRe
   const parsed = LoginResponseSchema.safeParse(await response.json());
   if (!parsed.success) {
     // A drifted or unexpected success body is a failure, never a silent login.
+    throw new AuthApiError(response.status, 'invalid_response', GENERIC_SIGN_IN_FAILURE);
+  }
+  return parsed.data;
+}
+
+/**
+ * Mint a one-time code that transfers this session to the tablet origin.
+ *
+ * The code is not the session token and is never accepted in place of one.
+ * It expires after a minute and is revoked on exchange.
+ */
+export async function requestHandoff(token: string): Promise<CreateHandoffResponse> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_PREFIX}/auth/handoff`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    throw new AuthApiError(0, 'network_error', GENERIC_SIGN_IN_FAILURE);
+  }
+  if (!response.ok) throw await readFailure(response, GENERIC_SIGN_IN_FAILURE);
+
+  const parsed = CreateHandoffResponseSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new AuthApiError(response.status, 'invalid_response', GENERIC_SIGN_IN_FAILURE);
+  }
+  return parsed.data;
+}
+
+/**
+ * Exchange a one-time handoff code for a session on this origin.
+ *
+ * The code is not a session token; the API returns a newly issued token, which
+ * the caller stores under the dashboard's client storage key.
+ */
+export async function exchangeHandoff(code: string): Promise<LoginResponse> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_PREFIX}/auth/handoff/exchange`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+  } catch {
+    throw new AuthApiError(0, 'network_error', GENERIC_SIGN_IN_FAILURE);
+  }
+  if (!response.ok) throw await readFailure(response, GENERIC_SIGN_IN_FAILURE);
+
+  const parsed = LoginResponseSchema.safeParse(await response.json());
+  if (!parsed.success) {
     throw new AuthApiError(response.status, 'invalid_response', GENERIC_SIGN_IN_FAILURE);
   }
   return parsed.data;

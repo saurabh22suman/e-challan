@@ -100,7 +100,7 @@ test.describe('F-02 tablet authentication', () => {
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
   });
 
-  test('R1: refuses a supervisor account and revokes the session it was issued', async ({
+  test('R1: hands a supervisor account to the dashboard and revokes the tablet session', async ({
     page,
   }) => {
     const issued: string[] = [];
@@ -116,12 +116,12 @@ test.describe('F-02 tablet authentication', () => {
     await page.getByLabel('Password', { exact: true }).fill(ACCOUNTS.supervisor.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-    await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
-    expect(issued, 'the API issues a session before the client refuses the role').toHaveLength(1);
+    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+    await expect(page).toHaveURL(/127\.0\.0\.1:5174\//);
+    expect(issued, 'the tablet must have logged in through the real API').toHaveLength(1);
     const token = issued[0] as string;
 
-    // A session the client refuses must be revoked, not left live.
+    // The dashboard exchange revokes the tablet session rather than leaving it live.
     await expect
       .poll(async () => {
         const response = await page.request.get('/api/auth/session', {
@@ -130,13 +130,9 @@ test.describe('F-02 tablet authentication', () => {
         return response.status();
       })
       .toBe(401);
-
-    await page.reload();
-    await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
-    await expect(page.getByLabel('Username')).toBeVisible();
   });
 
-  test('R1: refuses a restored supervisor session obtained from the real API', async ({ page }) => {
+  test('R1: hands a restored supervisor session to the dashboard', async ({ page }) => {
     const login = await page.request.post('/api/auth/login', {
       data: { username: ACCOUNTS.supervisor.username, password: ACCOUNTS.supervisor.password },
     });
@@ -144,16 +140,16 @@ test.describe('F-02 tablet authentication', () => {
     const { token } = (await login.json()) as { token: string };
 
     // Seed the real API-issued token BEFORE the first navigation. Writing it under
-    // a running anonymous page is racy: the pending anonymous session refusal can
-    // complete afterwards and clear the externally seeded value.
+    // a running anonymous page is racy: the pending restoration can complete
+    // afterwards and clear the externally seeded value.
     await page.addInitScript(([key, value]) => window.localStorage.setItem(key, value), [
       'echallan.tablet.session-token',
       token,
     ] as const);
     await page.goto('/');
 
-    await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+    await expect(page).toHaveURL(/127\.0\.0\.1:5174\//);
 
     await expect
       .poll(async () => {

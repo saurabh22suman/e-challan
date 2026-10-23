@@ -1,9 +1,11 @@
 import {
   AmbiguousContextResponseSchema,
   ApiErrorSchema,
+  CreateHandoffResponseSchema,
   LoginRequestSchema,
   LoginResponseSchema,
   SessionResponseSchema,
+  type CreateHandoffResponse,
   type LoginRequest,
   type LoginResponse,
   type SessionResponse,
@@ -161,6 +163,55 @@ export async function signInWithPassword(request: LoginRequest): Promise<LoginRe
  * cannot resurrect a session the API has ended, and why an unconfigured or
  * tampered client store cannot invent one.
  */
+/**
+ * Mint a one-time code that transfers this session to the dashboard origin.
+ * Used when a Supervisor/Admin signs in on the tablet sign-in page.
+ */
+export async function requestHandoff(token: string): Promise<CreateHandoffResponse> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_PREFIX}/auth/handoff`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    throw new AuthApiError(0, 'network_error', GENERIC_SIGN_IN_FAILURE);
+  }
+  if (!response.ok) throw await readFailure(response, GENERIC_SIGN_IN_FAILURE);
+
+  const parsed = CreateHandoffResponseSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new AuthApiError(response.status, 'invalid_response', GENERIC_SIGN_IN_FAILURE);
+  }
+  return parsed.data;
+}
+
+/**
+ * Exchange a one-time handoff code for a session on this origin.
+ *
+ * The code is not a session token; the API returns a newly issued token, which
+ * the caller stores under {@link SESSION_STORAGE_KEY}.
+ */
+export async function exchangeHandoff(code: string): Promise<LoginResponse> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_PREFIX}/auth/handoff/exchange`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+  } catch {
+    throw new AuthApiError(0, 'network_error', GENERIC_SIGN_IN_FAILURE);
+  }
+  if (!response.ok) throw await readFailure(response, GENERIC_SIGN_IN_FAILURE);
+
+  const parsed = LoginResponseSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new AuthApiError(response.status, 'invalid_response', GENERIC_SIGN_IN_FAILURE);
+  }
+  return parsed.data;
+}
+
 export async function fetchSession(token: string | null): Promise<SessionResponse | null> {
   // No token means no session to restore. Do not probe a protected endpoint
   // anonymously just to log a 401 on every sign-in screen.

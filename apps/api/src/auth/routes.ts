@@ -2,6 +2,8 @@ import type { FastifyInstance, FastifyReply } from 'fastify';
 import {
   API_ERROR_CODES,
   AmbiguousContextResponseSchema,
+  CreateHandoffResponseSchema,
+  ExchangeHandoffRequestSchema,
   LoginRequestSchema,
   LoginResponseSchema,
   SessionResponseSchema,
@@ -10,6 +12,7 @@ import {
 import type { Db } from '../db/client.js';
 import type { DemoCredentials } from './config.js';
 import { AuthFailure, buildIdentity, login } from './service.js';
+import { createHandoff, exchangeHandoff } from './handoff.js';
 import { revokeSession } from './session.js';
 import { bearerToken, requireSession, sendError, SIGN_IN_REQUIRED } from './guard.js';
 
@@ -121,5 +124,46 @@ export function registerAuthRoutes(app: FastifyInstance, options: AuthRouteOptio
       if (error instanceof AuthFailure) return sendFailure(reply, app, error);
       throw error;
     }
+  });
+
+  /**
+   * `POST /auth/handoff` — mint a one-time code that moves this session to the
+   * other client origin. The code is not a token and is never accepted as one.
+   */
+  app.post('/auth/handoff', async (request, reply) => {
+    const session = await requireSession(
+      app,
+      options.resolveDb,
+      request.headers.authorization,
+      reply,
+    );
+    if (session === undefined) return reply;
+
+    const handoff = createHandoff(session);
+    return reply.code(200).send(
+      parseContract(CreateHandoffResponseSchema, {
+        code: handoff.code,
+        expiresAt: handoff.expiresAt.toISOString(),
+      }),
+    );
+  });
+
+  /**
+   * `POST /auth/handoff/exchange` — consume a code and issue a session on the
+   * target origin. The source session is revoked by the exchange.
+   */
+  app.post('/auth/handoff/exchange', async (request, reply) => {
+    const parsed = ExchangeHandoffRequestSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return sendError(reply, API_ERROR_CODES.invalidRequest, 400, 'A handoff code is required.');
+    }
+
+    const result = await exchangeHandoff(options.resolveDb(), parsed.data.code);
+    if (result === null) {
+      return sendError(reply, API_ERROR_CODES.unauthenticated, 401, SIGN_IN_REQUIRED);
+    }
+    return reply
+      .code(200)
+      .send(parseContract(LoginResponseSchema, { token: result.token, ...result.identity }));
   });
 }

@@ -368,3 +368,28 @@ status history in challan details. No profile editing, password self-service,
 cross-user profile access, evidence-history UI or public tracking URL is
 authorised. No password/hash may be returned. Affected cases: AUTH-01/AUTH-02,
 REV-01/REV-02, UI-03; independent review remains required.
+
+## Owner decision — 2026-10-24
+
+**Single sign-in page with role handoff.** Source: owner request "i want the
+same login page, the username will decide the account, so same login should work
+with all 3 roles", followed by the owner selecting "One login, redirect by role".
+
+- The admin domain is the single sign-in page. The API still resolves the role
+  from the username; no client may request a role.
+- A Marshal is handed to the tablet; Supervisor/Admin remain on the dashboard.
+- The handoff is a short-lived, signed, single-use code carried in the URL
+  fragment. It is not a session token, is never accepted as one, and revokes the
+  source session when exchanged. Tokens remain opaque and server-side.
+- In the deployed tablet build, anonymous visits redirect to the admin sign-in
+  page. Local development and component tests retain the tablet form.
+- This intentionally supersedes the earlier R1 expectation that the admin and
+  tablet surfaces refuse and revoke the other role's session. Acceptance tests
+  were revised for the new owner-approved behaviour; no other authentication rule
+  was weakened.
+- Deployment must set the two public HTTPS origins before building, and the
+  compose stack keeps one API replica because the handoff signing key is
+  process-local.
+
+Affected cases: AUTH-01, AUTH-02, F-02 login surfaces. Independent review remains
+required.

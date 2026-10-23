@@ -24,16 +24,16 @@ test('UXA-06/UXA-28: dashboard sign-in toggles the password and states the hones
   page,
 }) => {
   await page.goto('/');
-  await expect(
-    page.getByRole('heading', { level: 1, name: /e-Challan dashboard sign-in/i }),
-  ).toBeVisible();
-  await expect(page.getByText('Use the account given by your supervisor.')).toBeVisible();
-  // Policy consistency (R7): desktop roles use the 3600 s window, not the
-  // marshal's 600 s; the copy must state 60 minutes.
+  await expect(page.getByRole('heading', { level: 1, name: /e-Challan sign-in/i })).toBeVisible();
   await expect(
     page.getByText(
-      'Supervisor and admin accounts only. Sessions end after 60 minutes without activity.',
+      'Use the account given by your supervisor. You will be taken to the right workspace.',
     ),
+  ).toBeVisible();
+  // Policy consistency (R7): both windows are stated because this is the single
+  // sign-in page for all three roles.
+  await expect(
+    page.getByText(/Marshal sessions end after 10 minutes without activity.*60 minutes/i),
   ).toBeVisible();
 
   const password = page.getByLabel('Password', { exact: true });

@@ -78,7 +78,9 @@ test.describe('F-02 admin authentication', () => {
     expect(after.status(), 'logout must revoke the session on the API').toBe(401);
   });
 
-  test('R1: refuses a marshal account and revokes the session it was issued', async ({ page }) => {
+  test('R1: hands a marshal account to the tablet and revokes the dashboard session', async ({
+    page,
+  }) => {
     const issued: string[] = [];
     page.on('response', async (response) => {
       if (response.url().includes('/auth/login') && response.status() === 200) {
@@ -92,12 +94,12 @@ test.describe('F-02 admin authentication', () => {
     await page.getByLabel('Password', { exact: true }).fill(ACCOUNTS.marshal.password);
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-    await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toHaveCount(0);
-    expect(issued, 'the API issues a session before the client refuses the role').toHaveLength(1);
+    await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toBeVisible();
+    await expect(page).toHaveURL(/127\.0\.0\.1:5173\//);
+    expect(issued, 'the dashboard must have logged in through the real API').toHaveLength(1);
     const token = issued[0] as string;
 
-    // A session the client refuses must be revoked, not left live.
+    // The tablet exchange revokes the dashboard session rather than leaving it live.
     await expect
       .poll(async () => {
         const response = await page.request.get('/api/auth/session', {
@@ -108,7 +110,7 @@ test.describe('F-02 admin authentication', () => {
       .toBe(401);
   });
 
-  test('R1: refuses a restored marshal session obtained from the real API', async ({ page }) => {
+  test('R1: hands a restored marshal session to the tablet', async ({ page }) => {
     const login = await page.request.post('/api/auth/login', {
       data: { username: ACCOUNTS.marshal.username, password: ACCOUNTS.marshal.password },
     });
@@ -116,16 +118,16 @@ test.describe('F-02 admin authentication', () => {
     const { token } = (await login.json()) as { token: string };
 
     // Seed the real API-issued token BEFORE the first navigation. Writing it under
-    // a running anonymous page is racy: the pending anonymous session refusal can
-    // complete afterwards and clear the externally seeded value.
+    // a running anonymous page is racy: the pending restoration can complete
+    // afterwards and clear the externally seeded value.
     await page.addInitScript(([key, value]) => window.localStorage.setItem(key, value), [
       'echallan.admin.session-token',
       token,
     ] as const);
     await page.goto('/');
 
-    await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toBeVisible();
+    await expect(page).toHaveURL(/127\.0\.0\.1:5173\//);
 
     await expect
       .poll(async () => {

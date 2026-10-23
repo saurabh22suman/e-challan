@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -18,19 +18,34 @@ import { GENERIC_SIGN_IN_FAILURE } from '../auth/api';
 import { useSession } from '../auth/session';
 
 /**
- * Dashboard sign-in screen (restyled under B-09).
+ * Single sign-in screen for every role (restyled under B-09).
  *
- * Statically labelled fields and visible error feedback. The action is the navy
- * primary rather than the reserved green, because signing in does not commit a
- * challan.
+ * The API resolves the account from the username. Supervisor/Admin identities
+ * continue to the dashboard; a Marshal is handed off to the tablet by the app
+ * shell. Statically labelled fields and visible error feedback. The action is the
+ * navy primary rather than the reserved green, because signing in does not commit
+ * a challan.
  */
 export default function LoginScreen() {
   const { signIn, notice } = useSession();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    new URLSearchParams(window.location.search).get('handoff') === 'failed'
+      ? 'That sign-in link expired. Sign in again.'
+      : null,
+  );
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // The one-time handoff failure is a one-shot notice, not a permanent query
+  // parameter on the sign-in page.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('handoff') !== 'failed') return;
+    url.searchParams.delete('handoff');
+    window.history.replaceState(null, '', `${url.pathname}${url.search}`);
+  }, []);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -67,10 +82,10 @@ export default function LoginScreen() {
         }}
       >
         <Typography component="h1" variant="h1" sx={{ color: tokens.surface }}>
-          e-Challan dashboard sign-in
+          e-Challan sign-in
         </Typography>
         <Typography variant="body2" sx={{ color: tokens.onNavy.subtitle, mt: SPACING.xs }}>
-          Use the account given by your supervisor.
+          Use the account given by your supervisor. You will be taken to the right workspace.
         </Typography>
       </Box>
       <CardContent sx={{ padding: SPACING.xl }}>
@@ -129,8 +144,9 @@ export default function LoginScreen() {
             </Button>
 
             <Typography variant="caption" color="text.secondary">
-              Supervisor and admin accounts only. Sessions end after{' '}
-              {IDLE_TIMEOUT_SECONDS.Supervisor / 60} minutes without activity.
+              Marshal sessions end after {IDLE_TIMEOUT_SECONDS.Marshal / 60} minutes without
+              activity; Supervisor and Admin sessions end after{' '}
+              {IDLE_TIMEOUT_SECONDS.Supervisor / 60} minutes.
             </Typography>
           </Stack>
         </form>

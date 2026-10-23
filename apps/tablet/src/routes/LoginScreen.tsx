@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type FormEvent } from 'react';
+import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -52,9 +52,22 @@ export default function LoginScreen() {
   const [shiftId, setShiftId] = useState('');
   const [postOptions, setPostOptions] = useState<ContextOption[]>([]);
   const [shiftOptions, setShiftOptions] = useState<ContextOption[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    new URLSearchParams(window.location.search).get('handoff') === 'failed'
+      ? 'That sign-in link expired. Sign in again.'
+      : null,
+  );
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // The one-time handoff failure is a one-shot notice, not a permanent query
+  // parameter on the sign-in page.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('handoff') !== 'failed') return;
+    url.searchParams.delete('handoff');
+    window.history.replaceState(null, '', `${url.pathname}${url.search}`);
+  }, []);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -106,10 +119,10 @@ export default function LoginScreen() {
         }}
       >
         <Typography component="h1" variant="h1" sx={{ color: tokens.surface }}>
-          e-Challan marshal sign-in
+          e-Challan sign-in
         </Typography>
         <Typography variant="body2" sx={{ color: tokens.onNavy.subtitle, mt: SPACING.xs }}>
-          Use the account given by your supervisor.
+          Use the account given by your supervisor. You will be taken to the right workspace.
         </Typography>
       </Box>
       <CardContent sx={{ padding: SPACING.xl }}>
@@ -209,8 +222,8 @@ export default function LoginScreen() {
             </Button>
 
             <Typography variant="caption" color="text.secondary">
-              Sessions end after {IDLE_TIMEOUT_SECONDS.Marshal / 60} minutes without activity and
-              unsent entries are discarded.
+              Marshal sessions end after {IDLE_TIMEOUT_SECONDS.Marshal / 60} minutes without
+              activity and unsent entries are discarded. Other roles continue to the dashboard.
             </Typography>
           </Stack>
         </form>

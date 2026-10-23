@@ -63,14 +63,16 @@ test('UXA-06: marshal sign-in explains itself, states the marshal policy and tog
   page,
 }) => {
   await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: /e-Challan sign-in/i })).toBeVisible();
   await expect(
-    page.getByRole('heading', { level: 1, name: /e-Challan marshal sign-in/i }),
+    page.getByText(
+      'Use the account given by your supervisor. You will be taken to the right workspace.',
+    ),
   ).toBeVisible();
-  await expect(page.getByText('Use the account given by your supervisor.')).toBeVisible();
   // Policy consistency: the marshal window is 600 s (IDLE_TIMEOUT_SECONDS.Marshal).
   await expect(
     page.getByText(
-      'Sessions end after 10 minutes without activity and unsent entries are discarded.',
+      /Marshal sessions end after 10 minutes without activity.*Other roles continue to the dashboard/i,
     ),
   ).toBeVisible();
 

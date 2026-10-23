@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../App';
 
+const { replaceLocationMock } = vi.hoisted(() => ({ replaceLocationMock: vi.fn() }));
+vi.mock('../auth/navigate', () => ({ replaceLocation: replaceLocationMock }));
+
 /**
  * Planner-owned F-02 tablet acceptance (AUTH-01, AUTH-04 UI/E2E half): a real login
  * screen, protected content, login error feedback, logout, and the 10-minute idle
@@ -156,6 +159,15 @@ function stubFetch(options: StubOptions = {}) {
     if (url.includes('/auth/logout') && method === 'POST') {
       return NO_CONTENT();
     }
+    if (url.includes('/auth/handoff') && method === 'POST') {
+      if (auth === undefined) {
+        return jsonResponse({ error: 'unauthenticated', message: 'Sign in required.' }, 401);
+      }
+      return jsonResponse(
+        { code: 'test-handoff-code', expiresAt: '2099-01-01T00:00:00.000Z' },
+        200,
+      );
+    }
     if (url.includes('/auth/session')) {
       if (options.heldSession !== undefined) return options.heldSession;
       if (options.sessionJsonThrows === true) return INVALID_JSON_RESPONSE();
@@ -195,6 +207,7 @@ function deferred<T>() {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  replaceLocationMock.mockReset();
   vi.useRealTimers();
   localStorage.clear();
 });
@@ -345,47 +358,52 @@ describe('AUTH-01/AUTH-04: tablet login, protected routes and idle logout', () =
     }
   });
 
-  describe('R1: the tablet admits Marshal sessions only', () => {
-    it('refuses a Supervisor account after a fresh login and revokes the session it was issued', async () => {
+  describe('R1: a non-Marshal is handed back to the dashboard, never shown the tablet shell', () => {
+    it('mints a one-time handoff after a fresh Supervisor login instead of rendering the shell', async () => {
       const fetchMock = stubFetch({ loginBody: SUPERVISOR_LOGIN_BODY });
       render(<App />);
 
       await signIn({ username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' });
 
-      expect(await screen.findByRole('alert')).toHaveTextContent(
-        /marshal|tablet|not authoris|not authoriz|role/i,
-      );
+      expect(await screen.findByRole('heading', { name: /opening the dashboard/i })).toBeVisible();
       expect(
         screen.queryByRole('heading', { name: /create new safety violation/i }),
       ).not.toBeInTheDocument();
-      expect(
-        localStorage.getItem(STORAGE_KEY),
-        'a session for the wrong surface must not be retained',
-      ).toBeNull();
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(SUPERVISOR_TOKEN);
 
-      const logoutCall = fetchMock.mock.calls.find(
+      const handoffCall = fetchMock.mock.calls.find(
         ([url, init]) =>
-          String(url).includes('/api/auth/logout') &&
+          String(url).includes('/api/auth/handoff') &&
           (init as RequestInit | undefined)?.method === 'POST',
       );
-      expect(logoutCall, 'the refused session must be revoked, not left live').toBeDefined();
-      const headers = (logoutCall?.[1] as RequestInit | undefined)?.headers as
+      expect(handoffCall, 'the tablet must ask the API for a handoff code').toBeDefined();
+      const headers = (handoffCall?.[1] as RequestInit | undefined)?.headers as
         Record<string, string> | undefined;
       expect(headers?.['Authorization']).toContain(SUPERVISOR_TOKEN);
+
+      await vi.waitFor(() => {
+        expect(replaceLocationMock).toHaveBeenCalledWith(
+          'http://127.0.0.1:5174/#handoff=test-handoff-code',
+        );
+      });
     });
 
-    it('refuses a restored Supervisor session instead of rendering the shell', async () => {
+    it('hands off a restored Supervisor session instead of rendering the shell', async () => {
       localStorage.setItem(STORAGE_KEY, SUPERVISOR_TOKEN);
       stubFetch({ sessionBody: SUPERVISOR_SESSION_BODY });
       render(<App />);
 
-      expect(await screen.findByRole('alert')).toHaveTextContent(
-        /marshal|tablet|not authoris|not authoriz|role/i,
-      );
+      expect(await screen.findByRole('heading', { name: /opening the dashboard/i })).toBeVisible();
       expect(
         screen.queryByRole('heading', { name: /create new safety violation/i }),
       ).not.toBeInTheDocument();
-      expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+      expect(localStorage.getItem(STORAGE_KEY)).toBe(SUPERVISOR_TOKEN);
+
+      await vi.waitFor(() => {
+        expect(replaceLocationMock).toHaveBeenCalledWith(
+          'http://127.0.0.1:5174/#handoff=test-handoff-code',
+        );
+      });
     });
   });
 

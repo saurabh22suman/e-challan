@@ -10,6 +10,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { AppThemeProvider, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
 import LoginScreen from './routes/LoginScreen';
+import HandoffToAdmin, {
+  RedirectToDashboardLogin,
+  hasConfiguredDashboardOrigin,
+} from './auth/HandoffToAdmin';
 import { IdleLogoutGuard, SessionProvider, useSession } from './auth/session';
 import ProfileDialog from './profile/ProfileDialog';
 import SyncStatusBar from './features/sync/SyncStatusBar';
@@ -86,9 +90,37 @@ function SessionGate({
   language: DriverLanguage;
   onLanguageChange: (value: DriverLanguage) => void;
 }) {
-  const { status } = useSession();
+  const { status, identity, restoring } = useSession();
+  const dashboardConfigured = hasConfiguredDashboardOrigin();
 
-  if (status === 'authenticated')
+  // In the deployed single-login build, wait for a stored token to finish
+  // validating before deciding to redirect. Without this, a handoff or reload
+  // would briefly look anonymous and bounce back to the dashboard.
+  if (restoring && dashboardConfigured) {
+    return (
+      <Box
+        component="main"
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: SPACING.md,
+          backgroundColor: tokens.canvas,
+          px: SPACING.lg,
+        }}
+      >
+        <CircularProgress />
+        <Typography variant="body1">Restoring your session…</Typography>
+      </Box>
+    );
+  }
+
+  if (status === 'authenticated') {
+    // The dashboard is the single sign-in page. A Supervisor/Admin who signed in
+    // here is handed back to it instead of entering the field workspace.
+    if (identity?.user.role !== 'Marshal') return <HandoffToAdmin />;
     return (
       <TabletShell
         highContrast={highContrast}
@@ -97,6 +129,29 @@ function SessionGate({
         onLanguageChange={onLanguageChange}
       />
     );
+  }
+
+  // A production tablet build sends anonymous visitors to the one dashboard
+  // sign-in page. Local development and component tests keep the tablet form so
+  // the field bundle remains independently runnable.
+  if (dashboardConfigured) {
+    return (
+      <Box
+        component="main"
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: tokens.canvas,
+          px: SPACING.lg,
+        }}
+      >
+        <RedirectToDashboardLogin />
+      </Box>
+    );
+  }
+
   return (
     <Box
       component="main"
