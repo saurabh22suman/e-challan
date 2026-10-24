@@ -130,6 +130,15 @@ Those values are demo-only and are never a runtime default.
 For local development, copy the fixture values into `.env` (it is gitignored).
 CI expects the same six values as repository secrets.
 
+## PWA and device use
+
+The whole app is one installable PWA at the root URL: the dashboard is `/` and
+the marshal tablet is `/tablet/`, under one manifest and one root service worker.
+After sign-in, a phone or tablet shows an **Install e-Challan** banner that opens
+the browser install prompt; desktop does not show it. iOS gets Add to Home Screen
+instructions instead of a native prompt. API, auth and evidence requests are
+never cached; only the app shell is.
+
 ## Ports
 
 | Service                | Port        |
@@ -208,12 +217,16 @@ shown by `pnpm exec playwright install-deps --dry-run chromium`.
 ## Deploying with Dokploy
 
 `docker-compose.dokploy.yml` defines PostgreSQL, the API, and Nginx-served admin
-and tablet bundles. The admin domain is the single sign-in page: the username
-selects the account and role, then a one-time handoff sends a Marshal to the
-tablet while Supervisor/Admin stay on the dashboard. Admin credentials come from
+and tablet bundles under one public origin: `/` is the dashboard/sign-in and
+`/tablet/` is the marshal app. The admin container reverse-proxies the tablet
+container; the tablet is not separately exposed. The username selects the account
+and role, then a one-time handoff sends a Marshal to `/tablet/` while
+Supervisor/Admin stay on the dashboard. Admin credentials come from
 `DEMO_ADMIN_USERNAME` / `DEMO_ADMIN_PASSWORD`; the first API start applies
 migrations and creates the matching `users` row before the server listens. Set
-`PUBLIC_ADMIN_ORIGIN` and `PUBLIC_TABLET_ORIGIN` to the two HTTPS domains. See
+`PUBLIC_APP_ORIGIN` to the one HTTPS origin. Set `SEED_DEMO_DATA=true` on the
+first deploy to load realistic-looking locations, posts, shifts, drivers, gate
+passes and challans and give the env Marshal/Supervisor a demo location. See
 `docs/deployment/dokploy.md` for service, environment, domain and backup steps.
 
 ## Continuous integration

@@ -81,11 +81,18 @@ export default function LoginScreen() {
           padding: `${SPACING.xl} ${SPACING.xl} ${SPACING.lg}`,
         }}
       >
+        <Typography
+          variant="overline"
+          sx={{ color: tokens.onNavy.strong, fontWeight: 700, letterSpacing: '0.12em' }}
+        >
+          E-Challan · Secure sign-in
+        </Typography>
         <Typography component="h1" variant="h1" sx={{ color: tokens.surface }}>
-          e-Challan sign-in
+          Sign in
         </Typography>
         <Typography variant="body2" sx={{ color: tokens.onNavy.subtitle, mt: SPACING.xs }}>
-          Use the account given by your supervisor. You will be taken to the right workspace.
+          Use your assigned account. Marshals continue to the tablet; Supervisors and Admins
+          continue to the dashboard.
         </Typography>
       </Box>
       <CardContent sx={{ padding: SPACING.xl }}>

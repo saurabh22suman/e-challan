@@ -1,10 +1,13 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { capturePwaInstallPrompt } from '@echallan/theme';
 import App from './App';
 import { exchangeHandoff, SESSION_STORAGE_KEY } from './auth/api';
 import { dashboardLoginUrl } from './auth/HandoffToAdmin';
 
 const HANDOFF_PREFIX = '#handoff=';
+
+capturePwaInstallPrompt();
 
 /** Read a one-time handoff code from the fragment, if this load carries one. */
 function readHandoffCode(): string | null {

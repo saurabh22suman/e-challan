@@ -24,10 +24,10 @@ test('UXA-06/UXA-28: dashboard sign-in toggles the password and states the hones
   page,
 }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1, name: /e-Challan sign-in/i })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
   await expect(
     page.getByText(
-      'Use the account given by your supervisor. You will be taken to the right workspace.',
+      'Use your assigned account. Marshals continue to the tablet; Supervisors and Admins continue to the dashboard.',
     ),
   ).toBeVisible();
   // Policy consistency (R7): both windows are stated because this is the single

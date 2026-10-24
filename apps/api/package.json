@@ -18,7 +18,8 @@
     "db:generate": "drizzle-kit generate",
     "db:seed:demo": "tsx src/db/seed-demo.ts",
     "db:seed:domain": "tsx src/db/seed-domain-demo.ts",
-    "db:seed:env-users": "tsx src/db/seed-env-users.ts"
+    "db:seed:env-users": "tsx src/db/seed-env-users.ts",
+    "db:seed:deploy": "tsx src/db/seed-demo-deploy.ts"
   },
   "dependencies": {
     "@echallan/contracts": "workspace:*",

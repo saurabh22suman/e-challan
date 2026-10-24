@@ -31,6 +31,10 @@ function configuredAdminOrigin(): string | null {
 function dashboardAddress(): string | null {
   const configured = import.meta.env['VITE_ADMIN_ORIGIN'];
   if (typeof configured === 'string' && configured.trim() !== '') return configured.trim();
+  // The deployed build always supplies VITE_ADMIN_ORIGIN. Development falls back
+  // to the admin Vite server so local use also has exactly one sign-in page;
+  // component tests keep the tablet form as a rendering seam.
+  if (import.meta.env.DEV && import.meta.env.MODE !== 'test') return DEV_ADMIN_ORIGIN;
   return null;
 }
 

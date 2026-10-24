@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { expect, test, type Page } from '@playwright/test';
 
 /**
- * Planner-owned F-02 browser journey for the tablet: a real login against the real
- * API and PostgreSQL through the real Vite proxy, protected content only after a
- * session, and a real logout whose revoked token the API then rejects.
+ * Planner-owned F-02 browser journey for the single sign-in flow as entered from
+ * the tablet: the tablet sends anonymous visitors to the dashboard sign-in page,
+ * a real Marshal login hands them back to the field workspace, and logout revokes
+ * the server-side session before the single sign-in page returns.
  *
  * This is a read-only planner input. Do not weaken or skip these assertions.
  */
@@ -32,29 +33,38 @@ const ACCOUNTS = JSON.parse(
   admin: { username: string; password: string };
 };
 
+const ADMIN_ORIGIN = 'http://127.0.0.1:5174';
+const TABLET_TOKEN_KEY = 'echallan.tablet.session-token';
+
 /** Genuine authentication through the real proxy; no bypass, no client-side stub. */
-async function signIn(page: Page, account: 'marshal' | 'supervisor' | 'admin'): Promise<void> {
+async function signInAtAdmin(page: Page, account: 'marshal' | 'supervisor' | 'admin') {
   const { username, password } = ACCOUNTS[account];
-  await page.goto('/');
   await page.getByLabel('Username').fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
 }
 
-test.describe('F-02 tablet authentication', () => {
-  test('requires a real sign in before showing the foundation screen', async ({ page }) => {
+test.describe('F-02 single sign-in as entered from the tablet', () => {
+  test('redirects to the single sign-in page and returns a Marshal to the tablet', async ({
+    page,
+  }) => {
     await page.goto('/');
 
-    // Protected content is absent before authentication.
+    await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
+    await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
 
-    await signIn(page, 'marshal');
+    await signInAtAdmin(page, 'marshal');
 
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toBeVisible();
+    await expect(page.getByLabel('Vehicle registration')).toBeVisible();
   });
 
-  test('shows an error for wrong credentials and stays signed out', async ({ page }) => {
+  test('shows a credential error on the single sign-in page and stays out of the tablet', async ({
+    page,
+  }) => {
     await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
 
     await page.getByLabel('Username').fill(ACCOUNTS.marshal.username);
     await page.getByLabel('Password', { exact: true }).fill('definitely-not-the-demo-password');
@@ -62,77 +72,62 @@ test.describe('F-02 tablet authentication', () => {
 
     await expect(page.getByRole('alert')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
+    await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
   });
 
-  test('logs out, and the API then rejects the token the browser was holding', async ({ page }) => {
-    // Capture the session token the browser actually receives from the real API.
-    const issued: string[] = [];
-    page.on('response', async (response) => {
-      if (response.url().includes('/auth/login') && response.status() === 200) {
-        const body = (await response.json()) as { token?: string };
-        if (body.token) issued.push(body.token);
-      }
-    });
-
-    await signIn(page, 'marshal');
+  test('logs out, revokes the tablet session and returns to the single sign-in page', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await signInAtAdmin(page, 'marshal');
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toBeVisible();
-    expect(issued, 'the API must have issued a real session token').toHaveLength(1);
-    const token = issued[0] as string;
 
-    // While signed in, the token works.
+    const token = await page.evaluate((key) => window.localStorage.getItem(key), TABLET_TOKEN_KEY);
+    expect(token, 'the tablet must hold a real API-issued session').toBeTruthy();
+
     const during = await page.request.get('/api/auth/session', {
       headers: { Authorization: `Bearer ${token}` },
     });
     expect(during.status()).toBe(200);
 
     await page.getByRole('button', { name: /log ?out|sign out/i }).click();
-    await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
+    await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), TABLET_TOKEN_KEY))
+      .toBeNull();
 
-    // Logout must be server-side: the very same token is now refused.
     const after = await page.request.get('/api/auth/session', {
       headers: { Authorization: `Bearer ${token}` },
     });
     expect(after.status(), 'logout must revoke the session on the API').toBe(401);
 
-    // A reload must not resurrect the session from client storage alone.
     await page.reload();
+    await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Create new safety violation' })).toHaveCount(0);
   });
 
-  test('R1: hands a supervisor account to the dashboard and revokes the tablet session', async ({
-    page,
-  }) => {
-    const issued: string[] = [];
-    page.on('response', async (response) => {
-      if (response.url().includes('/auth/login') && response.status() === 200) {
-        const body = (await response.json()) as { token?: string };
-        if (body.token) issued.push(body.token);
-      }
-    });
-
+  test('a Supervisor who starts at the tablet continues to the dashboard', async ({ page }) => {
     await page.goto('/');
-    await page.getByLabel('Username').fill(ACCOUNTS.supervisor.username);
-    await page.getByLabel('Password', { exact: true }).fill(ACCOUNTS.supervisor.password);
-    await page.getByRole('button', { name: /sign in|log in/i }).click();
+    await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
+
+    await signInAtAdmin(page, 'supervisor');
 
     await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
-    await expect(page).toHaveURL(/127\.0\.0\.1:5174\//);
-    expect(issued, 'the tablet must have logged in through the real API').toHaveLength(1);
-    const token = issued[0] as string;
+    await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
 
-    // The dashboard exchange revokes the tablet session rather than leaving it live.
-    await expect
-      .poll(async () => {
-        const response = await page.request.get('/api/auth/session', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        return response.status();
-      })
-      .toBe(401);
+    const token = await page.evaluate(() =>
+      window.localStorage.getItem('echallan.admin.session-token'),
+    );
+    expect(token, 'the dashboard must hold a real API-issued session').toBeTruthy();
+    const session = await page.request.get('/api/auth/session', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(session.status()).toBe(200);
   });
 
-  test('R1: hands a restored supervisor session to the dashboard', async ({ page }) => {
+  test('hands a restored Supervisor session from the tablet to the dashboard', async ({ page }) => {
     const login = await page.request.post('/api/auth/login', {
       data: { username: ACCOUNTS.supervisor.username, password: ACCOUNTS.supervisor.password },
     });
@@ -143,13 +138,13 @@ test.describe('F-02 tablet authentication', () => {
     // a running anonymous page is racy: the pending restoration can complete
     // afterwards and clear the externally seeded value.
     await page.addInitScript(([key, value]) => window.localStorage.setItem(key, value), [
-      'echallan.tablet.session-token',
+      TABLET_TOKEN_KEY,
       token,
     ] as const);
     await page.goto('/');
 
     await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
-    await expect(page).toHaveURL(/127\.0\.0\.1:5174\//);
+    await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
 
     await expect
       .poll(async () => {

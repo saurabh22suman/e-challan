@@ -42,8 +42,11 @@ export const WORKSPACE_ROOT = findWorkspaceRoot(MODULE_DIRECTORY);
 /** Absolute path of the root environment file (copy of `.env.example`). */
 export const ENV_FILE_PATH = path.join(WORKSPACE_ROOT, '.env');
 
-/** Absolute path of the synthetic demo fixture consumed by the seed adapter. */
+/** Absolute path of the synthetic demo fixture consumed by the test seed adapter. */
 export const DEMO_DATA_PATH = path.join(WORKSPACE_ROOT, 'docs', 'demo-data.json');
+
+/** Absolute path of the realistic-looking deployment seed fixture. */
+export const DEPLOYMENT_DATA_PATH = path.join(WORKSPACE_ROOT, 'docs', 'deployment-data.json');
 
 export const EnvSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required (development/demo database)'),

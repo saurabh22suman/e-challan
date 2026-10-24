@@ -10,6 +10,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Stack from '@mui/material/Stack';
@@ -22,6 +23,8 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TextField from '@mui/material/TextField';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import type {
@@ -473,64 +476,97 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
         />
         <CardContent>
           <Stack spacing={SPACING.lg}>
-            <Stack
-              direction={{ xs: 'column', md: 'row' }}
-              spacing={SPACING.md}
-              sx={{ alignItems: { md: 'center' }, flexWrap: 'wrap' }}
+            <Box
+              sx={{
+                padding: SPACING.md,
+                border: `1px solid ${tokens.lineSoft}`,
+                borderRadius: 2,
+                backgroundColor: tokens.surface,
+              }}
             >
-              <TextField
-                label="Search challans"
-                placeholder="Challan, vehicle, gate pass, driver or location"
-                value={filters.search}
-                onChange={(event) => setFilter('search', event.target.value)}
-                sx={{ flex: '1 1 320px', maxWidth: { md: 460 } }}
-              />
-              <TextField
-                select
-                label="Saved view"
-                value={selectedView}
-                onChange={(event) => {
-                  const name = event.target.value;
-                  setSelectedView(name);
-                  if (name === 'Needs attention') {
+              <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                spacing={SPACING.md}
+                sx={{ alignItems: { md: 'center' }, flexWrap: 'wrap' }}
+              >
+                <TextField
+                  label="Search challans"
+                  placeholder="Challan, vehicle, gate pass, driver or location"
+                  value={filters.search}
+                  onChange={(event) => setFilter('search', event.target.value)}
+                  sx={{ flex: '1 1 320px', maxWidth: { md: 460 } }}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+                <TextField
+                  select
+                  label="Saved view"
+                  value={selectedView}
+                  onChange={(event) => {
+                    const name = event.target.value;
+                    setSelectedView(name);
+                    if (name === 'Needs attention') {
+                      applyView({
+                        name,
+                        filters: { ...EMPTY_FILTERS, status: 'Under Review' },
+                        sortField: 'issuedAt',
+                        sortDirection: 'asc',
+                      });
+                      return;
+                    }
+                    const view = savedViews.find((candidate) => candidate.name === name);
+                    if (view !== undefined) applyView(view);
+                  }}
+                  sx={{ minWidth: 210 }}
+                >
+                  <MenuItem value="">No saved view</MenuItem>
+                  <MenuItem value="Needs attention">Needs attention</MenuItem>
+                  {savedViews.map((view) => (
+                    <MenuItem key={view.name} value={view.name}>
+                      {view.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                {compact && (
+                  <Button
+                    variant={filtersOpen ? 'contained' : 'outlined'}
+                    startIcon={<FilterListIcon />}
+                    onClick={() => setFiltersOpen((previous) => !previous)}
+                    aria-expanded={filtersOpen}
+                    aria-controls="challan-filters"
+                  >
+                    {filtersOpen
+                      ? 'Hide filters'
+                      : hasFilters
+                        ? `Filters (${activeChips.length})`
+                        : 'Filters'}
+                  </Button>
+                )}
+                <Button variant="outlined" onClick={() => setSaveViewOpen(true)}>
+                  Save current view
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() =>
                     applyView({
-                      name,
+                      name: 'Needs attention',
                       filters: { ...EMPTY_FILTERS, status: 'Under Review' },
                       sortField: 'issuedAt',
                       sortDirection: 'asc',
-                    });
-                    return;
+                    })
                   }
-                  const view = savedViews.find((candidate) => candidate.name === name);
-                  if (view !== undefined) applyView(view);
-                }}
-                sx={{ minWidth: 210 }}
-              >
-                <MenuItem value="">No saved view</MenuItem>
-                <MenuItem value="Needs attention">Needs attention</MenuItem>
-                {savedViews.map((view) => (
-                  <MenuItem key={view.name} value={view.name}>
-                    {view.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <Button variant="outlined" onClick={() => setSaveViewOpen(true)}>
-                Save current view
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  applyView({
-                    name: 'Needs attention',
-                    filters: { ...EMPTY_FILTERS, status: 'Under Review' },
-                    sortField: 'issuedAt',
-                    sortDirection: 'asc',
-                  })
-                }
-              >
-                Needs attention
-              </Button>
-            </Stack>
+                >
+                  Needs attention
+                </Button>
+              </Stack>
+            </Box>
 
             {activeChips.length > 0 && (
               <Stack
@@ -560,154 +596,158 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
               </Stack>
             )}
 
-            {compact && (
-              <Button
-                variant="outlined"
-                onClick={() => setFiltersOpen((previous) => !previous)}
-                sx={{ alignSelf: 'flex-start' }}
-              >
-                {filtersOpen
-                  ? 'Hide filters'
-                  : hasFilters
-                    ? 'Show filters (active)'
-                    : 'Show filters'}
-              </Button>
-            )}
             {(!compact || filtersOpen) && (
               <Box
+                id="challan-filters"
                 sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
-                  gap: SPACING.md,
+                  padding: SPACING.lg,
+                  border: `1px solid ${tokens.lineSoft}`,
+                  borderRadius: 2,
+                  backgroundColor: tokens.canvas,
                 }}
               >
-                <TextField
-                  select
-                  label="Filter by status"
-                  value={filters.status}
-                  onChange={(event) =>
-                    setFilter('status', event.target.value as FilterState['status'])
-                  }
+                <Box sx={{ marginBottom: SPACING.lg }}>
+                  <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700 }}>
+                    Refine results
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: tokens.muted }}>
+                    Filters are applied by the server across the authorised records.
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: {
+                      xs: '1fr',
+                      sm: 'repeat(2, 1fr)',
+                      lg: 'repeat(4, 1fr)',
+                    },
+                    gap: SPACING.md,
+                  }}
                 >
-                  <MenuItem value="all">All statuses</MenuItem>
-                  {STATUSES.map((candidate) => (
-                    <MenuItem key={candidate} value={candidate}>
-                      {candidate}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  select
-                  label="Severity"
-                  value={filters.severity}
-                  onChange={(event) =>
-                    setFilter('severity', event.target.value as FilterState['severity'])
-                  }
-                >
-                  <MenuItem value="">All severities</MenuItem>
-                  {SEVERITIES.map((candidate) => (
-                    <MenuItem key={candidate} value={candidate}>
-                      {candidate}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  select
-                  label="Location"
-                  value={filters.locationId}
-                  onChange={(event) => setFilter('locationId', event.target.value)}
-                >
-                  <MenuItem value="">All locations</MenuItem>
-                  {locations.map((location) => (
-                    <MenuItem key={location.id} value={location.id}>
-                      {location.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  select
-                  label="Department"
-                  value={filters.departmentId}
-                  onChange={(event) => setFilter('departmentId', event.target.value)}
-                >
-                  <MenuItem value="">All departments</MenuItem>
-                  {departments.map((department) => (
-                    <MenuItem key={department.id} value={department.id}>
-                      {department.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  select
-                  label="Violation type"
-                  value={filters.violationTypeId}
-                  onChange={(event) => setFilter('violationTypeId', event.target.value)}
-                >
-                  <MenuItem value="">All violation types</MenuItem>
-                  {violations.map((violation) => (
-                    <MenuItem key={violation.id} value={violation.id}>
-                      {violation.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                {role === 'Admin' && (
                   <TextField
+                    size="small"
                     select
-                    label="Issued by"
-                    value={filters.issuedByUserId}
-                    onChange={(event) => setFilter('issuedByUserId', event.target.value)}
+                    label="Filter by status"
+                    value={filters.status}
+                    onChange={(event) =>
+                      setFilter('status', event.target.value as FilterState['status'])
+                    }
                   >
-                    <MenuItem value="">All marshals</MenuItem>
-                    {marshals.map((marshal) => (
-                      <MenuItem key={marshal.id} value={marshal.id}>
-                        {marshal.displayName} ({marshal.username})
+                    <MenuItem value="all">All statuses</MenuItem>
+                    {STATUSES.map((candidate) => (
+                      <MenuItem key={candidate} value={candidate}>
+                        {candidate}
                       </MenuItem>
                     ))}
                   </TextField>
-                )}
-                <TextField
-                  label="Vehicle number"
-                  value={filters.vehicle}
-                  onChange={(event) => setFilter('vehicle', event.target.value)}
-                />
-                <TextField
-                  label="Gate pass number"
-                  value={filters.gatePass}
-                  onChange={(event) => setFilter('gatePass', event.target.value)}
-                />
-                <TextField
-                  label="From date"
-                  type="date"
-                  value={filters.from}
-                  onChange={(event) => setFilter('from', event.target.value)}
-                  slotProps={{ inputLabel: { shrink: true } }}
-                />
-                <TextField
-                  label="To date"
-                  type="date"
-                  value={filters.to}
-                  onChange={(event) => setFilter('to', event.target.value)}
-                  slotProps={{ inputLabel: { shrink: true } }}
-                />
+                  <TextField
+                    size="small"
+                    select
+                    label="Severity"
+                    value={filters.severity}
+                    onChange={(event) =>
+                      setFilter('severity', event.target.value as FilterState['severity'])
+                    }
+                  >
+                    <MenuItem value="">All severities</MenuItem>
+                    {SEVERITIES.map((candidate) => (
+                      <MenuItem key={candidate} value={candidate}>
+                        {candidate}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    size="small"
+                    select
+                    label="Location"
+                    value={filters.locationId}
+                    onChange={(event) => setFilter('locationId', event.target.value)}
+                  >
+                    <MenuItem value="">All locations</MenuItem>
+                    {locations.map((location) => (
+                      <MenuItem key={location.id} value={location.id}>
+                        {location.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    size="small"
+                    select
+                    label="Department"
+                    value={filters.departmentId}
+                    onChange={(event) => setFilter('departmentId', event.target.value)}
+                  >
+                    <MenuItem value="">All departments</MenuItem>
+                    {departments.map((department) => (
+                      <MenuItem key={department.id} value={department.id}>
+                        {department.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    size="small"
+                    select
+                    label="Violation type"
+                    value={filters.violationTypeId}
+                    onChange={(event) => setFilter('violationTypeId', event.target.value)}
+                  >
+                    <MenuItem value="">All violation types</MenuItem>
+                    {violations.map((violation) => (
+                      <MenuItem key={violation.id} value={violation.id}>
+                        {violation.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  {role === 'Admin' && (
+                    <TextField
+                      size="small"
+                      select
+                      label="Issued by"
+                      value={filters.issuedByUserId}
+                      onChange={(event) => setFilter('issuedByUserId', event.target.value)}
+                    >
+                      <MenuItem value="">All marshals</MenuItem>
+                      {marshals.map((marshal) => (
+                        <MenuItem key={marshal.id} value={marshal.id}>
+                          {marshal.displayName} ({marshal.username})
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                  <TextField
+                    size="small"
+                    label="Vehicle number"
+                    value={filters.vehicle}
+                    onChange={(event) => setFilter('vehicle', event.target.value)}
+                  />
+                  <TextField
+                    size="small"
+                    label="Gate pass number"
+                    value={filters.gatePass}
+                    onChange={(event) => setFilter('gatePass', event.target.value)}
+                  />
+                  <TextField
+                    size="small"
+                    label="From date"
+                    type="date"
+                    value={filters.from}
+                    onChange={(event) => setFilter('from', event.target.value)}
+                    slotProps={{ inputLabel: { shrink: true } }}
+                  />
+                  <TextField
+                    size="small"
+                    label="To date"
+                    type="date"
+                    value={filters.to}
+                    onChange={(event) => setFilter('to', event.target.value)}
+                    slotProps={{ inputLabel: { shrink: true } }}
+                  />
+                </Box>
               </Box>
             )}
 
-            <Stack
-              direction="row"
-              spacing={SPACING.md}
-              sx={{ flexWrap: 'wrap', rowGap: SPACING.sm }}
-            >
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setFilters(EMPTY_FILTERS);
-                  setAppliedFilters(EMPTY_FILTERS);
-                  setPage(0);
-                }}
-                disabled={!hasFilters}
-              >
-                Clear filters
-              </Button>
+            <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
               <Button variant="contained" onClick={() => void download()} disabled={exporting}>
                 {exporting ? 'Preparing export…' : 'Export Excel'}
               </Button>

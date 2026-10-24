@@ -1,11 +1,14 @@
 {
-  "name": "e-Challan Admin",
+  "id": "/",
+  "name": "e-Challan",
   "short_name": "e-Challan",
-  "description": "Gate safety-violation e-Challan",
+  "description": "Gate safety-violation e-Challan for marshals, supervisors and admins",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#F2F5FA",
   "theme_color": "#0B2E5C",
+  "lang": "en",
   "icons": [
     {
       "src": "/icons/icon-192.png",

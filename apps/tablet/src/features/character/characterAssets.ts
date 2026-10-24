@@ -13,11 +13,13 @@ export interface CharacterAsset {
  * that preserves the face, hands and identifying prop. Originals remain in
  * `assets/` and are prepared by `tools/prepare-character-assets.py`.
  */
+const BASE = import.meta.env.BASE_URL;
+
 export const CHARACTER_ASSETS: Record<CharacterKind, CharacterAsset> = {
-  welcome: { src: '/characters/welcome-full.webp', width: 640, height: 640 },
-  'check-details': { src: '/characters/check-details.webp', width: 480, height: 480 },
-  processing: { src: '/characters/processing.webp', width: 480, height: 480 },
-  success: { src: '/characters/success.webp', width: 480, height: 480 },
-  error: { src: '/characters/error.webp', width: 480, height: 480 },
-  connection: { src: '/characters/connection.webp', width: 480, height: 480 },
+  welcome: { src: `${BASE}characters/welcome-full.webp`, width: 640, height: 640 },
+  'check-details': { src: `${BASE}characters/check-details.webp`, width: 480, height: 480 },
+  processing: { src: `${BASE}characters/processing.webp`, width: 480, height: 480 },
+  success: { src: `${BASE}characters/success.webp`, width: 480, height: 480 },
+  error: { src: `${BASE}characters/error.webp`, width: 480, height: 480 },
+  connection: { src: `${BASE}characters/connection.webp`, width: 480, height: 480 },
 };

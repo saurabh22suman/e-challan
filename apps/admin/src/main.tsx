@@ -1,10 +1,13 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { capturePwaInstallPrompt } from '@echallan/theme';
 import App from './App';
 import { exchangeHandoff } from './auth/api';
 import { ADMIN_SESSION_STORAGE_KEY } from './auth/session';
 
 const HANDOFF_PREFIX = '#handoff=';
+
+capturePwaInstallPrompt();
 
 /** Read a one-time handoff code from the fragment, if this load carries one. */
 function readHandoffCode(): string | null {
@@ -48,6 +51,15 @@ async function boot(): Promise<void> {
       <App />
     </StrictMode>,
   );
+
+  // The shell worker is production-only: it must never cache Vite's dev modules.
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      void navigator.serviceWorker.register('/sw.js').catch(() => {
+        /* installability degrades quietly; the dashboard still works online */
+      });
+    });
+  }
 }
 
 void boot();

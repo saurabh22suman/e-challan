@@ -9,8 +9,10 @@ FROM node:22.23.2-alpine AS build
 ARG APP
 ARG VITE_ADMIN_ORIGIN
 ARG VITE_TABLET_ORIGIN
+ARG VITE_BASE_PATH
 ENV VITE_ADMIN_ORIGIN=${VITE_ADMIN_ORIGIN} \
-    VITE_TABLET_ORIGIN=${VITE_TABLET_ORIGIN}
+    VITE_TABLET_ORIGIN=${VITE_TABLET_ORIGIN} \
+    VITE_BASE_PATH=${VITE_BASE_PATH}
 RUN npm install --global pnpm@11.22.0
 WORKDIR /app
 
@@ -28,7 +30,7 @@ RUN pnpm run build:packages \
 
 FROM nginx:1.27-alpine AS runtime
 ARG APP
-COPY deploy/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY "deploy/nginx/${APP}.conf" /etc/nginx/conf.d/default.conf
 COPY --from=build "/app/apps/${APP}/dist" /usr/share/nginx/html
 
 EXPOSE 80

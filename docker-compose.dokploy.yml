@@ -2,12 +2,12 @@
 #
 # Dokploy configuration:
 #   Compose path: docker-compose.dokploy.yml
-#   Domains:      admin  -> container port 80
-#                 tablet -> container port 80
-#   Do not add a public domain for api or db.
+#   Domain:       admin -> container port 80 -> https://e-challan.thedutchrabbit.com
+#   Do not add a public domain for api, db or tablet.
 #
-# Dokploy injects the Traefik labels for the two web services; this file keeps
-# them on dokploy-network and lets Dokploy do the routing.
+# The admin container is the single public gateway and reverse-proxies /tablet/
+# to the internal tablet container. Dokploy injects the Traefik labels for admin;
+# tablet stays on the private network.
 
 services:
   db:
@@ -40,6 +40,7 @@ services:
       HOST: '0.0.0.0'
       API_ORIGIN: '${API_ORIGIN:-http://api:3001}'
       EVIDENCE_ROOT: /data/evidence
+      SEED_DEMO_DATA: '${SEED_DEMO_DATA:-false}'
       DEMO_MARSHAL_USERNAME: '${DEMO_MARSHAL_USERNAME:?DEMO_MARSHAL_USERNAME is required}'
       DEMO_MARSHAL_PASSWORD: '${DEMO_MARSHAL_PASSWORD:?DEMO_MARSHAL_PASSWORD is required}'
       DEMO_SUPERVISOR_USERNAME: '${DEMO_SUPERVISOR_USERNAME:?DEMO_SUPERVISOR_USERNAME is required}'
@@ -72,12 +73,14 @@ services:
       dockerfile: deploy/docker/web.Dockerfile
       args:
         APP: admin
-        VITE_TABLET_ORIGIN: '${PUBLIC_TABLET_ORIGIN:?PUBLIC_TABLET_ORIGIN is required}'
+        VITE_TABLET_ORIGIN: '${PUBLIC_APP_ORIGIN:?PUBLIC_APP_ORIGIN is required}/tablet'
     restart: unless-stopped
     ports:
       - '80'
     depends_on:
       api:
+        condition: service_healthy
+      tablet:
         condition: service_healthy
     healthcheck:
       test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1/']
@@ -95,10 +98,9 @@ services:
       dockerfile: deploy/docker/web.Dockerfile
       args:
         APP: tablet
-        VITE_ADMIN_ORIGIN: '${PUBLIC_ADMIN_ORIGIN:?PUBLIC_ADMIN_ORIGIN is required}'
+        VITE_ADMIN_ORIGIN: '${PUBLIC_APP_ORIGIN:?PUBLIC_APP_ORIGIN is required}'
+        VITE_BASE_PATH: /tablet/
     restart: unless-stopped
-    ports:
-      - '80'
     depends_on:
       api:
         condition: service_healthy
@@ -110,7 +112,6 @@ services:
       start_period: 10s
     networks:
       - internal
-      - dokploy-network
 
 volumes:
   echallan-db-data:

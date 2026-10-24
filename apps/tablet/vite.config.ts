@@ -12,6 +12,11 @@ export default defineConfig(({ mode }) => {
   // App-local .env wins over the workspace-root .env; both are optional.
   const env = { ...loadEnv(mode, '../../', 'VITE_'), ...loadEnv(mode, '.', 'VITE_') };
   const apiOrigin = env.VITE_API_ORIGIN ?? DEFAULT_API_ORIGIN;
+  // Production is one origin with the tablet under /tablet/. Development keeps
+  // the tablet at the origin root so the existing Vite servers and journeys work.
+  const configuredBase = process.env['VITE_BASE_PATH'] ?? env.VITE_BASE_PATH;
+  const base =
+    typeof configuredBase === 'string' && configuredBase.trim() !== '' ? configuredBase : '/';
   // The browser only ever calls same-origin /api/... ; the prefix is stripped
   // here because the API serves /health and /health/ready at the root. If the
   // API ever mounts under /api, delete this rewrite.
@@ -24,6 +29,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
+    base,
     plugins: [react()],
     server: { host: '127.0.0.1', port: 5173, strictPort: true, proxy },
     preview: { host: '127.0.0.1', port: 4173, strictPort: true, proxy },

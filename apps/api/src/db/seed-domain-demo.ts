@@ -151,13 +151,31 @@ function byId<T extends { id: string }>(rows: T[]): Map<string, T> {
 
 /* --------------------------------- seeding -------------------------------- */
 
-export async function seedDomainDemoDatabase(connectionString: string): Promise<{
+export interface SeedDomainOptions {
+  /** Fixture file; defaults to the reviewed test/demo fixture. */
+  dataPath?: string;
+  /** Provenance label written to the audit payload and used in logs. */
+  sourceLabel?: string;
+  /** Note on resolution/cancellation history in this seed. */
+  resolutionNote?: string;
+  cancellationNote?: string;
+}
+
+export async function seedDomainDemoDatabase(
+  connectionString: string,
+  options: SeedDomainOptions = {},
+): Promise<{
   databaseName: string;
   challans: number;
 }> {
   // Guard first: nothing is connected or written before this succeeds.
   const databaseName = assertIsSeedAllowedDatabase(connectionString);
-  const fixture = JSON.parse(await readFile(DEMO_DATA_PATH, 'utf8')) as Fixture;
+  const dataPath = options.dataPath ?? DEMO_DATA_PATH;
+  const sourceLabel = options.sourceLabel ?? SEED_SOURCE;
+  const resolutionNote = options.resolutionNote ?? `Synthetic demo resolution. ${SYNTHETIC_NOTE}`;
+  const cancellationNote =
+    options.cancellationNote ?? `Synthetic demo cancellation. ${SYNTHETIC_NOTE}`;
+  const fixture = JSON.parse(await readFile(dataPath, 'utf8')) as Fixture;
 
   const gates = byId(fixture.gates);
   const departments = byId(fixture.departments);
@@ -377,6 +395,8 @@ export async function seedDomainDemoDatabase(connectionString: string): Promise<
         departments,
         contractors,
         vehicleTypes,
+        resolutionNote,
+        cancellationNote,
       });
 
       await tx
@@ -392,8 +412,8 @@ export async function seedDomainDemoDatabase(connectionString: string): Promise<
             source: SYNTHETIC_SOURCE,
             payload: {
               synthetic: true,
-              fixtureSource: SEED_SOURCE,
-              note: SYNTHETIC_NOTE,
+              fixtureSource: sourceLabel,
+              note: sourceLabel,
               displayStatus: row.demoStatus,
             },
           })),
@@ -402,8 +422,8 @@ export async function seedDomainDemoDatabase(connectionString: string): Promise<
     });
 
     console.log(
-      `db:seed:domain: seeded ${fixture.challans.length} synthetic challan record(s) into ` +
-        `${databaseName} from ${SEED_SOURCE}; no media or operational issuance implied`,
+      `db:seed:domain: seeded ${fixture.challans.length} challan record(s) into ` +
+        `${databaseName} from ${sourceLabel}; no media or operational issuance implied`,
     );
     return { databaseName, challans: fixture.challans.length };
   } finally {
@@ -426,9 +446,20 @@ async function seedChallans(
     departments: Map<string, Fixture['departments'][number]>;
     contractors: Map<string, Fixture['contractors'][number]>;
     vehicleTypes: Map<string, Fixture['vehicleTypes'][number]>;
+    resolutionNote: string;
+    cancellationNote: string;
   },
 ): Promise<void> {
-  const { gates, postForGate, passesByDriver, vehicles, violationTypes, staff } = refs;
+  const {
+    gates,
+    postForGate,
+    passesByDriver,
+    vehicles,
+    violationTypes,
+    staff,
+    resolutionNote,
+    cancellationNote,
+  } = refs;
 
   const ordered = [...fixture.challans].sort(
     (a, b) => new Date(a.issuedAt).getTime() - new Date(b.issuedAt).getTime(),
@@ -511,7 +542,7 @@ async function seedChallans(
           cancelledByUserId: cancelled
             ? deterministicUuid(`staff:${staff.get('staff-admin')?.id ?? 'staff-admin'}`)
             : null,
-          cancellationReason: cancelled ? `Synthetic demo cancellation. ${SYNTHETIC_NOTE}` : null,
+          cancellationReason: cancelled ? cancellationNote : null,
           demoSourceId: row.id,
         };
       }),
@@ -578,7 +609,7 @@ async function seedChallans(
             challanId: deterministicUuid(`challan:${row.id}`),
             toStatus: 'Resolved' as const,
             action: 'custom' as ResolutionActionCode,
-            remarks: `Synthetic demo resolution. ${SYNTHETIC_NOTE}`,
+            remarks: resolutionNote,
             performerUserId: deterministicUuid(`staff:${shift?.supervisorId ?? ''}`),
             demoSourceId: row.id,
           };
@@ -598,7 +629,7 @@ async function seedChallans(
           toStatus: 'Cancelled' as const,
           action: null,
           remarks: null,
-          reason: `Synthetic demo cancellation. ${SYNTHETIC_NOTE}`,
+          reason: cancellationNote,
           performerUserId: deterministicUuid(`staff:staff-admin`),
           demoSourceId: row.id,
         })),

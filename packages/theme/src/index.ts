@@ -14,6 +14,7 @@ export { SPACING, SPACING_BASE, SPACING_PX, TOUCH_TARGET_MIN } from './touchTarg
 export type { Spacing, TouchTargetMin } from './touchTargets.js';
 export { tokens } from './tokens.js';
 export type { ThemeTokens } from './tokens.js';
+export { capturePwaInstallPrompt, isMobileOrTabletDevice, PwaInstallPrompt } from './pwaInstall.js';
 export { ErrorSummary, FormSection, Notice, SeverityChip, StatusChip } from './primitives.js';
 export type {
   ErrorSummaryItem,

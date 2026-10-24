@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { AppThemeProvider, SPACING, tokens } from '@echallan/theme';
+import { AppThemeProvider, PwaInstallPrompt, SPACING, tokens } from '@echallan/theme';
 import LoginScreen from './routes/LoginScreen';
 import HandoffToTablet from './auth/HandoffToTablet';
 import { SessionProvider, useSession } from './auth/session';
@@ -109,6 +109,7 @@ function DashboardShell() {
       </AppBar>
 
       <Container component="main" maxWidth="lg" sx={{ py: SPACING.xl }}>
+        <PwaInstallPrompt />
         <Suspense fallback={<Typography variant="body1">Loading the dashboard…</Typography>}>
           <DashboardScreen />
         </Suspense>

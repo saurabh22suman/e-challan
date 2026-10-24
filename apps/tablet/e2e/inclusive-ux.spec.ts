@@ -59,32 +59,15 @@ async function drawStroke(page: Page) {
   await page.mouse.up();
 }
 
-test('UXA-06: marshal sign-in explains itself, states the marshal policy and toggles the password', async ({
-  page,
-}) => {
+test('UXA-06: tablet redirects to the single admin sign-in page', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1, name: /e-Challan sign-in/i })).toBeVisible();
+  await expect(page).toHaveURL(/127\.0\.0\.1:5174\//);
+  await expect(page.getByRole('heading', { level: 1, name: /^sign in$/i })).toBeVisible();
   await expect(
     page.getByText(
-      'Use the account given by your supervisor. You will be taken to the right workspace.',
+      'Use your assigned account. Marshals continue to the tablet; Supervisors and Admins continue to the dashboard.',
     ),
   ).toBeVisible();
-  // Policy consistency: the marshal window is 600 s (IDLE_TIMEOUT_SECONDS.Marshal).
-  await expect(
-    page.getByText(
-      /Marshal sessions end after 10 minutes without activity.*Other roles continue to the dashboard/i,
-    ),
-  ).toBeVisible();
-
-  const password = page.getByLabel('Password', { exact: true });
-  await password.fill(credentials.password);
-  await expect(password).toHaveAttribute('type', 'password');
-  await page.getByRole('button', { name: 'Show password' }).click();
-  await expect(password).toHaveAttribute('type', 'text');
-  await expect(password).toHaveValue(credentials.password);
-  await page.getByRole('button', { name: 'Hide password' }).click();
-  await expect(password).toHaveAttribute('type', 'password');
-  await expect(password).toHaveValue(credentials.password);
 });
 
 test('UXA-02: no horizontal document overflow at 390, 768, 1024 and 1280 widths', async ({
@@ -99,7 +82,7 @@ test('UXA-02: no horizontal document overflow at 390, 768, 1024 and 1280 widths'
   for (const size of widths) {
     await page.setViewportSize(size);
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /sign-in/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^sign in$/i })).toBeVisible();
     const loginOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );

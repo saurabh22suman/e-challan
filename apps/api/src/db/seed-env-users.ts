@@ -8,7 +8,7 @@ import {
   type DemoCredentials,
   type DemoRole,
 } from '../auth/config.js';
-import { DEMO_DATA_PATH, loadEnv } from '../env.js';
+import { DEMO_DATA_PATH, DEPLOYMENT_DATA_PATH, loadEnv } from '../env.js';
 import { createDb } from './client.js';
 import * as s from './schema.js';
 import { deterministicUuid } from './seed-domain-demo.js';
@@ -42,38 +42,55 @@ export interface BootstrapUsersResult {
   existing: number;
 }
 
+interface FixtureUser {
+  id: string;
+  displayName: string;
+}
+
 /**
- * Demo-fixture usernames map to the stable UUIDs the synthetic seed uses.
+ * Fixture usernames map to the stable UUIDs and names the seed uses.
  *
- * The optional demo seed inserts `user_locations` and shift references with IDs
- * derived from `docs/demo-data.json`; if the bootstrap created the same username
- * under a random id first, the demo seed's foreign keys would fail. Using the
- * fixture's deterministic id when the employee ID matches keeps both seeds
- * composable. Custom operator usernames still get random ids.
+ * Both the test fixture and the realistic deployment fixture share the same
+ * internal staff ids, so their deterministic UUIDs match. If the bootstrap
+ * created a fixture employee ID under a random id first, the seed's
+ * `user_locations` foreign keys would fail. Matching here keeps the bootstrap and
+ * either seed composable; custom operator usernames still get random ids.
  */
-async function fixtureUserIds(): Promise<Map<string, string>> {
-  const ids = new Map<string, string>();
+async function addFixtureUsers(dataPath: string, users: Map<string, FixtureUser>): Promise<void> {
   try {
-    const raw = await readFile(DEMO_DATA_PATH, 'utf8');
+    const raw = await readFile(dataPath, 'utf8');
     const fixture = JSON.parse(raw) as {
-      staff?: Array<{ id?: unknown; employeeId?: unknown }>;
+      staff?: Array<{ id?: unknown; employeeId?: unknown; name?: unknown }>;
     };
     for (const person of fixture.staff ?? []) {
-      if (typeof person.id === 'string' && typeof person.employeeId === 'string') {
-        ids.set(person.employeeId, deterministicUuid(`staff:${person.id}`));
+      if (
+        typeof person.id === 'string' &&
+        typeof person.employeeId === 'string' &&
+        typeof person.name === 'string'
+      ) {
+        users.set(person.employeeId, {
+          id: deterministicUuid(`staff:${person.id}`),
+          displayName: person.name,
+        });
       }
     }
   } catch {
-    // The fixture is optional at runtime; a custom deployment simply gets random ids.
+    // A fixture is optional at runtime; custom deployments simply get random ids.
   }
-  return ids;
+}
+
+async function fixtureUsers(): Promise<Map<string, FixtureUser>> {
+  const users = new Map<string, FixtureUser>();
+  await addFixtureUsers(DEMO_DATA_PATH, users);
+  await addFixtureUsers(DEPLOYMENT_DATA_PATH, users);
+  return users;
 }
 
 export async function seedEnvUsers(
   connectionString: string,
   credentials: DemoCredentials,
 ): Promise<BootstrapUsersResult> {
-  const demoUserIds = await fixtureUserIds();
+  const demoUsers = await fixtureUsers();
   const db = createDb(connectionString);
   try {
     return await db.orm.transaction(async (tx) => {
@@ -102,13 +119,14 @@ export async function seedEnvUsers(
           continue;
         }
 
+        const fixture = demoUsers.get(username);
         await tx
           .insert(s.users)
           .values({
-            id: demoUserIds.get(username) ?? randomUUID(),
+            id: fixture?.id ?? randomUUID(),
             username,
             role,
-            displayName: username,
+            displayName: fixture?.displayName ?? username,
             isActive: true,
           })
           .onConflictDoNothing();

@@ -18,7 +18,12 @@ import { AmbiguousContextError, GENERIC_SIGN_IN_FAILURE, type ContextOption } fr
 import { useSession } from '../auth/session';
 
 /**
- * Tablet sign-in screen.
+ * Component-test seam only.
+ *
+ * The tablet never renders this screen in development or production: the app
+ * redirects anonymous visitors to the single dashboard sign-in page. The form is
+ * retained here so the tablet's session and form tests can exercise the original
+ * layout without a cross-origin navigation.
  *
  * Full-screen field sign-in: a single branded card, statically labelled fields,
  * tablet-sized touch targets and visible error feedback. The action is the navy
@@ -118,11 +123,17 @@ export default function LoginScreen() {
           padding: `${SPACING.xl} ${SPACING.xl} ${SPACING.lg}`,
         }}
       >
+        <Typography
+          variant="overline"
+          sx={{ color: tokens.onNavy.strong, fontWeight: 700, letterSpacing: '0.12em' }}
+        >
+          E-Challan · Marshal Tablet
+        </Typography>
         <Typography component="h1" variant="h1" sx={{ color: tokens.surface }}>
-          e-Challan sign-in
+          Tablet sign-in
         </Typography>
         <Typography variant="body2" sx={{ color: tokens.onNavy.subtitle, mt: SPACING.xs }}>
-          Use the account given by your supervisor. You will be taken to the right workspace.
+          Marshal access. A Supervisor or Admin can sign in here and will be taken to the dashboard.
         </Typography>
       </Box>
       <CardContent sx={{ padding: SPACING.xl }}>

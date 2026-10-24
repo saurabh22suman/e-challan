@@ -1,9 +1,10 @@
 # Deploying the demo with Dokploy
 
 Dokploy runs the stack from `docker-compose.dokploy.yml`: PostgreSQL, the Fastify
-API, and two Nginx containers serving the admin and tablet bundles. Nginx proxies
-each SPA's same-origin `/api/...` calls to the API over a private Compose network,
-so the API needs no public domain and there is no CORS configuration.
+API, and two Nginx containers. The admin container is the single public gateway:
+it serves the dashboard at `/` and reverse-proxies the internal tablet container
+at `/tablet/`. Both call the same-origin `/api/...` through the gateway, so the
+API needs no public domain and there is no CORS configuration.
 
 Dokploy derives Traefik routing from the domains entered in its UI. The compose
 file intentionally contains no Traefik labels and no `container_name`.
@@ -29,8 +30,8 @@ blank.
 (letters, digits, `-`, `_`). Avoid `@`, `:`, `/`, `?`, `#` and `$`; they need URL
 encoding or are treated specially by Compose's environment interpolation.
 
-The single sign-in page is the admin domain. The username decides the account and
-role; the API refuses to trust a role supplied by the client.
+The single sign-in page is the one public URL. The username decides the account
+and role; the API refuses to trust a role supplied by the client.
 
 ```text
 DEMO_ADMIN_USERNAME
@@ -38,31 +39,32 @@ DEMO_ADMIN_PASSWORD
 ```
 
 The API also requires distinct Marshal and Supervisor credentials at startup.
-After a successful login, a Marshal is redirected to the tablet with a one-time
-handoff code; Supervisor/Admin continue to the dashboard. The compose build maps
-your two public origins into the client bundles, so set them before building:
+After a successful login, a Marshal is redirected to `/tablet/` with a one-time
+handoff code; Supervisor/Admin continue to the dashboard. Set the one public
+origin before building:
 
 ```text
-PUBLIC_ADMIN_ORIGIN=https://admin.example.com
-PUBLIC_TABLET_ORIGIN=https://tablet.example.com
+PUBLIC_APP_ORIGIN=https://e-challan.thedutchrabbit.com
 ```
 
-## 3. Add the domains
+## 3. Add the domain
 
-Add two domains in Dokploy, both with HTTPS enabled:
+Add one domain in Dokploy with HTTPS enabled:
 
-| Service | Container port | Example host            |
-| ------- | -------------- | ----------------------- |
-| `admin` | `80`           | `admin.example.com`     |
-| `tablet`| `80`           | `tablet.example.com`    |
+| Service | Container port | Host                              |
+| ------- | -------------- | --------------------------------- |
+| `admin` | `80`           | `e-challan.thedutchrabbit.com`    |
 
-Leave `api` and `db` without domains. Dokploy attaches the web services to
-`dokploy-network`; the stack already declares that network as external.
+Leave `api`, `db` and `tablet` without domains. Dokploy attaches `admin` to
+`dokploy-network`; the stack declares that network as external. The tablet is
+reachable only through the admin gateway on the private network.
 
-The two hostnames must exactly match `PUBLIC_ADMIN_ORIGIN` and
-`PUBLIC_TABLET_ORIGIN`; the browser handoff is a real cross-origin navigation.
-HTTPS is not optional for real tablet use: camera capture and service-worker
-installation require a trusted secure context.
+The hostname must match `PUBLIC_APP_ORIGIN`. The whole app is one installable PWA
+at that origin: `/` is the dashboard/sign-in and `/tablet/` is the marshal app.
+After sign-in, a phone or tablet shows the in-app **Install e-Challan** banner;
+desktop does not. iOS shows Add to Home Screen instructions. HTTPS is not optional
+for real tablet use: camera capture, service-worker installation and the install
+prompt require a trusted secure context.
 
 ## 4. Deploy
 
@@ -73,8 +75,8 @@ Dokploy builds the three images and starts the stack in this order:
    bootstrap, then the Fastify server.
 3. The admin and tablet Nginx containers start once the API health check passes.
 
-Open the admin domain and sign in with any approved account. A Marshal lands on
-the tablet at the assigned post; Supervisor/Admin land on the dashboard. The
+Open the public origin and sign in with any approved account. A Marshal lands on
+`/tablet/` at the assigned post; Supervisor/Admin land on the dashboard. The
 one-time handoff expires after 60 seconds, is single-use, and revokes the session
 it came from. The handoff signing key is process-local, so keep this stack at one
 API replica; a restart or a second replica simply asks the user to sign in again.
@@ -96,23 +98,38 @@ Dokploy and redeploying changes the sign-in password while the stored hash is
 still `NULL`. After an in-app reset, use the reset password or reset it again.
 
 The Marshal account can sign in only after it has an authorised post and an
-active shift. A fresh deployment has no master data or shift rows, so the
-dashboard is the immediately usable role.
+active shift. A fresh deployment has no master data or shift rows, so enable the
+demo seed below or add masters and assignments through the dashboard first.
 
-## Optional synthetic demo history
+## Seeding the demo domain
 
-With `POSTGRES_DB=echallan_demo`, the reviewed synthetic fixture can be loaded
-after the stack is healthy:
+Set `SEED_DEMO_DATA=true` in the Dokploy environment on the first deployment.
+`deploy-start` then loads the deployment fixture: fictional but realistic-looking
+locations, gates, posts, shifts, staff, drivers, gate passes, contractors,
+departments, vehicles and challan history. It gives the env Marshal/Supervisor a
+demo location when they have none. The selected location has exactly one active
+post and one active shift, so Marshal login resolves its context without an
+ambiguity prompt. The example env usernames (`EMP-1042`, `EMP-3106`, `EMP-2217`)
+reuse the seeded profiles, so the UI shows the matching real-looking names.
+Custom usernames also work; the seed assigns a location to a custom
+Marshal/Supervisor.
+
+The seed is insert-if-absent and safe to run repeatedly. It is refused for any
+database name other than `echallan_demo` or `echallan_test`. If an older demo
+seed already populated the same database, reset the demo database/volume before
+enabling this fixture: existing rows are not rewritten, and issued challan rows
+must not be mutated.
+
+If the stack is already running with `SEED_DEMO_DATA=false`, run the same seed
+manually:
 
 ```bash
 docker compose -f docker-compose.dokploy.yml exec api \
-  node apps/api/dist/db/seed-domain-demo.js
+  node apps/api/dist/db/seed-demo-deploy.js
 ```
 
-This adds locations, posts, shifts and synthetic challan history. It is refused
-for any database name other than `echallan_demo` or `echallan_test`. To use the
-fixture's own Marshal/Supervisor accounts, set the env usernames to
-`DEMO-EMP-004` and `DEMO-EMP-002`; a custom admin username continues to work.
+The command prints each role's assignment reason. `already-assigned` means the
+account already had a location; `assigned` means the demo location was added.
 
 ## Local smoke test
 
@@ -123,12 +140,10 @@ docker compose -f docker-compose.dokploy.yml --env-file .env.dokploy up --build 
 docker compose -f docker-compose.dokploy.yml --env-file .env.dokploy port admin 80
 ```
 
-For a local handoff test, point `PUBLIC_ADMIN_ORIGIN` and
-`PUBLIC_TABLET_ORIGIN` at the two printed host ports and rebuild the web images;
-the deployed hosts must be the real HTTPS domains.
-
-Open the printed host port for the admin UI. Check API readiness through either
-web container:
+For a local handoff test, set `PUBLIC_APP_ORIGIN` to the printed host origin and
+rebuild the web images; the deployed host must be the real HTTPS origin. Open the
+printed host port and use `/` for the dashboard and `/tablet/` for the field app.
+Check API readiness through either web container:
 
 ```bash
 docker compose -f docker-compose.dokploy.yml --env-file .env.dokploy \
@@ -144,6 +159,11 @@ docker compose -f docker-compose.dokploy.yml --env-file .env.dokploy \
 
 Back up both volumes together. Restoring only the database leaves evidence object
 keys pointing at missing files. Redeploying does not delete either volume.
+
+Captured photos and signatures are files under `/data/evidence`
+(`EVIDENCE_ROOT`). The database stores object keys and metadata, never the binary
+bytes; the API serves them through authenticated, audited evidence routes. This
+is local-disk storage, not S3/MinIO or another object store.
 
 ## Scope
 

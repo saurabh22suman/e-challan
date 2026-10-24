@@ -1,0 +1,888 @@
+{
+  "metadata": {
+    "version": 2,
+    "purpose": "Fictional but realistic-looking deployment seed for the gate pilot",
+    "synthetic": true,
+    "referenceNow": "2026-10-01T12:00:00+05:30",
+    "displayTimezone": "Asia/Kolkata",
+    "notes": [
+      "Names, staff, contractors, site and events are fictional; the data is illustrative only.",
+      "Vehicle numbers use Indian registration-style syntax and may coincidentally match real registrations; no real ownership is asserted.",
+      "Severity, statuses and review actions do not approve unresolved production formats, escalation or resolution rules.",
+      "No photos or signatures are supplied by this fixture; captured media is stored separately when issued through the app.",
+      "Use the fixed reference clock for reproducible scenarios; do not derive age from the machine clock."
+    ]
+  },
+  "locations": [
+    {
+      "id": "loc-main",
+      "name": "Hazira Industrial Estate — Main Gate",
+      "city": "Surat",
+      "state": "Gujarat"
+    },
+    {
+      "id": "loc-dispatch",
+      "name": "Hazira Industrial Estate — Dispatch Gate",
+      "city": "Surat",
+      "state": "Gujarat"
+    }
+  ],
+  "gates": [
+    {
+      "id": "gate-01",
+      "locationId": "loc-main",
+      "name": "Gate 1 — Main Entrance",
+      "postId": "Main Gate Post"
+    },
+    {
+      "id": "gate-02",
+      "locationId": "loc-dispatch",
+      "name": "Gate 2 — Dispatch Entrance",
+      "postId": "Dispatch Gate Post"
+    }
+  ],
+  "departments": [
+    {
+      "id": "dept-logistics",
+      "name": "Logistics",
+      "active": true
+    },
+    {
+      "id": "dept-maintenance",
+      "name": "Maintenance",
+      "active": true
+    },
+    {
+      "id": "dept-operations",
+      "name": "Plant operations",
+      "active": true
+    },
+    {
+      "id": "dept-construction",
+      "name": "Projects and construction",
+      "active": true
+    },
+    {
+      "id": "dept-other",
+      "name": "Other",
+      "active": true
+    }
+  ],
+  "contractors": [
+    {
+      "id": "contract-west",
+      "name": "Western Freight Services",
+      "active": true
+    },
+    {
+      "id": "contract-unity",
+      "name": "Unity Engineering Works",
+      "active": true
+    },
+    {
+      "id": "contract-coastal",
+      "name": "Coastal Supply Transport",
+      "active": true
+    },
+    {
+      "id": "contract-retired",
+      "name": "Legacy Haulage",
+      "active": false
+    }
+  ],
+  "vehicleTypes": [
+    {
+      "id": "type-car",
+      "name": "Car",
+      "active": true
+    },
+    {
+      "id": "type-truck",
+      "name": "Truck",
+      "active": true
+    },
+    {
+      "id": "type-tanker",
+      "name": "Tanker",
+      "active": true
+    },
+    {
+      "id": "type-pickup",
+      "name": "Pickup",
+      "active": true
+    },
+    {
+      "id": "type-bus",
+      "name": "Bus",
+      "active": true
+    },
+    {
+      "id": "type-other",
+      "name": "Other",
+      "active": true
+    }
+  ],
+  "violationTypes": [
+    {
+      "id": "violation-seatbelt",
+      "name": "Not wearing a seat belt",
+      "demoSeverity": "Minor",
+      "active": true
+    },
+    {
+      "id": "violation-speed",
+      "name": "Exceeding the posted speed limit",
+      "demoSeverity": "Major",
+      "active": true
+    },
+    {
+      "id": "violation-phone",
+      "name": "Using a mobile phone while driving",
+      "demoSeverity": "Major",
+      "active": true
+    },
+    {
+      "id": "violation-parking",
+      "name": "Parking in a restricted area",
+      "demoSeverity": "Minor",
+      "active": true
+    },
+    {
+      "id": "violation-route",
+      "name": "Driving against the designated route",
+      "demoSeverity": "Critical",
+      "active": true
+    },
+    {
+      "id": "violation-other",
+      "name": "Other",
+      "demoSeverity": "Minor",
+      "active": true
+    },
+    {
+      "id": "violation-retired",
+      "name": "Retired loading restriction",
+      "demoSeverity": "Minor",
+      "active": false
+    }
+  ],
+  "staff": [
+    {
+      "id": "staff-admin",
+      "name": "Meera Shah",
+      "employeeId": "EMP-1042",
+      "role": "Admin",
+      "locationIds": [
+        "loc-main",
+        "loc-dispatch"
+      ]
+    },
+    {
+      "id": "staff-supervisor-main",
+      "name": "Sunil Deshmukh",
+      "employeeId": "EMP-2217",
+      "role": "Supervisor",
+      "locationIds": [
+        "loc-main"
+      ]
+    },
+    {
+      "id": "staff-supervisor-dispatch",
+      "name": "Farah Ansari",
+      "employeeId": "EMP-2284",
+      "role": "Supervisor",
+      "locationIds": [
+        "loc-dispatch"
+      ]
+    },
+    {
+      "id": "staff-marshal-main",
+      "name": "Ravi Patel",
+      "employeeId": "EMP-3106",
+      "role": "Marshal",
+      "locationIds": [
+        "loc-main"
+      ]
+    },
+    {
+      "id": "staff-marshal-dispatch",
+      "name": "Asha Nair",
+      "employeeId": "EMP-3142",
+      "role": "Marshal",
+      "locationIds": [
+        "loc-dispatch"
+      ]
+    }
+  ],
+  "shifts": [
+    {
+      "id": "shift-main-day",
+      "gateId": "gate-01",
+      "label": "A Shift (06:00–14:00)",
+      "marshalId": "staff-marshal-main",
+      "supervisorId": "staff-supervisor-main"
+    },
+    {
+      "id": "shift-dispatch-day",
+      "gateId": "gate-02",
+      "label": "A Shift (06:00–14:00)",
+      "marshalId": "staff-marshal-dispatch",
+      "supervisorId": "staff-supervisor-dispatch"
+    }
+  ],
+  "drivers": [
+    {
+      "id": "driver-01",
+      "name": "Ramesh Kumar",
+      "gatePassNumber": "HZ-GP-1042",
+      "contractorId": "contract-west",
+      "departmentId": "dept-logistics"
+    },
+    {
+      "id": "driver-02",
+      "name": "Imran Shaikh",
+      "gatePassNumber": "HZ-GP-1043",
+      "contractorId": "contract-west",
+      "departmentId": "dept-logistics"
+    },
+    {
+      "id": "driver-03",
+      "name": "Harpreet Singh",
+      "gatePassNumber": "HZ-GP-1044",
+      "contractorId": "contract-coastal",
+      "departmentId": "dept-logistics"
+    },
+    {
+      "id": "driver-04",
+      "name": "Lakshmi Narayanan",
+      "gatePassNumber": "HZ-GP-1045",
+      "contractorId": "contract-unity",
+      "departmentId": "dept-maintenance"
+    },
+    {
+      "id": "driver-05",
+      "name": "Anita Verma",
+      "gatePassNumber": "HZ-GP-1046",
+      "contractorId": "contract-unity",
+      "departmentId": "dept-operations"
+    },
+    {
+      "id": "driver-06",
+      "name": "Sanjay Patil",
+      "gatePassNumber": "HZ-GP-1047",
+      "contractorId": "contract-west",
+      "departmentId": "dept-logistics"
+    },
+    {
+      "id": "driver-07",
+      "name": "Pooja Das",
+      "gatePassNumber": "HZ-GP-1048",
+      "contractorId": "contract-coastal",
+      "departmentId": "dept-construction"
+    },
+    {
+      "id": "driver-08",
+      "name": "Mohammed Faisal",
+      "gatePassNumber": "HZ-GP-1049",
+      "contractorId": "contract-retired",
+      "departmentId": "dept-logistics"
+    },
+    {
+      "id": "driver-09",
+      "name": "Ramesh Kumar",
+      "gatePassNumber": "HZ-GP-1050",
+      "contractorId": "contract-unity",
+      "departmentId": "dept-maintenance"
+    },
+    {
+      "id": "driver-10",
+      "name": "Kavita Joshi",
+      "gatePassNumber": "HZ-GP-1051",
+      "contractorId": "contract-unity",
+      "departmentId": "dept-operations"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "vehicle-01",
+      "registration": "GJ05DS4821",
+      "vehicleTypeId": "type-car"
+    },
+    {
+      "id": "vehicle-02",
+      "registration": "MH12RT7306",
+      "vehicleTypeId": "type-truck"
+    },
+    {
+      "id": "vehicle-03",
+      "registration": "RJ14PV2658",
+      "vehicleTypeId": "type-tanker"
+    },
+    {
+      "id": "vehicle-04",
+      "registration": "TN09BK3542",
+      "vehicleTypeId": "type-pickup"
+    },
+    {
+      "id": "vehicle-05",
+      "registration": "DL8CAF6193",
+      "vehicleTypeId": "type-car"
+    },
+    {
+      "id": "vehicle-06",
+      "registration": "KA03MN8176",
+      "vehicleTypeId": "type-bus"
+    },
+    {
+      "id": "vehicle-07",
+      "registration": "UP32LR5084",
+      "vehicleTypeId": "type-truck"
+    },
+    {
+      "id": "vehicle-08",
+      "registration": "WB02AT9461",
+      "vehicleTypeId": "type-truck"
+    },
+    {
+      "id": "vehicle-09",
+      "registration": "GJ05JP6207",
+      "vehicleTypeId": "type-car"
+    }
+  ],
+  "gatePassRecords": [
+    {
+      "id": "pass-01",
+      "gatePassNumber": "HZ-GP-1042",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "departmentId": "dept-logistics",
+      "contractorId": "contract-west",
+      "locationIds": [
+        "loc-main",
+        "loc-dispatch"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-02",
+      "gatePassNumber": "HZ-GP-1043",
+      "driverId": "driver-02",
+      "vehicleId": "vehicle-02",
+      "departmentId": "dept-logistics",
+      "contractorId": "contract-west",
+      "locationIds": [
+        "loc-dispatch"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-03",
+      "gatePassNumber": "HZ-GP-1044",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "departmentId": "dept-logistics",
+      "contractorId": "contract-coastal",
+      "locationIds": [
+        "loc-dispatch"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-04",
+      "gatePassNumber": "HZ-GP-1045",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "departmentId": "dept-maintenance",
+      "contractorId": "contract-unity",
+      "locationIds": [
+        "loc-main"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-05",
+      "gatePassNumber": "HZ-GP-1046",
+      "driverId": "driver-05",
+      "vehicleId": "vehicle-05",
+      "departmentId": "dept-operations",
+      "contractorId": "contract-unity",
+      "locationIds": [
+        "loc-main"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-06",
+      "gatePassNumber": "HZ-GP-1047",
+      "driverId": "driver-06",
+      "vehicleId": "vehicle-02",
+      "departmentId": "dept-logistics",
+      "contractorId": "contract-west",
+      "locationIds": [
+        "loc-dispatch"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-07",
+      "gatePassNumber": "HZ-GP-1048",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "departmentId": "dept-construction",
+      "contractorId": "contract-coastal",
+      "locationIds": [
+        "loc-dispatch"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-08",
+      "gatePassNumber": "HZ-GP-1049",
+      "driverId": "driver-08",
+      "vehicleId": "vehicle-08",
+      "departmentId": "dept-logistics",
+      "contractorId": "contract-retired",
+      "locationIds": [
+        "loc-dispatch"
+      ],
+      "demoStatus": "Expired",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2026-09-25T00:00:00+05:30"
+    },
+    {
+      "id": "pass-09",
+      "gatePassNumber": "HZ-GP-1050",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "departmentId": "dept-maintenance",
+      "contractorId": "contract-unity",
+      "locationIds": [
+        "loc-main"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-01-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    },
+    {
+      "id": "pass-10",
+      "gatePassNumber": "HZ-GP-1051",
+      "driverId": "driver-10",
+      "vehicleId": "vehicle-09",
+      "departmentId": "dept-operations",
+      "contractorId": "contract-unity",
+      "locationIds": [
+        "loc-main"
+      ],
+      "demoStatus": "Active",
+      "validFrom": "2026-09-01T00:00:00+05:30",
+      "validUntil": "2027-01-01T00:00:00+05:30"
+    }
+  ],
+  "lookupExamples": [
+    {
+      "query": "gj 05 ds 4821",
+      "locationId": "loc-main",
+      "expectedGatePassIds": [
+        "pass-01"
+      ],
+      "description": "Normalised car-number lookup supplies Ramesh Kumar, Logistics, contractor and Car type after selection."
+    },
+    {
+      "query": "MH12RT7306",
+      "locationId": "loc-dispatch",
+      "expectedGatePassIds": [
+        "pass-02",
+        "pass-06"
+      ],
+      "description": "Two drivers share this truck; marshal chooses the current driver/gate pass, not the first result automatically."
+    },
+    {
+      "query": "GJ05JP6207",
+      "locationId": "loc-main",
+      "expectedGatePassIds": [
+        "pass-10"
+      ],
+      "description": "Kavita Joshi has a gate pass but no previous challans; lookup must work without violation history."
+    }
+  ],
+  "challans": [
+    {
+      "id": "demo-challan-001",
+      "demoNumber": "HZL/EC/2026/0001",
+      "issuedAt": "2026-06-23T10:00:00+05:30",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Seat belt not worn at the main gate; driver acknowledged the warning.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-002",
+      "demoNumber": "HZL/EC/2026/0002",
+      "issuedAt": "2026-08-22T10:00:00+05:30",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Second seat-belt violation for the same vehicle; safety counselling completed.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-003",
+      "demoNumber": "HZL/EC/2026/0003",
+      "issuedAt": "2026-09-24T10:00:00+05:30",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Mobile phone use observed near Gate 1; kept under review.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-004",
+      "demoNumber": "HZL/EC/2026/0004",
+      "issuedAt": "2026-09-28T09:20:00+05:30",
+      "driverId": "driver-02",
+      "vehicleId": "vehicle-02",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed",
+        "violation-phone"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Speeding and mobile-phone use recorded on the dispatch route.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-005",
+      "demoNumber": "HZL/EC/2026/0005",
+      "issuedAt": "2026-09-29T15:30:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Vehicle driven against the designated route; driver declined to sign, supervisor witnessed.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "refused",
+        "assetsAvailable": false
+      },
+      "refusal": {
+        "reason": "Driver declined to sign the acknowledgement.",
+        "witnessStaffId": "staff-supervisor-dispatch",
+        "witnessName": "Farah Ansari",
+        "witnessEmployeeId": "EMP-2284"
+      }
+    },
+    {
+      "id": "demo-challan-006",
+      "demoNumber": "HZL/EC/2026/0006",
+      "issuedAt": "2026-09-30T08:40:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Parked in a restricted area near the main gate; warning issued.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-007",
+      "demoNumber": "HZL/EC/2026/0007",
+      "issuedAt": "2026-09-30T11:10:00+05:30",
+      "driverId": "driver-05",
+      "vehicleId": "vehicle-05",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Seat-belt violation cancelled after gate-pass review.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-008",
+      "demoNumber": "HZL/EC/2026/0009",
+      "issuedAt": "2026-10-01T08:15:00+05:30",
+      "driverId": "driver-06",
+      "vehicleId": "vehicle-02",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Seat-belt violation recorded during the morning shift.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-009",
+      "demoNumber": "HZL/EC/2026/0010",
+      "issuedAt": "2026-10-01T08:50:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Other violation recorded with explanatory remarks.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-010",
+      "demoNumber": "HZL/EC/2026/0011",
+      "issuedAt": "2026-10-01T09:10:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Restricted parking at the main entrance.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-011",
+      "demoNumber": "HZL/EC/2026/0008",
+      "issuedAt": "2026-09-20T10:45:00+05:30",
+      "driverId": "driver-08",
+      "vehicleId": "vehicle-08",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-retired"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical parking violation; the contractor master was later deactivated.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-012",
+      "demoNumber": "HZL/EC/2026/0012",
+      "issuedAt": "2026-10-01T10:30:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Repeat seat-belt violation; refusal witnessed by the supervisor.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "refused",
+        "assetsAvailable": false
+      },
+      "refusal": {
+        "reason": "Driver declined to sign after viewing the summary.",
+        "witnessStaffId": "staff-supervisor-main",
+        "witnessName": "Sunil Deshmukh",
+        "witnessEmployeeId": "EMP-2217"
+      }
+    },
+    {
+      "id": "demo-challan-013",
+      "demoNumber": "HZL/EC/2026/0013",
+      "issuedAt": "2026-10-01T11:50:00+05:30",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Seat-belt violation recorded ten minutes before the follow-up entry.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-014",
+      "demoNumber": "HZL/EC/2026/0014",
+      "issuedAt": "2026-10-01T11:58:00+05:30",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Restricted parking on the dispatch route; repeat within the current window.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    }
+  ],
+  "demoScenarios": [
+    {
+      "id": "repeat-history",
+      "description": "Same car and gate pass have multiple recent records plus one outside 90 days; prescribed action awaits D5.",
+      "driverId": "driver-01",
+      "vehicleId": "vehicle-01",
+      "challanIds": [
+        "demo-challan-001",
+        "demo-challan-002",
+        "demo-challan-003",
+        "demo-challan-013",
+        "demo-challan-014"
+      ]
+    },
+    {
+      "id": "same-car-warning",
+      "description": "At referenceNow, vehicle-01 at gate-01 has a record ten minutes earlier; demonstrate warning and acknowledgement.",
+      "vehicleId": "vehicle-01",
+      "gateId": "gate-01",
+      "challanIds": [
+        "demo-challan-013"
+      ]
+    },
+    {
+      "id": "shared-vehicle",
+      "description": "Two drivers use MH12RT7306; separate gate passes must remain separate identities.",
+      "driverIds": [
+        "driver-02",
+        "driver-06"
+      ],
+      "vehicleId": "vehicle-02",
+      "challanIds": [
+        "demo-challan-004",
+        "demo-challan-008"
+      ]
+    },
+    {
+      "id": "same-name",
+      "description": "Two Ramesh Kumar records with different gate passes must not be automatically merged.",
+      "driverIds": [
+        "driver-01",
+        "driver-09"
+      ],
+      "challanIds": [
+        "demo-challan-003",
+        "demo-challan-010"
+      ]
+    },
+    {
+      "id": "signature-refusal",
+      "description": "Refusal reason and supervisor witness name/ID present at each location.",
+      "challanIds": [
+        "demo-challan-005",
+        "demo-challan-012"
+      ]
+    },
+    {
+      "id": "multi-select-and-four-photos",
+      "description": "Two violations and the maximum four photos; no invented aggregate severity rule.",
+      "challanIds": [
+        "demo-challan-004"
+      ]
+    },
+    {
+      "id": "historical-inactive-master",
+      "description": "Historical record retains references to deactivated masters; exclude them from new-entry options.",
+      "challanIds": [
+        "demo-challan-011"
+      ]
+    },
+    {
+      "id": "other-with-remarks",
+      "description": "Other selection includes explanatory remarks.",
+      "challanIds": [
+        "demo-challan-009"
+      ]
+    },
+    {
+      "id": "gate-pass-without-challans",
+      "description": "Car-number lookup finds Kavita Joshi's gate pass even though no challan exists.",
+      "driverId": "driver-10",
+      "vehicleId": "vehicle-09",
+      "challanIds": []
+    }
+  ]
+}

@@ -381,8 +381,9 @@ with all 3 roles", followed by the owner selecting "One login, redirect by role"
 - The handoff is a short-lived, signed, single-use code carried in the URL
   fragment. It is not a session token, is never accepted as one, and revokes the
   source session when exchanged. Tokens remain opaque and server-side.
-- In the deployed tablet build, anonymous visits redirect to the admin sign-in
-  page. Local development and component tests retain the tablet form.
+- In deployed and local-development builds, anonymous tablet visits redirect to
+  the admin sign-in page, so there is one user-facing sign-in screen. Component
+  tests retain the tablet form only as a rendering seam.
 - This intentionally supersedes the earlier R1 expectation that the admin and
   tablet surfaces refuse and revoke the other role's session. Acceptance tests
   were revised for the new owner-approved behaviour; no other authentication rule
@@ -393,3 +394,10 @@ with all 3 roles", followed by the owner selecting "One login, redirect by role"
 
 Affected cases: AUTH-01, AUTH-02, F-02 login surfaces. Independent review remains
 required.
+
+**Single-origin production — 2026-10-24.** Production now serves the dashboard
+and sign-in at `/` and the marshal tablet at `/tablet/` on one HTTPS origin. The
+admin Nginx container is the public gateway; the tablet container is internal.
+The root manifest and service worker cover both routes, so there is one installable
+PWA, and the handoff remains same-origin. Local development keeps two Vite ports.
+Affected cases: AUTH-01/AUTH-02, DEMO-01/DEMO-02 and the login/PWA surfaces.

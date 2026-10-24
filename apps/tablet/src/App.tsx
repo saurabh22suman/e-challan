@@ -8,7 +8,13 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { AppThemeProvider, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import {
+  AppThemeProvider,
+  PwaInstallPrompt,
+  SPACING,
+  TOUCH_TARGET_MIN,
+  tokens,
+} from '@echallan/theme';
 import LoginScreen from './routes/LoginScreen';
 import HandoffToAdmin, {
   RedirectToDashboardLogin,
@@ -32,6 +38,7 @@ const EntryFlow = lazy(() => import('./routes/EntryFlow'));
  */
 const HIGH_CONTRAST_KEY = 'echallan.tablet.high-contrast';
 const DRIVER_LANGUAGE_KEY = 'echallan.tablet.driver-language';
+const ROUTER_BASE = import.meta.env.BASE_URL.replace(/\/$/u, '');
 
 function readHighContrast(): boolean {
   try {
@@ -65,7 +72,7 @@ export default function App() {
 
   return (
     <AppThemeProvider surface="tablet" highContrast={highContrast}>
-      <BrowserRouter>
+      <BrowserRouter basename={ROUTER_BASE}>
         <SessionProvider>
           <SessionGate
             highContrast={highContrast}
@@ -131,9 +138,10 @@ function SessionGate({
     );
   }
 
-  // A production tablet build sends anonymous visitors to the one dashboard
-  // sign-in page. Local development and component tests keep the tablet form so
-  // the field bundle remains independently runnable.
+  // The tablet has no user-facing login form: anonymous visitors always go to
+  // the one dashboard sign-in page. Component tests keep the form as a rendering
+  // seam, and a misconfigured production build fails visibly instead of silently
+  // showing a second login surface.
   if (dashboardConfigured) {
     return (
       <Box
@@ -148,6 +156,31 @@ function SessionGate({
         }}
       >
         <RedirectToDashboardLogin />
+      </Box>
+    );
+  }
+
+  if (import.meta.env.MODE !== 'test') {
+    return (
+      <Box
+        component="main"
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: tokens.canvas,
+          px: SPACING.lg,
+        }}
+      >
+        <Stack spacing={SPACING.sm} sx={{ maxWidth: 520 }}>
+          <Typography component="h1" variant="h2">
+            Sign-in page unavailable
+          </Typography>
+          <Typography variant="body1" sx={{ color: tokens.muted }}>
+            The dashboard sign-in address is not configured for this tablet build.
+          </Typography>
+        </Stack>
       </Box>
     );
   }
@@ -259,6 +292,7 @@ function TabletShell({
         </Toolbar>
       </AppBar>
       <SyncStatusBar />
+      <PwaInstallPrompt />
 
       <Container component="main" maxWidth={false} sx={{ py: 0, px: 0 }}>
         <Suspense

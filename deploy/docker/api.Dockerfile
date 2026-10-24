@@ -31,6 +31,7 @@ WORKDIR /app
 # the workspace root and demo fixture path by walking up to pnpm-workspace.yaml.
 COPY --from=build /prod/api /app/apps/api
 COPY --from=build /app/docs/demo-data.json /app/docs/demo-data.json
+COPY --from=build /app/docs/deployment-data.json /app/docs/deployment-data.json
 RUN printf 'packages:\n  - apps/*\n' > /app/pnpm-workspace.yaml \
   && mkdir -p /data/evidence \
   && chown -R node:node /data
