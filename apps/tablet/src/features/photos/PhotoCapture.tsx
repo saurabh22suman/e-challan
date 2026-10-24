@@ -408,13 +408,16 @@ export default function PhotoCapture({
         )}
       </Box>
       {streaming && (
-        <Stack direction="row" spacing={SPACING.md}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
           <Button
             variant="contained"
             data-testid="photo-capture-button"
             onClick={() => void handleCapture()}
             disabled={captureDisabled}
-            sx={{ minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction }}
+            sx={{
+              width: { xs: '100%', sm: 'auto' },
+              minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction,
+            }}
           >
             {wouldExceedPhotoLimit(store)
               ? `Maximum ${MAX_PHOTOS} photos`
@@ -425,7 +428,10 @@ export default function PhotoCapture({
           <Button
             variant="outlined"
             onClick={stopCamera}
-            sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+            sx={{
+              width: { xs: '100%', sm: 'auto' },
+              minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
+            }}
             data-testid="photo-stop-camera"
           >
             Stop camera

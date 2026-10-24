@@ -1381,10 +1381,15 @@ export default function EntryFlow({
                     <Typography variant="caption" sx={{ color: tokens.muted }}>
                       Tap a recent vehicle to fill the known details. Everything stays editable.
                     </Typography>
-                    <Stack
-                      direction="row"
-                      spacing={SPACING.md}
-                      sx={{ flexWrap: 'wrap', gap: SPACING.sm }}
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                          xs: '1fr',
+                          sm: 'repeat(auto-fit, minmax(190px, 1fr))',
+                        },
+                        gap: SPACING.sm,
+                      }}
                     >
                       {recentMatches.map((match) => (
                         <Button
@@ -1392,25 +1397,40 @@ export default function EntryFlow({
                           variant="outlined"
                           onClick={() => chooseMatch(match)}
                           sx={{
+                            width: '100%',
                             minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
                             justifyContent: 'flex-start',
                             textAlign: 'left',
+                            whiteSpace: 'normal',
+                            py: SPACING.sm,
                           }}
                         >
-                          <Stack sx={{ alignItems: 'flex-start' }}>
+                          <Stack sx={{ alignItems: 'flex-start', minWidth: 0, width: '100%' }}>
                             <Typography
                               variant="body2"
-                              sx={{ fontFamily: FONT_MONO, fontWeight: 700 }}
+                              sx={{
+                                fontFamily: FONT_MONO,
+                                fontWeight: 700,
+                                overflowWrap: 'anywhere',
+                              }}
                             >
                               {match.vehicleRegistrationNumber}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: tokens.muted }}>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: tokens.muted,
+                                whiteSpace: 'normal',
+                                overflowWrap: 'anywhere',
+                                textAlign: 'left',
+                              }}
+                            >
                               {match.driverName} · {match.gatePassNumber}
                             </Typography>
                           </Stack>
                         </Button>
                       ))}
-                    </Stack>
+                    </Box>
                   </Stack>
                 )}
                 <VehiclePicker
@@ -1583,6 +1603,7 @@ export default function EntryFlow({
                 disabled={reviewing}
                 data-testid="check-details"
                 sx={{
+                  width: { xs: '100%', sm: 'auto' },
                   minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction,
                   px: SPACING.xl,
                 }}
@@ -1662,11 +1683,14 @@ export default function EntryFlow({
                     {refusal.value.witnessStaffId}).
                   </Notice>
                 )}
-                <Stack direction="row" spacing={SPACING.md}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
                   <Button
                     variant="outlined"
                     onClick={() => setStep('form')}
-                    sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+                    sx={{
+                      width: { xs: '100%', sm: 'auto' },
+                      minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
+                    }}
                   >
                     Change details
                   </Button>
@@ -1674,7 +1698,10 @@ export default function EntryFlow({
                     variant="contained"
                     onClick={() => setStep('signature')}
                     disabled={preview === null}
-                    sx={{ minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction }}
+                    sx={{
+                      width: { xs: '100%', sm: 'auto' },
+                      minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction,
+                    }}
                   >
                     Continue to photos
                   </Button>
@@ -1711,18 +1738,24 @@ export default function EntryFlow({
                     onInvalidate={handleInvalidateMedia}
                   />
                 </Suspense>
-                <Stack direction="row" spacing={SPACING.md}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
                   <Button
                     variant="outlined"
                     onClick={() => setStep('refusal')}
-                    sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+                    sx={{
+                      width: { xs: '100%', sm: 'auto' },
+                      minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
+                    }}
                   >
                     Driver refuses to sign
                   </Button>
                   <Button
                     variant="outlined"
                     onClick={() => setStep('summary')}
-                    sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+                    sx={{
+                      width: { xs: '100%', sm: 'auto' },
+                      minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
+                    }}
                   >
                     Back to summary
                   </Button>
@@ -2027,7 +2060,11 @@ function SuggestionList({
           onClick={() => onChoose(match)}
           sx={{
             justifyContent: 'flex-start',
+            textAlign: 'left',
+            whiteSpace: 'normal',
+            lineHeight: 1.35,
             minHeight: TOUCH_TARGET_MIN.tabletDropdownRow,
+            py: SPACING.sm,
           }}
         >
           {`${match.driverName} — ${match.gatePassNumber} — ${match.vehicleRegistrationNumber}`}
