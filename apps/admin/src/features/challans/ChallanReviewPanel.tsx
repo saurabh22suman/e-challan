@@ -9,7 +9,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -37,7 +36,15 @@ import type {
   Role,
   Severity,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusChip, tokens } from '@echallan/theme';
+import {
+  challanStatusKind,
+  Notice,
+  SPACING,
+  StatusBadge,
+  ToneDialogTitle,
+  tokens,
+  useToast,
+} from '@echallan/theme';
 import {
   exportChallanReport,
   getChallanReport,
@@ -147,6 +154,7 @@ function Metric({ label, value, accent }: { label: string; value: number; accent
 }
 
 export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelProps) {
+  const { showToast } = useToast();
   const { challanId } = useParams();
   const navigate = useNavigate();
   const compact = useMediaQuery('(max-width:1199.95px)');
@@ -159,7 +167,6 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
   const [report, setReport] = useState<ChallanReportResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(challanId ?? null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -284,7 +291,6 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
   const setFilter = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters((previous) => ({ ...previous, [key]: value }));
     setSelectedView('');
-    setNotice(null);
   };
 
   const toggleSort = (field: SortField) => {
@@ -299,7 +305,6 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
 
   const download = async () => {
     setExporting(true);
-    setNotice(null);
     try {
       const { blob, filename } = await exportChallanReport(token, query);
       const url = URL.createObjectURL(blob);
@@ -310,7 +315,11 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
       anchor.click();
       anchor.remove();
       URL.revokeObjectURL(url);
-      setNotice('Export started. The export is recorded in the audit trail.');
+      showToast({
+        tone: 'success',
+        title: 'Export started',
+        description: 'The export is recorded in the audit trail.',
+      });
     } catch (failure) {
       setError(
         failure instanceof OperationsApiError
@@ -363,7 +372,11 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
     setSaveViewOpen(false);
     setViewName('');
     setViewError(null);
-    setNotice(`Saved view “${name}”.`);
+    showToast({
+      tone: 'success',
+      title: 'View saved',
+      description: `“${name}” is saved in this browser.`,
+    });
   };
 
   const activeChips: Array<{ key: string; label: string; clear: () => void }> = [];
@@ -753,11 +766,6 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
               </Button>
             </Stack>
 
-            {notice !== null && (
-              <Notice severity="success" role="status">
-                {notice}
-              </Notice>
-            )}
             {error !== null && (
               <Notice severity="error" role="status">
                 <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
@@ -820,7 +828,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                                 {item.locationLabel}
                               </Typography>
                             </Box>
-                            <StatusChip label={item.status} />
+                            <StatusBadge status={challanStatusKind(item.status)} />
                           </Stack>
                           <Box
                             sx={{
@@ -950,7 +958,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                             <TableCell>{item.locationLabel}</TableCell>
                             <TableCell>{item.severity}</TableCell>
                             <TableCell>
-                              <StatusChip label={item.status} />
+                              <StatusBadge status={challanStatusKind(item.status)} />
                             </TableCell>
                             <TableCell sx={{ color: tokens.muted, whiteSpace: 'nowrap' }}>
                               {formatIssuedAt(item.issuedAt)}
@@ -1007,9 +1015,9 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
         maxWidth="xs"
         aria-labelledby="save-view-title"
       >
-        <DialogTitle id="save-view-title" component="h2">
+        <ToneDialogTitle id="save-view-title" component="h2">
           Save current view
-        </DialogTitle>
+        </ToneDialogTitle>
         <DialogContent dividers>
           <TextField
             autoFocus

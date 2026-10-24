@@ -14,7 +14,7 @@ import {
   wouldExceedPhotoLimit,
   type PhotoCapture,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusChip, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { Notice, SPACING, StatusBadge, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
 import { encodeJpegToBudget } from './encoder.js';
 
 /**
@@ -338,7 +338,7 @@ export default function PhotoCapture({
         <Typography component="h2" variant="h2">
           Evidence photos
         </Typography>
-        <StatusChip label={`${store.acceptedCount} of ${MAX_PHOTOS} captured`} />
+        <StatusBadge label={`${store.acceptedCount} of ${MAX_PHOTOS} captured`} tone="info" />
       </Stack>
       {failure !== null && (
         <Notice severity="error" role="alert">

@@ -237,3 +237,52 @@ export const ChallanReportResponseSchema = z.strictObject({
   totals: ChallanReportTotalsSchema,
 });
 export type ChallanReportResponse = z.infer<typeof ChallanReportResponseSchema>;
+
+/* -------------------------------------------------------------------------- */
+/* Challan trend reporting                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Event-count trend for the Supervisor/Admin Trend tab (design section 8).
+ *
+ * Dates are Asia/Kolkata calendar dates. `issued` counts issuance events;
+ * `resolved`/`cancelled` count distinct challans whose review action happened in
+ * the bucket. They are event counts, not current-status backlog counts.
+ */
+export const CHALLAN_TREND_GRANULARITIES = ['day', 'week'] as const;
+export const ChallanTrendGranularitySchema = z.enum(CHALLAN_TREND_GRANULARITIES);
+export type ChallanTrendGranularity = z.infer<typeof ChallanTrendGranularitySchema>;
+
+/** Server-side trend query. Omitted dates default to the last 30 inclusive days. */
+export const ChallanTrendQuerySchema = z.strictObject({
+  from: z.iso.date().optional(),
+  to: z.iso.date().optional(),
+  granularity: ChallanTrendGranularitySchema.default('day'),
+  locationId: z.uuid().optional(),
+});
+export type ChallanTrendQuery = z.infer<typeof ChallanTrendQuerySchema>;
+
+export const ChallanTrendPointSchema = z.strictObject({
+  bucketStart: z.iso.date(),
+  issued: z.number().int().min(0),
+  resolved: z.number().int().min(0),
+  cancelled: z.number().int().min(0),
+});
+export type ChallanTrendPoint = z.infer<typeof ChallanTrendPointSchema>;
+
+export const ChallanTrendTotalsSchema = z.strictObject({
+  issued: z.number().int().min(0),
+  resolved: z.number().int().min(0),
+  cancelled: z.number().int().min(0),
+});
+export type ChallanTrendTotals = z.infer<typeof ChallanTrendTotalsSchema>;
+
+export const ChallanTrendResponseSchema = z.strictObject({
+  timezone: z.literal('Asia/Kolkata'),
+  granularity: ChallanTrendGranularitySchema,
+  from: z.iso.date(),
+  to: z.iso.date(),
+  points: z.array(ChallanTrendPointSchema),
+  totals: ChallanTrendTotalsSchema,
+});
+export type ChallanTrendResponse = z.infer<typeof ChallanTrendResponseSchema>;

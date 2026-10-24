@@ -4,7 +4,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -19,7 +18,17 @@ import {
   type ResolutionActionCode,
   type Role,
 } from '@echallan/contracts';
-import { ErrorSummary, Notice, SeverityChip, SPACING, StatusChip, tokens } from '@echallan/theme';
+import {
+  challanStatusKind,
+  ErrorSummary,
+  Notice,
+  SeverityChip,
+  SPACING,
+  StatusBadge,
+  ToneDialogTitle,
+  tokens,
+  useToast,
+} from '@echallan/theme';
 import { getChallan, OperationsApiError, transitionChallan } from '../../api/operations';
 import ChallanEvidencePanel from './ChallanEvidencePanel';
 
@@ -89,6 +98,7 @@ export default function ChallanDetailDialog({
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [errorNonce, setErrorNonce] = useState(0);
+  const { showToast } = useToast();
 
   const open = challanId !== null;
 
@@ -139,6 +149,31 @@ export default function ChallanDetailDialog({
       const updated = await transitionChallan(token, challanId, transition);
       setDetail(updated);
       onChanged();
+      if (transition.to === 'Resolved') {
+        showToast({
+          tone: 'success',
+          title: 'Challan resolved',
+          description: 'The action taken and remarks were recorded.',
+        });
+      } else if (transition.to === 'Cancelled') {
+        showToast({
+          tone: 'success',
+          title: 'Challan cancelled',
+          description: 'The cancellation reason was recorded and the record is retained.',
+        });
+      } else if ('reason' in transition && transition.reason !== undefined) {
+        showToast({
+          tone: 'success',
+          title: 'Challan reopened',
+          description: 'The reopening reason was recorded. The challan is under review again.',
+        });
+      } else {
+        showToast({
+          tone: 'success',
+          title: 'Review started',
+          description: 'The challan is now under review.',
+        });
+      }
     } catch (failure) {
       setActionError(
         failure instanceof OperationsApiError ? failure.message : 'The review could not be saved.',
@@ -211,9 +246,9 @@ export default function ChallanDetailDialog({
       maxWidth="md"
       aria-labelledby="challan-detail-title"
     >
-      <DialogTitle id="challan-detail-title" component="h2">
+      <ToneDialogTitle id="challan-detail-title" component="h2">
         Challan details
-      </DialogTitle>
+      </ToneDialogTitle>
       <DialogContent dividers>
         {loading && <CircularProgress aria-label="Loading challan" />}
         {error !== null && (
@@ -224,7 +259,7 @@ export default function ChallanDetailDialog({
         {detail !== null && (
           <Stack spacing={SPACING.lg}>
             <Stack direction="row" spacing={SPACING.sm} sx={{ alignItems: 'center' }}>
-              <StatusChip label={detail.status} />
+              <StatusBadge status={challanStatusKind(detail.status)} />
               <SeverityChip severity={detail.severity} />
               <Typography variant="body2" sx={{ color: tokens.muted }}>
                 {detail.challanNumber}
@@ -304,18 +339,32 @@ export default function ChallanDetailDialog({
                 sx={{ margin: 0, paddingLeft: SPACING.lg }}
               >
                 <li>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    Issued — {formatInstant(detail.issuedAt)}
-                  </Typography>
+                  <Stack
+                    direction="row"
+                    spacing={SPACING.sm}
+                    sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+                  >
+                    <StatusBadge status="issued" />
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      — {formatInstant(detail.issuedAt)}
+                    </Typography>
+                  </Stack>
                   <Typography variant="body2">
                     Issued by {detail.issuedBy.displayName} ({detail.issuedBy.username})
                   </Typography>
                 </li>
                 {history.map((entry) => (
                   <li key={entry.id}>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                      {entry.toStatus} — {formatInstant(entry.createdAt)}
-                    </Typography>
+                    <Stack
+                      direction="row"
+                      spacing={SPACING.sm}
+                      sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+                    >
+                      <StatusBadge status={challanStatusKind(entry.toStatus)} />
+                      <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        — {formatInstant(entry.createdAt)}
+                      </Typography>
+                    </Stack>
                     {entry.action !== null && (
                       <Typography variant="body2">
                         Action: {RESOLUTION_ACTION_LABELS[entry.action]}

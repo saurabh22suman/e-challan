@@ -20,12 +20,15 @@ const ACCOUNTS = JSON.parse(
   ),
 ) as { admin: { username: string; password: string } };
 
-async function expectDialogMatchesCardChrome(
+async function expectDialogTone(
   page: Page,
   dialog: ReturnType<Page['getByRole']>,
+  tone: 'default' | 'danger',
 ): Promise<void> {
   const card = page.locator('.MuiCardHeader-root').first();
   const title = dialog.locator('.MuiDialogTitle-root');
+  await expect(title).toHaveAttribute('data-tone', tone);
+
   const [cardChrome, dialogChrome] = await Promise.all([
     card.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -36,8 +39,15 @@ async function expectDialogMatchesCardChrome(
       return { background: style.backgroundColor, color: style.color };
     }),
   ]);
-  expect(dialogChrome.background).toBe(cardChrome.background);
-  expect(dialogChrome.color).toBe(cardChrome.color);
+
+  // A normal dialog keeps the accepted blue card chrome. A destructive dialog
+  // must be visibly different before the user reaches its confirm button.
+  expect(dialogChrome.color).toBe('rgb(255, 255, 255)');
+  if (tone === 'default') {
+    expect(dialogChrome.background).toBe(cardChrome.background);
+  } else {
+    expect(dialogChrome.background).not.toBe(cardChrome.background);
+  }
 }
 
 async function signIn(page: Page): Promise<void> {
@@ -57,7 +67,7 @@ test('Admin creates, deactivates and reactivates a Supervisor through the UI', a
 
   await page.getByRole('button', { name: 'Create user' }).click();
   const create = page.getByRole('dialog', { name: /create user/i });
-  await expectDialogMatchesCardChrome(page, create);
+  await expectDialogTone(page, create, 'default');
   await create.getByLabel(/^username/i).fill(username);
   await create.getByLabel(/^display name/i).fill('E2E Supervisor');
   await create.getByLabel(/employee id/i).fill('E2E-EMP');
@@ -84,7 +94,7 @@ test('Admin creates, deactivates and reactivates a Supervisor through the UI', a
 
   await page.getByRole('button', { name: `Deactivate ${username}` }).click();
   const confirm = page.getByRole('dialog', { name: /deactivate user/i });
-  await expectDialogMatchesCardChrome(page, confirm);
+  await expectDialogTone(page, confirm, 'danger');
   await expect(confirm.getByText(/retained/i)).toBeVisible();
   await confirm.getByRole('button', { name: 'Deactivate user' }).click();
 

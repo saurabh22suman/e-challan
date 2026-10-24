@@ -51,10 +51,11 @@ import {
   ErrorSummary,
   FONT_MONO,
   FormSection,
+  challanStatusKind,
   Notice,
   SeverityChip,
   SPACING,
-  StatusChip,
+  StatusBadge,
   TOUCH_TARGET_MIN,
   tokens,
 } from '@echallan/theme';
@@ -1111,7 +1112,10 @@ export default function EntryFlow({
               </Box>
               <Box component="dl" sx={{ margin: 0 }}>
                 <SummaryRow label={copy.status}>
-                  <StatusChip label={copy.statusValues[issued.status]} />
+                  <StatusBadge
+                    status={challanStatusKind(issued.status)}
+                    label={copy.statusValues[issued.status]}
+                  />
                 </SummaryRow>
                 <SummaryRow label={copy.driver}>{draft.driverName}</SummaryRow>
                 <SummaryRow label={copy.vehicle} mono>
@@ -1635,7 +1639,9 @@ export default function EntryFlow({
                         severity={preview?.severity ?? derivedSeverity ?? 'Minor'}
                         label={copy.severityValues[preview?.severity ?? derivedSeverity ?? 'Minor']}
                       />
-                      {vehicleMode === 'new' && <StatusChip label={copy.manualEntry} />}
+                      {vehicleMode === 'new' && (
+                        <StatusBadge label={copy.manualEntry} tone="info" />
+                      )}
                     </Box>
                   </SummaryRow>
                   <SummaryRow label={copy.locationShift}>

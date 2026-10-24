@@ -612,6 +612,7 @@ async function seedChallans(
             remarks: resolutionNote,
             performerUserId: deterministicUuid(`staff:${shift?.supervisorId ?? ''}`),
             demoSourceId: row.id,
+            createdAt: new Date(new Date(row.issuedAt).getTime() + 2 * 60 * 60 * 1000),
           };
         }),
       )
@@ -632,6 +633,7 @@ async function seedChallans(
           reason: cancellationNote,
           performerUserId: deterministicUuid(`staff:staff-admin`),
           demoSourceId: row.id,
+          createdAt: new Date(new Date(row.issuedAt).getTime() + 30 * 60 * 1000),
         })),
       )
       .onConflictDoNothing();

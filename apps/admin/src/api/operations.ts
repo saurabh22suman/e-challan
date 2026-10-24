@@ -7,6 +7,8 @@ import {
   ChallanListResponseSchema,
   ChallanReportQuerySchema,
   ChallanReportResponseSchema,
+  ChallanTrendQuerySchema,
+  ChallanTrendResponseSchema,
   CreateUserRequestSchema,
   MasterListResponseSchema,
   MasterResponseSchema,
@@ -18,6 +20,8 @@ import {
   type ChallanEvidenceResponse,
   type ChallanReportQuery,
   type ChallanReportResponse,
+  type ChallanTrendQuery,
+  type ChallanTrendResponse,
   type ChallanStatus,
   type ChallanSummary,
   type CreateUserRequest,
@@ -128,6 +132,18 @@ export async function getChallanReport(
 ): Promise<ChallanReportResponse> {
   const search = reportQueryString(query);
   return request(`/challans/report?${search}`, token, ChallanReportResponseSchema);
+}
+
+export async function getChallanTrend(
+  token: string,
+  query: Partial<ChallanTrendQuery> = {},
+): Promise<ChallanTrendResponse> {
+  const parsed = ChallanTrendQuerySchema.parse(query);
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(parsed)) {
+    if (value !== undefined) search.set(key, String(value));
+  }
+  return request(`/challans/report/trend?${search.toString()}`, token, ChallanTrendResponseSchema);
 }
 
 export async function exportChallanReport(

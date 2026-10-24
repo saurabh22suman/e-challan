@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { test, expect, type Page } from '@playwright/test';
 
 /**
@@ -21,6 +24,16 @@ import { test, expect, type Page } from '@playwright/test';
  * `PHOTO_BYTES_HARD_MAX = 800 * 1024`); they are duplicated here because the
  * root e2e TypeScript project does not resolve the workspace package.
  */
+
+const ACCOUNTS = JSON.parse(
+  readFileSync(
+    path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      '../../../tests/fixtures/f02-demo-credentials.json',
+    ),
+    'utf8',
+  ),
+) as { marshal: { username: string; password: string } };
 
 const PHOTO_BYTES_TARGET = 300 * 1024;
 const PHOTO_BYTES_HARD_MAX = 800 * 1024;
@@ -150,6 +163,16 @@ async function encodeSynthetic(
 
 test.describe('E-02 decoded synthetic-image acceptance', () => {
   test.beforeEach(async ({ page }) => {
+    // The single sign-in flow redirects an anonymous tablet visit to the admin
+    // origin. This harness needs the tablet module URL, so seed a real session
+    // before navigating and keep the page on the tablet Vite server.
+    const login = await page.request.post('/api/auth/login', { data: ACCOUNTS.marshal });
+    expect(login.status()).toBe(200);
+    const { token } = (await login.json()) as { token: string };
+    await page.addInitScript(([key, value]) => window.localStorage.setItem(key, value), [
+      'echallan.tablet.session-token',
+      token,
+    ] as const);
     await page.goto('/');
     await expect(page.locator('#root')).toBeAttached();
   });

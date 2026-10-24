@@ -9,7 +9,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -32,7 +31,7 @@ import {
   type ResolutionActionCode,
   type Severity,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusChip, tokens } from '@echallan/theme';
+import { Notice, SPACING, StatusBadge, ToneDialogTitle, tokens, useToast } from '@echallan/theme';
 import {
   deactivateMaster,
   listAdminMasters,
@@ -76,12 +75,12 @@ function emptyEdit(): EditState {
 }
 
 export default function MasterDataPanel({ token }: { token: string }) {
+  const { showToast } = useToast();
   const [kind, setKind] = useState<MasterKind>('violation-types');
   const [masters, setMasters] = useState<MasterRecord[]>([]);
   const [locations, setLocations] = useState<MasterRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   const [edit, setEdit] = useState<EditState | null>(null);
   const [deactivating, setDeactivating] = useState<MasterRecord | null>(null);
   const [actionFailure, setActionFailure] = useState<string | null>(null);
@@ -159,7 +158,11 @@ export default function MasterDataPanel({ token }: { token: string }) {
       const count = selectedMasters.length;
       setBulkOpen(false);
       setSelectedIds(new Set());
-      setNotice(`${count} master entr${count === 1 ? 'y' : 'ies'} deactivated.`);
+      showToast({
+        tone: 'success',
+        title: 'Master entries deactivated',
+        description: `${count} master entr${count === 1 ? 'y' : 'ies'} removed from selectors. Historical challans keep their snapshots.`,
+      });
       setReloadKey((value) => value + 1);
     } catch (failure) {
       setBulkFailure(
@@ -179,7 +182,6 @@ export default function MasterDataPanel({ token }: { token: string }) {
 
   const startEdit = (master: MasterRecord) => {
     setActionFailure(null);
-    setNotice(null);
     setEdit({
       mode: 'edit',
       target: master,
@@ -226,8 +228,15 @@ export default function MasterDataPanel({ token }: { token: string }) {
       edit.mode === 'edit' && edit.target !== null ? edit.target.id : undefined,
     )
       .then(() => {
+        const created = edit.mode === 'create';
         setEdit(null);
-        setNotice(edit.mode === 'create' ? 'Master entry created.' : 'Master entry updated.');
+        showToast({
+          tone: 'success',
+          title: created ? 'Master entry created' : 'Master entry updated',
+          description: created
+            ? 'The entry is now available in the controlled selectors.'
+            : 'The entry was saved and is used by new records.',
+        });
         setReloadKey((value) => value + 1);
       })
       .catch((failure: unknown) => {
@@ -252,7 +261,11 @@ export default function MasterDataPanel({ token }: { token: string }) {
     setActionFailure(null);
     deactivateMaster(token, kind, deactivating.id)
       .then(() => {
-        setNotice(`Deactivated ${deactivating.label}. Historical challans retain their snapshots.`);
+        showToast({
+          tone: 'success',
+          title: 'Master entry deactivated',
+          description: `${deactivating.label} was removed from selectors. Historical challans keep their snapshots.`,
+        });
         setDeactivating(null);
         setReloadKey((value) => value + 1);
       })
@@ -321,7 +334,6 @@ export default function MasterDataPanel({ token }: { token: string }) {
               value={kind}
               onChange={(event) => {
                 setKind(event.target.value as MasterKind);
-                setNotice(null);
                 setError(null);
               }}
               sx={{ minWidth: 260 }}
@@ -364,11 +376,6 @@ export default function MasterDataPanel({ token }: { token: string }) {
             )}
           </Stack>
 
-          {notice !== null && (
-            <Notice severity="success" role="status">
-              {notice}
-            </Notice>
-          )}
           {error !== null && (
             <Notice severity="error" role="status">
               {error}
@@ -416,7 +423,11 @@ export default function MasterDataPanel({ token }: { token: string }) {
                           {master.label}
                         </Typography>
                       </Stack>
-                      <StatusChip label={master.isActive ? 'Active' : 'Inactive'} />
+                      {master.isActive ? (
+                        <StatusBadge status="active" />
+                      ) : (
+                        <StatusBadge status="deactivated" label="Inactive" />
+                      )}
                     </Stack>
                     <Typography variant="caption" sx={{ color: tokens.muted }}>
                       {detailText(master)}
@@ -473,7 +484,11 @@ export default function MasterDataPanel({ token }: { token: string }) {
                       </TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>{master.label}</TableCell>
                       <TableCell>
-                        <StatusChip label={master.isActive ? 'Active' : 'Inactive'} />
+                        {master.isActive ? (
+                          <StatusBadge status="active" />
+                        ) : (
+                          <StatusBadge status="deactivated" label="Inactive" />
+                        )}
                       </TableCell>
                       <TableCell sx={{ color: tokens.muted }}>{detailText(master)}</TableCell>
                       <TableCell align="right">{renderActions(master)}</TableCell>
@@ -494,9 +509,9 @@ export default function MasterDataPanel({ token }: { token: string }) {
           maxWidth="sm"
           aria-labelledby="master-edit-title"
         >
-          <DialogTitle id="master-edit-title" component="h2">
+          <ToneDialogTitle id="master-edit-title" component="h2">
             {edit.mode === 'create' ? `Create ${KIND_LABELS[kind]}` : `Edit ${edit.target?.label}`}
-          </DialogTitle>
+          </ToneDialogTitle>
           <DialogContent dividers>
             <Stack spacing={SPACING.lg} sx={{ pt: SPACING.sm }}>
               {edit.error !== null && (
@@ -609,9 +624,9 @@ export default function MasterDataPanel({ token }: { token: string }) {
           maxWidth="sm"
           aria-labelledby="bulk-master-deactivate-title"
         >
-          <DialogTitle id="bulk-master-deactivate-title" component="h2">
+          <ToneDialogTitle id="bulk-master-deactivate-title" component="h2" tone="danger">
             Deactivate selected master entries
-          </DialogTitle>
+          </ToneDialogTitle>
           <DialogContent dividers>
             <Stack spacing={SPACING.md}>
               <Typography variant="body1">
@@ -650,9 +665,9 @@ export default function MasterDataPanel({ token }: { token: string }) {
           maxWidth="sm"
           aria-labelledby="master-deactivate-title"
         >
-          <DialogTitle id="master-deactivate-title" component="h2">
+          <ToneDialogTitle id="master-deactivate-title" component="h2" tone="danger">
             Deactivate master entry
-          </DialogTitle>
+          </ToneDialogTitle>
           <DialogContent dividers>
             <Stack spacing={SPACING.md}>
               <Typography variant="body1">

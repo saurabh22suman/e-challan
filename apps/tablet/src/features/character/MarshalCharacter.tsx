@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { SPACING, tokens } from '@echallan/theme';
+import { SPACING, tokens, toneStyles, type Tone } from '@echallan/theme';
 import { CHARACTER_ASSETS, type CharacterKind } from './characterAssets.js';
 import './marshalCharacter.css';
 
@@ -115,19 +115,15 @@ export interface MarshalCalloutProps {
   testId?: string;
 }
 
-const TONE_SURFACE = {
-  info: tokens.tint,
-  success: tokens.successTint,
-  warning: tokens.warningTint,
-  error: tokens.errorTint,
-} as const;
+type CalloutTone = NonNullable<MarshalCalloutProps['tone']>;
 
-const TONE_BORDER = {
-  info: tokens.line,
-  success: tokens.line,
-  warning: tokens.severity.major,
-  error: tokens.severity.critical,
-} as const;
+/** The callout keeps its `error` prop; the shared palette names that tone `danger`. */
+const TONE_MAP: Record<CalloutTone, Tone> = {
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+  error: 'danger',
+};
 
 /**
  * A character-led callout: illustration, plain explanation and an optional next
@@ -147,6 +143,7 @@ export function MarshalCallout({
   useEffect(() => {
     setFailed(false);
   }, [character]);
+  const palette = toneStyles[TONE_MAP[tone]];
 
   return (
     <Box
@@ -159,9 +156,9 @@ export function MarshalCallout({
         alignItems: { xs: 'flex-start', sm: 'center' },
         gap: { xs: SPACING.md, md: SPACING.lg },
         padding: { xs: SPACING.md, md: SPACING.lg },
-        border: `2px solid ${TONE_BORDER[tone]}`,
+        border: `2px solid ${palette.border}`,
         borderRadius: 2,
-        backgroundColor: TONE_SURFACE[tone],
+        backgroundColor: palette.bg,
       }}
     >
       <Box sx={{ width: { xs: 84, sm: 108, md: 132 }, flexShrink: 0 }}>
@@ -172,7 +169,7 @@ export function MarshalCallout({
         />
       </Box>
       <Stack spacing={SPACING.xs} sx={{ minWidth: 0, flex: 1 }}>
-        <Typography variant="body1" sx={{ fontWeight: 700 }}>
+        <Typography variant="body1" sx={{ fontWeight: 700, color: palette.fg }}>
           {title}
         </Typography>
         {children !== undefined && (

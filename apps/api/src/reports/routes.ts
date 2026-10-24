@@ -4,12 +4,14 @@ import {
   API_ERROR_CODES,
   ChallanReportQuerySchema,
   ChallanReportResponseSchema,
+  ChallanTrendQuerySchema,
+  ChallanTrendResponseSchema,
   parseContract,
 } from '@echallan/contracts';
 import type { Db } from '../db/client.js';
 import * as s from '../db/schema.js';
 import { requireSession, sendError } from '../auth/guard.js';
-import { exportChallans, reportChallans } from './service.js';
+import { exportChallans, reportChallanTrend, reportChallans } from './service.js';
 
 export interface ReportRouteOptions {
   resolveDb: () => Db;
@@ -40,6 +42,38 @@ export function registerReportRoutes(app: FastifyInstance, options: ReportRouteO
     }
     return session;
   }
+
+  app.get('/challans/report/trend', async (request, reply) => {
+    const session = await sessionFor(request.headers.authorization, reply);
+    if (session === undefined) return reply;
+    const parsed = ChallanTrendQuerySchema.safeParse(request.query);
+    if (!parsed.success) {
+      return sendError(
+        reply,
+        API_ERROR_CODES.invalidRequest,
+        400,
+        'Choose a valid trend range and granularity.',
+      );
+    }
+    const result = await reportChallanTrend(options.resolveDb(), session, parsed.data, now());
+    if (!result.ok) {
+      if (result.reason === 'forbidden') {
+        return sendError(
+          reply,
+          API_ERROR_CODES.forbidden,
+          403,
+          'No authorised locations match this trend filter.',
+        );
+      }
+      return sendError(
+        reply,
+        API_ERROR_CODES.invalidRequest,
+        400,
+        'Choose a date range of 365 days or fewer, with the start on or before the end.',
+      );
+    }
+    return reply.code(200).send(parseContract(ChallanTrendResponseSchema, result.response));
+  });
 
   app.get('/challans/report', async (request, reply) => {
     const session = await sessionFor(request.headers.authorization, reply);

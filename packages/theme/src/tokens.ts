@@ -50,6 +50,20 @@ export const tokens = {
     resolved: '#157A3E',
     period: '#5B3FD1',
   },
+  /**
+   * Semantic status tones (docs/design.md §3.3). `fg` is the accessible
+   * text/icon colour on `bg`; `border` is the visible tinted outline. These are
+   * tint/outline surfaces only — solid green stays reserved for the challan
+   * commit action, and severity keeps its separate solid chips.
+   */
+  tone: {
+    neutral: { bg: '#F2F5FA', fg: '#445268', border: '#C9D4E2' },
+    info: { bg: '#E8F0FC', fg: '#08408D', border: '#9CBEF0' },
+    success: { bg: '#E7F4EC', fg: '#0F5D2F', border: '#9BCDAE' },
+    warning: { bg: '#FCF1E1', fg: '#7A4A00', border: '#E3C08A' },
+    danger: { bg: '#FCEBEC', fg: '#7E1017', border: '#E7A6AA' },
+    cancelled: { bg: '#FBEFF3', fg: '#7A1F3A', border: '#D8A7B8' },
+  },
   severity: {
     minor: '#AB6600',
     major: '#C24218',

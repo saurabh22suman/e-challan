@@ -11,6 +11,8 @@
  *  - a MUI barrel (`@mui/material`, `@mui/icons-material`, ...) or a dynamic
  *    barrel import such as `import('@mui/material')`
  *  - an admin-only MUI X widget anywhere in shared or tablet client code
+ *  - ECharts anywhere except the admin dashboard, and a bare `echarts` import
+ *    even there (only the four tree-shaken module entry points are allowed)
  *
  * Shared packages (`@echallan/contracts`, `@echallan/theme`) and exact-path MUI
  * imports are allowed. The gate is a real static check over committed source;
@@ -49,6 +51,16 @@ const ADMIN_ONLY_WIDGETS = ['@mui/x-data-grid', '@mui/x-charts', '@mui/x-date-pi
  * workspace-relative package directory so the rule follows the package location.
  */
 const ADMIN_ONLY_WIDGET_OWNERS = ['apps/admin'];
+
+/** Apache ECharts is an admin-only charting capability (design §8.3). */
+const ECHARTS_PACKAGE = 'echarts';
+const ECHARTS_MODULAR_ENTRIES = [
+  'echarts/core',
+  'echarts/charts',
+  'echarts/components',
+  'echarts/renderers',
+];
+const ECHARTS_OWNERS = ['apps/admin'];
 
 /** The one MUI subpath that is not a leaf component path. */
 const THEME_STYLE_ENTRY = '@mui/material/styles';
@@ -196,6 +208,26 @@ function findViolations(root, files) {
       }
 
       const addressedPackage = packageNameOfSpecifier(specifier);
+      if (specifier === ECHARTS_PACKAGE || addressedPackage === ECHARTS_PACKAGE) {
+        const allowedEntry =
+          ECHARTS_OWNERS.includes(workspaceRelative) &&
+          ECHARTS_MODULAR_ENTRIES.some(
+            (entry) => specifier === entry || specifier.startsWith(`${entry}/`),
+          );
+        if (!allowedEntry) {
+          violations.push({
+            file,
+            specifier,
+            rule: 'echarts-admin-modular-only',
+            message:
+              `Forbidden ECharts import "${specifier}" in ${packageName ?? workspaceRelative}; ` +
+              `ECharts is admin-only and must use ${ECHARTS_MODULAR_ENTRIES.join(', ')}. ` +
+              'Bare "echarts" and non-admin chart imports are not allowed.',
+          });
+        }
+        continue;
+      }
+
       if (addressedPackage !== null && APP_PACKAGES.includes(addressedPackage)) {
         violations.push({
           file,

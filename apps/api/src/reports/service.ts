@@ -5,6 +5,10 @@ import {
   type ChallanReportTotals,
   type ChallanSortField,
   type ChallanSummary,
+  type ChallanTrendPoint,
+  type ChallanTrendQuery,
+  type ChallanTrendResponse,
+  type ChallanTrendTotals,
 } from '@echallan/contracts';
 import type { Db } from '../db/client.js';
 import type { Session } from '../db/schema.js';
@@ -322,5 +326,214 @@ export async function exportChallans(
     buffer,
     rowCount: rows.rows.length,
     filename: `echallan-${kolkataToday(now)}.xlsx`,
+  };
+}
+
+/* -------------------------------------------------------------------------- */
+/* Challan trend (Supervisor/Admin Trend tab)                                  */
+/* -------------------------------------------------------------------------- */
+
+const TREND_DAY_MS = 24 * 60 * 60 * 1000;
+const MAX_TREND_RANGE_DAYS = 365;
+const TREND_TIMEZONE = 'Asia/Kolkata' as const;
+
+function addIsoDays(date: string, days: number): string {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
+}
+
+function isValidIsoDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function isoDayDifference(from: string, to: string): number {
+  const start = Date.parse(`${from}T00:00:00.000Z`);
+  const end = Date.parse(`${to}T00:00:00.000Z`);
+  return Math.round((end - start) / TREND_DAY_MS);
+}
+
+function mondayOf(date: string): string {
+  const weekday = new Date(`${date}T00:00:00.000Z`).getUTCDay();
+  return addIsoDays(date, -((weekday + 6) % 7));
+}
+
+function trendBuckets(
+  from: string,
+  to: string,
+  granularity: ChallanTrendQuery['granularity'],
+): string[] {
+  if (granularity === 'week') {
+    const buckets: string[] = [];
+    const last = mondayOf(to);
+    for (let cursor = mondayOf(from); cursor <= last; cursor = addIsoDays(cursor, 7)) {
+      buckets.push(cursor);
+    }
+    return buckets;
+  }
+  const buckets: string[] = [];
+  for (let cursor = from; cursor <= to; cursor = addIsoDays(cursor, 1)) {
+    buckets.push(cursor);
+  }
+  return buckets;
+}
+
+function resolveTrendRange(
+  query: ChallanTrendQuery,
+  now: Date,
+): { from: string; to: string } | null {
+  const to = query.to ?? kolkataToday(now);
+  if (!isValidIsoDate(to)) return null;
+  const from = query.from ?? addIsoDays(to, -29);
+  if (!isValidIsoDate(from) || from > to) return null;
+  const inclusiveDays = isoDayDifference(from, to) + 1;
+  if (inclusiveDays > MAX_TREND_RANGE_DAYS) return null;
+  return { from, to };
+}
+
+interface TrendScope {
+  text: string;
+  params: unknown[];
+}
+
+/**
+ * Supervisor scope is their assigned locations; Admin reads all locations. A
+ * requested location is intersected with the supervisor scope, and asking for a
+ * location outside it is a forbidden request rather than an empty result.
+ */
+async function buildTrendScope(
+  db: Db,
+  session: Session,
+  query: ChallanTrendQuery,
+): Promise<TrendScope | null> {
+  if (session.role !== 'Supervisor' && session.role !== 'Admin') return null;
+
+  const conditions: string[] = [];
+  const params: unknown[] = [];
+
+  if (session.role === 'Supervisor') {
+    const locations = await authorisedLocationIds(db, session.userId);
+    if (locations.length === 0) return null;
+    if (query.locationId !== undefined && !locations.includes(query.locationId)) return null;
+    conditions.push(`c.location_id = ANY(${addParam(params, locations)}::uuid[])`);
+  }
+  if (query.locationId !== undefined) {
+    conditions.push(`c.location_id = ${addParam(params, query.locationId)}::uuid`);
+  }
+
+  return {
+    text: conditions.length === 0 ? '' : `AND ${conditions.join(' AND ')}`,
+    params,
+  };
+}
+
+interface IssuedTrendRow {
+  bucket: string;
+  issued: number;
+}
+
+interface ActionTrendRow {
+  bucket: string;
+  resolved: number;
+  cancelled: number;
+}
+
+export type ChallanTrendResult =
+  | { ok: true; response: ChallanTrendResponse }
+  | { ok: false; reason: 'forbidden' | 'invalid-range' };
+
+/**
+ * Event-count trend over the requested Asia/Kolkata window (design section 8).
+ *
+ * Aggregation happens in PostgreSQL: issued events from `challans.issued_at`,
+ * resolved/cancelled events from `challan_actions.created_at` joined to the
+ * challan's location. Distinct challans are counted per bucket so duplicate
+ * action rows cannot inflate a series. The requested range is zero-filled in JS;
+ * no event rows are read into application memory for aggregation.
+ */
+export async function reportChallanTrend(
+  db: Db,
+  session: Session,
+  query: ChallanTrendQuery,
+  now: Date,
+): Promise<ChallanTrendResult> {
+  const range = resolveTrendRange(query, now);
+  if (range === null) return { ok: false, reason: 'invalid-range' };
+
+  const scope = await buildTrendScope(db, session, query);
+  if (scope === null) return { ok: false, reason: 'forbidden' };
+
+  const truncUnit = query.granularity === 'week' ? 'week' : 'day';
+  const start = range.from;
+  const endExclusive = addIsoDays(range.to, 1);
+
+  const issuedParams = [...scope.params];
+  const issuedStart = addParam(issuedParams, start);
+  const issuedEnd = addParam(issuedParams, endExclusive);
+  const issuedRows = await db.pool.query<IssuedTrendRow>(
+    `SELECT to_char(date_trunc('${truncUnit}', c.issued_at AT TIME ZONE '${TREND_TIMEZONE}'), 'YYYY-MM-DD') AS bucket,
+            count(*)::int AS issued
+       FROM challans c
+      WHERE c.issued_at >= (${issuedStart}::date::timestamp AT TIME ZONE '${TREND_TIMEZONE}')
+        AND c.issued_at < (${issuedEnd}::date::timestamp AT TIME ZONE '${TREND_TIMEZONE}')
+        ${scope.text}
+      GROUP BY 1
+      ORDER BY 1`,
+    issuedParams,
+  );
+
+  const actionParams = [...scope.params];
+  const actionStart = addParam(actionParams, start);
+  const actionEnd = addParam(actionParams, endExclusive);
+  const actionRows = await db.pool.query<ActionTrendRow>(
+    `SELECT to_char(date_trunc('${truncUnit}', a.created_at AT TIME ZONE '${TREND_TIMEZONE}'), 'YYYY-MM-DD') AS bucket,
+            (count(DISTINCT a.challan_id) FILTER (WHERE a.to_status = 'Resolved'))::int AS resolved,
+            (count(DISTINCT a.challan_id) FILTER (WHERE a.to_status = 'Cancelled'))::int AS cancelled
+       FROM challan_actions a
+       JOIN challans c ON c.id = a.challan_id
+      WHERE a.created_at >= (${actionStart}::date::timestamp AT TIME ZONE '${TREND_TIMEZONE}')
+        AND a.created_at < (${actionEnd}::date::timestamp AT TIME ZONE '${TREND_TIMEZONE}')
+        AND a.to_status IN ('Resolved','Cancelled')
+        ${scope.text}
+      GROUP BY 1
+      ORDER BY 1`,
+    actionParams,
+  );
+
+  const issuedByBucket = new Map(
+    issuedRows.rows.map((row) => [row.bucket, Number(row.issued)] as const),
+  );
+  const actionsByBucket = new Map(actionRows.rows.map((row) => [row.bucket, row] as const));
+
+  const points: ChallanTrendPoint[] = trendBuckets(range.from, range.to, query.granularity).map(
+    (bucketStart) => ({
+      bucketStart,
+      issued: issuedByBucket.get(bucketStart) ?? 0,
+      resolved: Number(actionsByBucket.get(bucketStart)?.resolved ?? 0),
+      cancelled: Number(actionsByBucket.get(bucketStart)?.cancelled ?? 0),
+    }),
+  );
+
+  const totals = points.reduce<ChallanTrendTotals>(
+    (sum, point) => ({
+      issued: sum.issued + point.issued,
+      resolved: sum.resolved + point.resolved,
+      cancelled: sum.cancelled + point.cancelled,
+    }),
+    { issued: 0, resolved: 0, cancelled: 0 },
+  );
+
+  return {
+    ok: true,
+    response: {
+      timezone: TREND_TIMEZONE,
+      granularity: query.granularity,
+      from: range.from,
+      to: range.to,
+      points,
+      totals,
+    },
   };
 }

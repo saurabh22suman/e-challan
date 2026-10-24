@@ -2,8 +2,16 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { SPACING, tokens } from '@echallan/theme';
-import { useSyncStatus } from './syncStatus';
+import { SPACING, toneStyles, type Tone } from '@echallan/theme';
+import { useSyncStatus, type SyncState } from './syncStatus';
+
+function resolveTone(state: SyncState, online: boolean): Tone {
+  if (!online) return 'warning';
+  if (state === 'sending' || state === 'saved') return 'info';
+  if (state === 'sent') return 'success';
+  if (state === 'error') return 'danger';
+  return 'success';
+}
 
 /**
  * Slim status strip under the app bar. Deliberately states what is true:
@@ -12,34 +20,32 @@ import { useSyncStatus } from './syncStatus';
  */
 export default function SyncStatusBar() {
   const { state, online } = useSyncStatus();
+  const tone = resolveTone(state, online);
+  const palette = toneStyles[tone];
 
   let text: string;
-  let colour: string;
   if (!online) {
     text =
       state === 'saved' || state === 'error'
         ? 'Offline — draft kept on this device. Issuance needs a connection.'
         : 'Offline — issuance needs a connection.';
-    colour = tokens.severity.major;
   } else if (state === 'sending') {
     text = 'Sending challan…';
-    colour = tokens.blue;
   } else if (state === 'sent') {
     text = 'Challan sent to the server.';
-    colour = tokens.green;
   } else if (state === 'error') {
     text = 'Send failed — your draft is still on this device.';
-    colour = tokens.severity.critical;
   } else if (state === 'saved') {
     text = 'Draft saved on this device.';
-    colour = tokens.blue;
   } else {
     text = 'Online';
-    colour = tokens.green;
   }
 
   return (
-    <Box sx={{ backgroundColor: tokens.surface, borderBottom: `1px solid ${tokens.lineSoft}` }}>
+    <Box
+      data-tone={tone}
+      sx={{ backgroundColor: palette.bg, borderBottom: `1px solid ${palette.border}` }}
+    >
       <Container maxWidth={false} sx={{ px: SPACING.lg, py: SPACING.xs }}>
         <Stack
           direction="row"
@@ -54,11 +60,11 @@ export default function SyncStatusBar() {
               width: 9,
               height: 9,
               borderRadius: '50%',
-              backgroundColor: colour,
+              backgroundColor: palette.fg,
               flexShrink: 0,
             }}
           />
-          <Typography variant="caption" sx={{ color: tokens.muted }}>
+          <Typography variant="caption" sx={{ color: palette.fg }}>
             {text}
           </Typography>
         </Stack>

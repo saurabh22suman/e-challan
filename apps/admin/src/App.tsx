@@ -7,7 +7,13 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { AppThemeProvider, PwaInstallPrompt, SPACING, tokens } from '@echallan/theme';
+import {
+  AppThemeProvider,
+  PwaInstallPrompt,
+  SPACING,
+  ToastProvider,
+  tokens,
+} from '@echallan/theme';
 import LoginScreen from './routes/LoginScreen';
 import HandoffToTablet from './auth/HandoffToTablet';
 import { SessionProvider, useSession } from './auth/session';
@@ -22,11 +28,13 @@ const DashboardScreen = lazy(() => import('./routes/DashboardScreen'));
 export default function App() {
   return (
     <AppThemeProvider surface="admin">
-      <BrowserRouter>
-        <SessionProvider>
-          <SessionGate />
-        </SessionProvider>
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <SessionProvider>
+            <SessionGate />
+          </SessionProvider>
+        </BrowserRouter>
+      </ToastProvider>
     </AppThemeProvider>
   );
 }

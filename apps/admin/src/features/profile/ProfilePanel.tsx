@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ProfileResponse } from '@echallan/contracts';
-import { Notice, SPACING, tokens } from '@echallan/theme';
+import { Notice, SPACING, StatusBadge, tokens } from '@echallan/theme';
 import { getProfile, OperationsApiError } from '../../api/operations';
 
 /**
@@ -92,7 +92,12 @@ export default function ProfilePanel({ token }: { token: string }) {
               <Field label="Display name" value={profile.user.displayName} />
               <Field label="Employee ID" value={profile.user.employeeId ?? 'Not recorded'} />
               <Field label="Role" value={profile.user.role} />
-              <Field label="Account status" value={profile.user.isActive ? 'Active' : 'Inactive'} />
+              <Stack spacing={0.25}>
+                <Typography variant="caption" sx={{ color: tokens.muted }}>
+                  Account status
+                </Typography>
+                <StatusBadge status={profile.user.isActive ? 'active' : 'deactivated'} />
+              </Stack>
             </Stack>
 
             <Stack spacing={SPACING.sm}>

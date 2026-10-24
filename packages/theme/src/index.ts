@@ -1,9 +1,9 @@
 /**
- * @echallan/theme — shared MUI tokens for the tablet and admin apps.
+ * @echallan/theme — shared MUI tokens and design-system primitives for the
+ * tablet and admin apps.
  *
- * Foundation subset only. The full design system is F-04. No MUI barrel is
- * re-exported from here: consumers import exact component paths from MUI and
- * the shared surface from this package.
+ * No MUI barrel is re-exported from here: consumers import exact component
+ * paths from MUI and the shared surface from this package.
  */
 export { FONT_MONO, FONT_SANS } from './fonts.js';
 export { AppThemeProvider } from './AppThemeProvider.js';
@@ -14,13 +14,19 @@ export { SPACING, SPACING_BASE, SPACING_PX, TOUCH_TARGET_MIN } from './touchTarg
 export type { Spacing, TouchTargetMin } from './touchTargets.js';
 export { tokens } from './tokens.js';
 export type { ThemeTokens } from './tokens.js';
+export { challanStatusKind, statusLabel, statusTone, toneStyles } from './status.js';
+export type { ChallanStatus, StatusKind, Tone, ToneStyle } from './status.js';
 export { capturePwaInstallPrompt, isMobileOrTabletDevice, PwaInstallPrompt } from './pwaInstall.js';
-export { ErrorSummary, FormSection, Notice, SeverityChip, StatusChip } from './primitives.js';
+export { ErrorSummary, FormSection, Notice, SeverityChip, StatusBadge } from './primitives.js';
 export type {
   ErrorSummaryItem,
   ErrorSummaryProps,
   FormSectionProps,
   NoticeProps,
   SeverityChipProps,
-  StatusChipProps,
+  StatusBadgeProps,
 } from './primitives.js';
+export { ToneDialogTitle } from './dialog.js';
+export type { ToneDialogTone, ToneDialogTitleProps } from './dialog.js';
+export { ToastProvider, useToast } from './toast.js';
+export type { ToastAction, ToastContextValue, ToastOptions, ToastProviderProps } from './toast.js';

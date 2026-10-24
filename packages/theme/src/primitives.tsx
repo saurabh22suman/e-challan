@@ -7,6 +7,8 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import type { ReactNode } from 'react';
 import Typography from '@mui/material/Typography';
+import { statusLabel, statusTone, toneStyles } from './status.js';
+import type { StatusKind, Tone } from './status.js';
 import { SPACING } from './touchTargets.js';
 import { tokens } from './tokens.js';
 
@@ -62,32 +64,52 @@ export function FormSection({ title, titleId, meta, children }: FormSectionProps
 }
 
 export interface NoticeProps {
-  /** Visual severity. Status is always outlined, never a solid severity fill. */
+  /**
+   * Legacy visual severity. Kept for existing screens; `error` maps to the
+   * danger tone. Prefer `tone` in new code.
+   */
   severity?: 'info' | 'success' | 'warning' | 'error';
+  /** Semantic tone; takes precedence over `severity` when both are supplied. */
+  tone?: Tone;
   /** Persistent notices use `status`; actionable warnings use `alert`. */
   role?: 'status' | 'alert';
   children: ReactNode;
 }
 
-const NOTICE_SURFACE = {
-  info: tokens.tint,
-  success: tokens.successTint,
-  warning: tokens.warningTint,
-  error: tokens.errorTint,
-} as const;
+const SEVERITY_TONE: Record<'info' | 'success' | 'warning' | 'error', Tone> = {
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+  error: 'danger',
+};
+
+/** MUI Alert still needs a known severity for its icon. */
+const TONE_SEVERITY: Record<Tone, 'info' | 'success' | 'warning' | 'error'> = {
+  neutral: 'info',
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+  danger: 'error',
+  cancelled: 'info',
+};
 
 /** A persistent notice on a tinted surface. Never a transient toast (REP-05). */
-export function Notice({ severity = 'info', role, children }: NoticeProps) {
+export function Notice({ severity = 'info', tone, role, children }: NoticeProps) {
+  const resolvedTone = tone ?? SEVERITY_TONE[severity];
+  const style = toneStyles[resolvedTone];
   return (
     <Alert
-      severity={severity}
+      severity={TONE_SEVERITY[resolvedTone]}
       role={role}
       variant="outlined"
+      data-tone={resolvedTone}
       sx={{
-        backgroundColor: NOTICE_SURFACE[severity],
-        color: tokens.ink,
+        backgroundColor: style.bg,
+        color: style.fg,
+        borderColor: style.border,
         borderRadius: 2,
         fontWeight: 500,
+        '& .MuiAlert-icon': { color: style.fg },
       }}
     >
       {children}
@@ -125,19 +147,54 @@ export function SeverityChip({ severity, label }: SeverityChipProps) {
   );
 }
 
-/** Status chip: outlined, labelled, no fill — distinct from severity fill. */
-export interface StatusChipProps {
-  label: string;
+interface StatusBadgeBaseProps {
+  /** Explicit tone; defaults to the status mapping, then neutral. */
+  tone?: Tone;
+  size?: 'small' | 'medium';
 }
 
-export function StatusChip({ label }: StatusChipProps) {
+/**
+ * A label and tone are both accepted so callers can render either a known
+ * application status or an explicitly toned label.
+ */
+export type StatusBadgeProps = StatusBadgeBaseProps &
+  ({ label: string; status?: StatusKind } | { label?: string; status: StatusKind });
+
+/**
+ * Status badge: tinted outline with a small tone dot and a visible label.
+ * Distinct by design from the solid `SeverityChip`.
+ */
+export function StatusBadge({ tone, size = 'small', label, status }: StatusBadgeProps) {
+  const resolvedTone = tone ?? (status === undefined ? 'neutral' : statusTone(status));
+  const resolvedLabel = label ?? (status === undefined ? '' : statusLabel(status));
+  const style = toneStyles[resolvedTone];
   return (
     <Chip
       variant="outlined"
-      label={label}
+      size={size}
+      label={resolvedLabel}
       role="status"
-      aria-label={label}
-      sx={{ color: tokens.ink, fontWeight: 600, borderColor: tokens.line }}
+      aria-label={resolvedLabel}
+      data-tone={resolvedTone}
+      icon={
+        <Box
+          component="span"
+          aria-hidden="true"
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            backgroundColor: style.fg,
+          }}
+        />
+      }
+      sx={{
+        backgroundColor: style.bg,
+        color: style.fg,
+        borderColor: style.border,
+        fontWeight: 600,
+        '& .MuiChip-icon': { marginLeft: '8px', marginRight: '-2px' },
+      }}
     />
   );
 }

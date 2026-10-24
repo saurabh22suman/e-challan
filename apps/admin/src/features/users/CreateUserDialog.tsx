@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,7 +12,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import type { AdminUser, Role } from '@echallan/contracts';
-import { ErrorSummary, Notice, SPACING } from '@echallan/theme';
+import { ErrorSummary, Notice, SPACING, ToneDialogTitle } from '@echallan/theme';
 import { createUser, type LocationOption, OperationsApiError } from '../../api/operations';
 
 const MIN_PASSWORD_LENGTH = 12;
@@ -135,9 +134,9 @@ export default function CreateUserDialog({
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="md" aria-labelledby="create-user-title">
-      <DialogTitle id="create-user-title" component="h2">
+      <ToneDialogTitle id="create-user-title" component="h2">
         Create user
-      </DialogTitle>
+      </ToneDialogTitle>
       <DialogContent dividers>
         <Stack
           id="create-user-form"

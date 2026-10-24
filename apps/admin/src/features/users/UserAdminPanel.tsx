@@ -9,7 +9,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -22,7 +21,15 @@ import TextField from '@mui/material/TextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import type { AdminUser } from '@echallan/contracts';
-import { ErrorSummary, Notice, SPACING, StatusChip, tokens } from '@echallan/theme';
+import {
+  ErrorSummary,
+  Notice,
+  SPACING,
+  StatusBadge,
+  ToneDialogTitle,
+  tokens,
+  useToast,
+} from '@echallan/theme';
 import {
   deactivateUser,
   listLocations,
@@ -119,9 +126,9 @@ function ResetPasswordDialog({
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="reset-password-title">
-      <DialogTitle id="reset-password-title" component="h2">
+      <ToneDialogTitle id="reset-password-title" component="h2">
         Reset password
-      </DialogTitle>
+      </ToneDialogTitle>
       <DialogContent dividers>
         <Stack
           id="reset-password-form"
@@ -199,9 +206,9 @@ function DeactivateDialog({
 }: DeactivateDialogProps) {
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm" aria-labelledby="deactivate-user-title">
-      <DialogTitle id="deactivate-user-title" component="h2">
+      <ToneDialogTitle id="deactivate-user-title" component="h2" tone="danger">
         Deactivate user
-      </DialogTitle>
+      </ToneDialogTitle>
       <DialogContent dividers>
         <Stack spacing={SPACING.md}>
           <Typography variant="body1">
@@ -234,12 +241,12 @@ interface UserAdminPanelProps {
 }
 
 export default function UserAdminPanel({ token, currentUserId, onSelfReset }: UserAdminPanelProps) {
+  const { showToast } = useToast();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [locations, setLocations] = useState<LocationOption[]>([]);
   const [locationsError, setLocationsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   const [actionFailure, setActionFailure] = useState<string | null>(null);
   const [resetTarget, setResetTarget] = useState<AdminUser | null>(null);
   const [deactivateTarget, setDeactivateTarget] = useState<AdminUser | null>(null);
@@ -297,8 +304,8 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
     };
   }, [token]);
 
-  function refresh(message: string): void {
-    setNotice(message);
+  function refresh(title: string, description: string): void {
+    showToast({ tone: 'success', title, description });
     setActionFailure(null);
     setReloadKey((value) => value + 1);
   }
@@ -306,7 +313,9 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
   function reactivate(user: AdminUser): void {
     setActionFailure(null);
     reactivateUser(token, user.id)
-      .then(() => refresh(`User reactivated: ${user.displayName} (${user.username}).`))
+      .then(() =>
+        refresh('User reactivated', `${user.displayName} (${user.username}) can sign in again.`),
+      )
       .catch((failure: unknown) => {
         setActionFailure(
           failure instanceof OperationsApiError
@@ -324,7 +333,10 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
       .then(() => {
         const target = deactivateTarget;
         setDeactivateTarget(null);
-        refresh(`User deactivated: ${target.displayName} (${target.username}). Account retained.`);
+        refresh(
+          'User deactivated',
+          `${target.displayName} (${target.username}) can no longer sign in. Account retained.`,
+        );
       })
       .catch((failure: unknown) => {
         setDeactivateFailure(
@@ -375,7 +387,8 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
       setBulkAction(null);
       setSelectedIds(new Set());
       refresh(
-        `${bulkAction.ids.length} user(s) ${bulkAction.verb === 'deactivate' ? 'deactivated' : 'reactivated'}.`,
+        bulkAction.verb === 'deactivate' ? 'Users deactivated' : 'Users reactivated',
+        `${bulkAction.ids.length} selected account(s) updated.`,
       );
     } catch (failure) {
       setBulkFailure(
@@ -406,7 +419,6 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           sx={{ whiteSpace: 'nowrap' }}
           aria-label={`Reset password for ${user.username}`}
           onClick={() => {
-            setNotice(null);
             setResetTarget(user);
           }}
         >
@@ -496,7 +508,7 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
             >
               <MenuItem value="all">All accounts</MenuItem>
               <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="inactive">Inactive</MenuItem>
+              <MenuItem value="inactive">Deactivated</MenuItem>
             </TextField>
           </Stack>
 
@@ -535,11 +547,6 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
             </Stack>
           )}
 
-          {notice !== null && (
-            <Notice severity="success" role="status">
-              {notice}
-            </Notice>
-          )}
           {error !== null && (
             <Notice severity="error" role="status">
               {error}
@@ -596,7 +603,7 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
                           <Typography variant="body2">{user.displayName}</Typography>
                         </Box>
                       </Stack>
-                      <StatusChip label={user.isActive ? 'Active' : 'Inactive'} />
+                      <StatusBadge status={user.isActive ? 'active' : 'deactivated'} />
                     </Stack>
                     <Typography variant="caption" sx={{ color: tokens.muted }}>
                       {user.role} ·{' '}
@@ -657,7 +664,9 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
                       <TableCell sx={{ fontFamily: 'monospace' }}>{user.username}</TableCell>
                       <TableCell>{user.displayName}</TableCell>
                       <TableCell>{user.role}</TableCell>
-                      <TableCell>{user.isActive ? 'Yes' : 'No'}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={user.isActive ? 'active' : 'deactivated'} />
+                      </TableCell>
                       <TableCell sx={{ color: tokens.muted }}>
                         {user.locationLabels.length === 0 ? 'None' : user.locationLabels.join(', ')}
                       </TableCell>
@@ -679,7 +688,10 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           onClose={() => setCreating(false)}
           onCreated={(created) => {
             setCreating(false);
-            refresh(`User created: ${created.displayName} (${created.username}).`);
+            refresh(
+              'User created',
+              `${created.displayName} (${created.username}) can now sign in.`,
+            );
           }}
         />
       )}
@@ -692,9 +704,11 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           onClose={() => setResetTarget(null)}
           onSuccess={(reset) => {
             setResetTarget(null);
-            setNotice(
-              `Password reset for ${reset.displayName} (${reset.username}). Their sessions were revoked.`,
-            );
+            showToast({
+              tone: 'success',
+              title: 'Password reset',
+              description: `${reset.displayName} (${reset.username}) must use the new password. Their sessions were revoked.`,
+            });
           }}
           onSelfReset={onSelfReset}
         />
@@ -708,11 +722,15 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           maxWidth="sm"
           aria-labelledby="bulk-users-title"
         >
-          <DialogTitle id="bulk-users-title" component="h2">
+          <ToneDialogTitle
+            id="bulk-users-title"
+            component="h2"
+            tone={bulkAction.verb === 'deactivate' ? 'danger' : 'default'}
+          >
             {bulkAction.verb === 'deactivate'
               ? 'Deactivate selected users'
               : 'Reactivate selected users'}
-          </DialogTitle>
+          </ToneDialogTitle>
           <DialogContent dividers>
             <Stack spacing={SPACING.md}>
               <Typography variant="body1">

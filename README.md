@@ -28,7 +28,7 @@ are not claimed.
 ```
 apps/api        Fastify API, Drizzle migrations, guarded test database, demo seed
 apps/tablet     marshal tablet PWA (sign-in, entry flow, media, submission, profile)
-apps/admin      Supervisor/Admin dashboard (reporting, review, evidence, users, masters, profile)
+apps/admin      Supervisor/Admin dashboard (reporting, trend chart, review, evidence, users, masters, profile)
 packages/contracts  shared Zod health, domain and authentication contracts
 packages/theme      shared MUI theme tokens and touch-target constants
 tools/           import-boundary and initial-JS budget command-line gates

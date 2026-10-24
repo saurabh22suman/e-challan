@@ -8,7 +8,7 @@ import {
   SignaturePadSchema,
   type SignaturePad as SignatureCapture,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusChip, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { Notice, SPACING, StatusBadge, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
 import SignaturePadLib from 'signature_pad';
 
 /**
@@ -387,9 +387,11 @@ export default function SignaturePadControl({
           Driver signature
         </Typography>
         {confirmedLocal ? (
-          <StatusChip label="Signature confirmed" />
+          <StatusBadge label="Signature confirmed" tone="success" />
         ) : (
-          confirmable !== null && <StatusChip label="Stroke captured — confirm to apply" />
+          confirmable !== null && (
+            <StatusBadge label="Stroke captured — confirm to apply" tone="info" />
+          )
         )}
       </Stack>
       <Typography variant="body2" id="signature-instructions" sx={{ color: tokens.muted }}>

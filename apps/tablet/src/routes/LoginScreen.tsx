@@ -1,5 +1,4 @@
 import { useEffect, useState, type CSSProperties, type FormEvent } from 'react';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -13,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { IDLE_TIMEOUT_SECONDS } from '@echallan/contracts';
-import { SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { Notice, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
 import { AmbiguousContextError, GENERIC_SIGN_IN_FAILURE, type ContextOption } from '../auth/api';
 import { useSession } from '../auth/session';
 
@@ -218,9 +217,9 @@ export default function LoginScreen() {
             )}
 
             {feedback !== null && (
-              <Alert severity="error" role="alert">
+              <Notice tone="danger" role="alert">
                 {feedback}
-              </Alert>
+              </Notice>
             )}
 
             <Button

@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -13,6 +14,8 @@ import MasterDataPanel from '../features/masters/MasterDataPanel';
 import ProfilePanel from '../features/profile/ProfilePanel';
 import UserAdminPanel from '../features/users/UserAdminPanel';
 import { useSession } from '../auth/session';
+
+const TrendPanel = lazy(() => import('../features/trend/TrendPanel'));
 
 function NotFound() {
   const navigate = useNavigate();
@@ -49,13 +52,15 @@ export default function DashboardScreen() {
   const role = identity?.user.role ?? 'Supervisor';
   const section = location.pathname.startsWith('/challans')
     ? 'challans'
-    : location.pathname.startsWith('/users')
-      ? 'users'
-      : location.pathname.startsWith('/masters')
-        ? 'masters'
-        : location.pathname.startsWith('/profile')
-          ? 'profile'
-          : false;
+    : location.pathname.startsWith('/trend')
+      ? 'trend'
+      : location.pathname.startsWith('/users')
+        ? 'users'
+        : location.pathname.startsWith('/masters')
+          ? 'masters'
+          : location.pathname.startsWith('/profile')
+            ? 'profile'
+            : false;
 
   return (
     <Stack spacing={SPACING.lg}>
@@ -76,12 +81,13 @@ export default function DashboardScreen() {
 
       <Tabs
         value={section}
-        onChange={(_event, value: 'challans' | 'users' | 'masters' | 'profile') => {
+        onChange={(_event, value: 'challans' | 'trend' | 'users' | 'masters' | 'profile') => {
           navigate(`/${value}`);
         }}
         aria-label="Administration sections"
       >
         <Tab label="Challans" value="challans" />
+        {(role === 'Supervisor' || role === 'Admin') && <Tab label="Trend" value="trend" />}
         {role === 'Admin' && <Tab label="Users" value="users" />}
         {role === 'Admin' && <Tab label="Masters" value="masters" />}
         <Tab label="Profile" value="profile" />
@@ -95,6 +101,18 @@ export default function DashboardScreen() {
           <Route
             path="/challans/:challanId?"
             element={<ChallanReviewPanel token={token} role={role} />}
+          />
+          <Route
+            path="/trend"
+            element={
+              role === 'Supervisor' || role === 'Admin' ? (
+                <Suspense fallback={<Typography variant="body1">Loading trend…</Typography>}>
+                  <TrendPanel token={token} />
+                </Suspense>
+              ) : (
+                <Navigate to="/challans" replace />
+              )
+            }
           />
           <Route
             path="/users"
