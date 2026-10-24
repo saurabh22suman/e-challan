@@ -176,6 +176,26 @@ export function createAppTheme(options: CreateAppThemeOptions = {}) {
               boxShadow: '0 0 0 6px rgba(255,255,255,0.95)',
             },
           },
+          sizeSmall: {
+            minHeight: tablet
+              ? TOUCH_TARGET_MIN.tabletSecondaryAction
+              : TOUCH_TARGET_MIN.desktopAction,
+            paddingLeft: SPACING.md,
+            paddingRight: SPACING.md,
+            fontSize: tablet ? 16 : 14,
+          },
+          sizeLarge: {
+            minHeight: tablet
+              ? TOUCH_TARGET_MIN.tabletPrimaryAction
+              : TOUCH_TARGET_MIN.desktopAction,
+            paddingLeft: SPACING.xxl,
+            paddingRight: SPACING.xxl,
+            fontSize: tablet ? 18 : 15,
+          },
+          text: {
+            paddingLeft: SPACING.md,
+            paddingRight: SPACING.md,
+          },
         },
       },
 

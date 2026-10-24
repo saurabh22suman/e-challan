@@ -1,9 +1,9 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { SPACING, TOUCH_TARGET_MIN } from './touchTargets.js';
+import { SPACING } from './touchTargets.js';
+import { ActionButton } from './button.js';
 import { tokens } from './tokens.js';
 
 /**
@@ -195,17 +195,13 @@ export function PwaInstallPrompt() {
           </Typography>
         </Box>
         <Stack direction="row" spacing={SPACING.sm} sx={{ flexShrink: 0 }}>
-          <Button onClick={dismiss} sx={{ minHeight: TOUCH_TARGET_MIN.interactive }}>
+          <ActionButton tone="ghost" size="md" onClick={dismiss}>
             Not now
-          </Button>
+          </ActionButton>
           {!iosHint && (
-            <Button
-              variant="contained"
-              onClick={() => void install()}
-              sx={{ minHeight: TOUCH_TARGET_MIN.interactive }}
-            >
+            <ActionButton tone="primary" size="md" onClick={() => void install()}>
               Install
-            </Button>
+            </ActionButton>
           )}
         </Stack>
       </Stack>

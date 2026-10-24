@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -8,7 +7,7 @@ import {
   SignaturePadSchema,
   type SignaturePad as SignatureCapture,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusBadge, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { ActionButton, Notice, SPACING, StatusBadge, tokens } from '@echallan/theme';
 import SignaturePadLib from 'signature_pad';
 
 /**
@@ -434,36 +433,25 @@ export default function SignaturePadControl({
       </div>
       <Stack spacing={SPACING.md}>
         <Stack direction="row" spacing={SPACING.md} sx={{ flexWrap: 'wrap', rowGap: SPACING.md }}>
-          <Button
-            variant="contained"
+          <ActionButton
+            tone="primary"
             data-testid="signature-confirm"
             disabled={confirmable === null || confirmedLocal}
-            sx={{ minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction }}
             onClick={handleConfirm}
           >
             Confirm signature
-          </Button>
+          </ActionButton>
           {confirmedLocal && (
-            <Button
-              variant="outlined"
-              onClick={handleClear}
-              sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-              data-testid="signature-sign-again"
-            >
+            <ActionButton tone="secondary" onClick={handleClear} data-testid="signature-sign-again">
               Sign again
-            </Button>
+            </ActionButton>
           )}
         </Stack>
         <Divider />
         <Stack direction="row" spacing={SPACING.md}>
-          <Button
-            variant="outlined"
-            onClick={handleClear}
-            sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-            data-testid="signature-clear"
-          >
+          <ActionButton tone="secondary" onClick={handleClear} data-testid="signature-clear">
             Clear signature
-          </Button>
+          </ActionButton>
         </Stack>
       </Stack>
       {confirmedLocal && (

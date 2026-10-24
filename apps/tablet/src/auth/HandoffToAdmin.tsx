@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Notice, SPACING } from '@echallan/theme';
+import { ActionButton, Notice, SPACING } from '@echallan/theme';
 import { requestHandoff } from './api';
 import { replaceLocation } from './navigate';
 import { useSession } from './session';
@@ -111,9 +110,9 @@ export default function HandoffToAdmin() {
               <Notice tone="danger" role="alert">
                 {error}
               </Notice>
-              <Button variant="contained" onClick={() => void signOut()}>
+              <ActionButton tone="primary" onClick={() => void signOut()}>
                 Back to sign in
-              </Button>
+              </ActionButton>
             </>
           )}
         </Stack>

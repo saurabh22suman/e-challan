@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -10,7 +9,7 @@ import {
   RefusalSchema,
   type Refusal,
 } from '@echallan/contracts';
-import { ErrorSummary, Notice, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { ActionButton, ErrorSummary, Notice, SPACING, tokens } from '@echallan/theme';
 
 /**
  * Plain-language task wording for the refusal form (UX-06/UXA-25). A limit
@@ -200,15 +199,14 @@ export default function RefusalForm({ summaryRevision, onChange, onInvalidate }:
         />
       </Stack>
       <Stack direction="row" spacing={SPACING.md}>
-        <Button
-          variant="contained"
+        <ActionButton
+          tone="primary"
           onClick={handleSubmit}
-          sx={{ minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction }}
           data-testid="refusal-confirm"
           disabled={confirmed !== null && confirmed.reason === reason}
         >
           Confirm refusal
-        </Button>
+        </ActionButton>
       </Stack>
       {confirmed !== null && (
         <Notice severity="success" role="status">

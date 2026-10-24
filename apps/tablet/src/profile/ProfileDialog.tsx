@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -14,7 +13,7 @@ import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ProfileResponse } from '@echallan/contracts';
-import { Notice, SPACING, tokens } from '@echallan/theme';
+import { ActionButton, Notice, SPACING, tokens } from '@echallan/theme';
 import { DRIVER_LANGUAGES, type DriverLanguage } from '../features/issuance/driverCopy';
 import { fetchProfile, ProfileApiError } from './api';
 
@@ -168,7 +167,9 @@ export default function ProfileDialog({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <ActionButton tone="ghost" onClick={onClose}>
+          Close
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );

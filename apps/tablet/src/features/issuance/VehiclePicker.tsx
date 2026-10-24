@@ -10,7 +10,6 @@ import {
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import FormHelperText from '@mui/material/FormHelperText';
@@ -21,7 +20,14 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import type { RegistryMatch } from '@echallan/contracts';
-import { FONT_MONO, Notice, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import {
+  ActionButton,
+  FONT_MONO,
+  Notice,
+  SPACING,
+  TOUCH_TARGET_MIN,
+  tokens,
+} from '@echallan/theme';
 import type { LookupController } from './useLookupController';
 
 /**
@@ -213,13 +219,14 @@ export default function VehiclePicker({
         <Notice severity="info" role="status">
           <strong>Manual entry.</strong> These details apply only to this challan.
           {carriedDetails && <> Existing details kept. Check them before continuing.</>}
-          <Button
+          <ActionButton
+            tone="ghost"
             onClick={onSwitchToRegistry}
-            sx={{ ml: SPACING.md, minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+            sx={{ ml: SPACING.md }}
             data-testid="vehicle-switch-registry"
           >
             Search the registry instead
-          </Button>
+          </ActionButton>
         </Notice>
       </Stack>
     );
@@ -238,9 +245,9 @@ export default function VehiclePicker({
         <Typography variant="body2" role="alert">
           Couldn&apos;t load the registry. Try again.
         </Typography>
-        <Button variant="outlined" onClick={lookup.triggerNow}>
+        <ActionButton tone="secondary" onClick={lookup.triggerNow}>
           Retry
-        </Button>
+        </ActionButton>
       </Stack>
     );
   } else if (searchMode) {
@@ -363,7 +370,8 @@ export default function VehiclePicker({
           >
             <Box sx={{ maxHeight: 384, overflowY: 'auto' }}>{panelContent}</Box>
             <Divider />
-            <Button
+            <ActionButton
+              tone="ghost"
               fullWidth
               startIcon={<AddCircleOutlineIcon />}
               onClick={() => {
@@ -373,13 +381,12 @@ export default function VehiclePicker({
               data-testid="vehicle-new-entry"
               sx={{
                 justifyContent: 'flex-start',
-                minHeight: TOUCH_TARGET_MIN.tabletDropdownRow,
                 borderRadius: 0,
                 paddingX: SPACING.lg,
               }}
             >
               Enter a new vehicle
-            </Button>
+            </ActionButton>
           </Paper>
         )}
       </Box>

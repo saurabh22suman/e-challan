@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -38,6 +37,7 @@ import type {
   Severity,
 } from '@echallan/contracts';
 import {
+  ActionButton,
   challanStatusKind,
   Notice,
   SPACING,
@@ -548,8 +548,8 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     </MenuItem>
                   ))}
                 </TextField>
-                <Button
-                  variant={filtersOpen ? 'contained' : 'outlined'}
+                <ActionButton
+                  tone={filtersOpen ? 'primary' : 'secondary'}
                   startIcon={<FilterListIcon />}
                   onClick={() => setFiltersOpen((previous) => !previous)}
                   aria-expanded={filtersOpen}
@@ -560,12 +560,12 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     : hasFilters
                       ? `Filters (${activeChips.length})`
                       : 'Filters'}
-                </Button>
-                <Button variant="outlined" onClick={() => setSaveViewOpen(true)}>
+                </ActionButton>
+                <ActionButton tone="secondary" onClick={() => setSaveViewOpen(true)}>
                   Save current view
-                </Button>
-                <Button
-                  variant="outlined"
+                </ActionButton>
+                <ActionButton
+                  tone="secondary"
                   onClick={() =>
                     applyView({
                       name: 'Needs attention',
@@ -576,7 +576,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                   }
                 >
                   Needs attention
-                </Button>
+                </ActionButton>
               </Stack>
             </Box>
 
@@ -594,8 +594,9 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     onDelete={chip.clear}
                   />
                 ))}
-                <Button
-                  size="small"
+                <ActionButton
+                  tone="ghost"
+                  size="sm"
                   onClick={() => {
                     setFilters(EMPTY_FILTERS);
                     setAppliedFilters(EMPTY_FILTERS);
@@ -604,7 +605,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                   }}
                 >
                   Clear all
-                </Button>
+                </ActionButton>
               </Stack>
             )}
 
@@ -636,9 +637,9 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                       Applied by the server across the authorised records.
                     </Typography>
                   </Box>
-                  <Button size="small" onClick={() => setFiltersOpen(false)}>
+                  <ActionButton tone="ghost" size="sm" onClick={() => setFiltersOpen(false)}>
                     Close
-                  </Button>
+                  </ActionButton>
                 </Stack>
                 <Box
                   sx={{
@@ -778,7 +779,8 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     paddingTop: SPACING.md,
                   }}
                 >
-                  <Button
+                  <ActionButton
+                    tone="ghost"
                     onClick={() => {
                       setFilters(EMPTY_FILTERS);
                       setAppliedFilters(EMPTY_FILTERS);
@@ -788,27 +790,31 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     disabled={!hasFilters}
                   >
                     Clear all
-                  </Button>
-                  <Button variant="contained" onClick={() => setFiltersOpen(false)}>
+                  </ActionButton>
+                  <ActionButton tone="primary" onClick={() => setFiltersOpen(false)}>
                     Done
-                  </Button>
+                  </ActionButton>
                 </Stack>
               </Stack>
             </Drawer>
 
             <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
-              <Button variant="contained" onClick={() => void download()} disabled={exporting}>
+              <ActionButton tone="primary" onClick={() => void download()} disabled={exporting}>
                 {exporting ? 'Preparing export…' : 'Export Excel'}
-              </Button>
+              </ActionButton>
             </Stack>
 
             {error !== null && (
               <Notice severity="error" role="status">
                 <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
                   <Typography variant="body1">{error}</Typography>
-                  <Button size="small" onClick={() => setReloadKey((value) => value + 1)}>
+                  <ActionButton
+                    tone="ghost"
+                    size="sm"
+                    onClick={() => setReloadKey((value) => value + 1)}
+                  >
                     Retry
-                  </Button>
+                  </ActionButton>
                 </Stack>
               </Notice>
             )}
@@ -820,8 +826,9 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                 <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
                   <Typography variant="body1">No challans match this filter.</Typography>
                   {hasFilters && (
-                    <Button
-                      size="small"
+                    <ActionButton
+                      tone="ghost"
+                      size="sm"
                       onClick={() => {
                         setFilters(EMPTY_FILTERS);
                         setAppliedFilters(EMPTY_FILTERS);
@@ -829,7 +836,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                       }}
                     >
                       Clear filter
-                    </Button>
+                    </ActionButton>
                   )}
                 </Stack>
               </Notice>
@@ -905,15 +912,15 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                               </Typography>
                             </Box>
                           </Box>
-                          <Button
-                            variant="outlined"
-                            size="small"
+                          <ActionButton
+                            tone="secondary"
+                            size="sm"
                             aria-label={`Open ${item.challanNumber}`}
                             onClick={() => navigate(`/challans/${item.id}`)}
                             sx={{ alignSelf: 'flex-start' }}
                           >
                             Open challan
-                          </Button>
+                          </ActionButton>
                         </Stack>
                       </Box>
                     ))}
@@ -1000,13 +1007,14 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                               {formatIssuedAt(item.issuedAt)}
                             </TableCell>
                             <TableCell align="right">
-                              <Button
-                                size="small"
+                              <ActionButton
+                                tone="ghost"
+                                size="sm"
                                 aria-label={`Open ${item.challanNumber}`}
                                 onClick={() => navigate(`/challans/${item.id}`)}
                               >
                                 Open
-                              </Button>
+                              </ActionButton>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -1070,10 +1078,12 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSaveViewOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={saveCurrentView}>
+          <ActionButton tone="ghost" size="sm" onClick={() => setSaveViewOpen(false)}>
+            Cancel
+          </ActionButton>
+          <ActionButton tone="primary" onClick={saveCurrentView}>
             Save view
-          </Button>
+          </ActionButton>
         </DialogActions>
       </Dialog>
     </Stack>

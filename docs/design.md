@@ -268,7 +268,7 @@ Create or consolidate in `packages/theme`:
 | --- | --- | --- |
 | `StatusBadge` | `tone`, `label`, `icon`, `size` | tinted outline; label required |
 | `SeverityChip` | `severity` | solid; unchanged meaning |
-| `Button` | `primary`, `secondary`, `outline`, `ghost`, `destructive`, `commit`, `loading` | one primary action per view; commit green only |
+| `ActionButton` | `tone`: `primary`, `secondary`, `ghost`, `danger`, `danger-solid`, `commit`; `size`: `sm`/`md`/`lg`; `loading` | one primary action per view; commit green only; destructive confirm uses `danger-solid` |
 | `Notice` | `tone`, `role` | persistent inline |
 | `Toast` / `ToastProvider` | `tone`, `title`, `description`, `action`, `duration` | transient, shared provider |
 | `ConfirmDialog` | `tone`, `title`, `description`, `confirmLabel`, `onConfirm` | consequence-based tone |
@@ -440,8 +440,12 @@ Implemented in this batch:
 - Trend UI: ECharts 6.1.0 loaded only by the lazy Trend chunk; the admin initial
   entry chunk does not contain ECharts; the tablet initial-JS gate remains under
   budget.
-- Browser evidence: 85 Playwright journeys pass, including the Trend tab,
-  status/toast flows and the production single-origin smoke.
+- All content buttons use the shared `ActionButton`; admin buttons share the
+  44px height, tablet primary actions are 64px and secondary/ghost actions 56px.
+  Destructive triggers use `danger`, destructive confirmations `danger-solid`,
+  and the commit action remains the only `commit` (green) button.
+- Browser evidence: 86 Playwright journeys pass, including the Trend tab,
+  status/toast flows, filter drawer, mobile layout and the single-origin smoke.
 - Independent review is still required before these changes are treated as
   accepted.
 

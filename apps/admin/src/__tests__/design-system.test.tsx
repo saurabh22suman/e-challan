@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import Button from '@mui/material/Button';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  ActionButton,
   Notice,
   StatusBadge,
   ToastProvider,
@@ -187,6 +188,39 @@ describe('Notice', () => {
       backgroundColor: toneStyles.danger.bg,
       color: toneStyles.danger.fg,
     });
+  });
+});
+
+describe('ActionButton', () => {
+  it('maps semantic tones to the approved MUI emphasis and colour', () => {
+    const { rerender } = render(<ActionButton tone="primary">Primary</ActionButton>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('MuiButton-contained');
+
+    rerender(<ActionButton tone="secondary">Secondary</ActionButton>);
+    expect(button).toHaveClass('MuiButton-outlined');
+
+    rerender(<ActionButton tone="ghost">Ghost</ActionButton>);
+    expect(button).toHaveClass('MuiButton-text');
+
+    rerender(<ActionButton tone="danger">Danger</ActionButton>);
+    expect(button).toHaveClass('MuiButton-outlined', 'MuiButton-colorError');
+
+    rerender(<ActionButton tone="danger-solid">Confirm</ActionButton>);
+    expect(button).toHaveClass('MuiButton-contained', 'MuiButton-colorError');
+
+    rerender(<ActionButton tone="commit">Commit</ActionButton>);
+    expect(button).toHaveClass('MuiButton-contained', 'MuiButton-colorSuccess');
+  });
+
+  it('disables the action and exposes the loading label', () => {
+    render(
+      <ActionButton loading loadingLabel="Saving…">
+        Save
+      </ActionButton>,
+    );
+    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByText('Saving…')).toBeInTheDocument();
   });
 });
 

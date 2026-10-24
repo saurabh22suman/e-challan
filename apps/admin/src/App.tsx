@@ -2,12 +2,12 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import {
+  ActionButton,
   AppThemeProvider,
   PwaInstallPrompt,
   SPACING,
@@ -93,9 +93,8 @@ function DashboardShell() {
                 </Typography>
               </Stack>
             )}
-            <Button
-              color="inherit"
-              variant="outlined"
+            <ActionButton
+              tone="secondary"
               onClick={() => void signOut()}
               sx={{
                 color: tokens.surface,
@@ -111,7 +110,7 @@ function DashboardShell() {
               }}
             >
               Log out
-            </Button>
+            </ActionButton>
           </Stack>
         </Toolbar>
       </AppBar>

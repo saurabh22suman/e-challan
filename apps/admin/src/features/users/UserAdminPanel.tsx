@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -22,6 +21,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import type { AdminUser } from '@echallan/contracts';
 import {
+  ActionButton,
   ErrorSummary,
   Notice,
   SPACING,
@@ -178,12 +178,12 @@ function ResetPasswordDialog({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={submitting}>
+        <ActionButton tone="ghost" size="sm" onClick={onClose} disabled={submitting}>
           Cancel
-        </Button>
-        <Button form="reset-password-form" type="submit" variant="contained" disabled={submitting}>
+        </ActionButton>
+        <ActionButton form="reset-password-form" type="submit" tone="primary" disabled={submitting}>
           Reset password
-        </Button>
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );
@@ -223,12 +223,12 @@ function DeactivateDialog({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={submitting}>
+        <ActionButton tone="ghost" size="sm" onClick={onClose} disabled={submitting}>
           Cancel
-        </Button>
-        <Button color="error" variant="contained" onClick={onConfirm} disabled={submitting}>
+        </ActionButton>
+        <ActionButton tone="danger-solid" onClick={onConfirm} disabled={submitting}>
           Deactivate user
-        </Button>
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );
@@ -414,8 +414,9 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
     const self = user.id === currentUserId;
     return (
       <Stack direction="row" spacing={SPACING.sm} sx={{ flexWrap: 'wrap', alignItems: 'center' }}>
-        <Button
-          size="small"
+        <ActionButton
+          tone="secondary"
+          size="sm"
           sx={{ whiteSpace: 'nowrap' }}
           aria-label={`Reset password for ${user.username}`}
           onClick={() => {
@@ -423,11 +424,11 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           }}
         >
           Reset password
-        </Button>
+        </ActionButton>
         {user.isActive ? (
-          <Button
-            size="small"
-            color="error"
+          <ActionButton
+            size="sm"
+            tone="danger"
             sx={{ whiteSpace: 'nowrap' }}
             aria-label={`Deactivate ${user.username}`}
             disabled={self}
@@ -437,16 +438,17 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
             }}
           >
             Deactivate
-          </Button>
+          </ActionButton>
         ) : (
-          <Button
-            size="small"
+          <ActionButton
+            tone="secondary"
+            size="sm"
             sx={{ whiteSpace: 'nowrap' }}
             aria-label={`Reactivate ${user.username}`}
             onClick={() => reactivate(user)}
           >
             Reactivate
-          </Button>
+          </ActionButton>
         )}
         {self && (
           <Typography variant="caption" sx={{ color: tokens.muted }}>
@@ -470,9 +472,9 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
       <CardContent>
         <Stack spacing={SPACING.lg}>
           <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
-            <Button variant="contained" onClick={() => setCreating(true)}>
+            <ActionButton tone="primary" onClick={() => setCreating(true)}>
               Create user
-            </Button>
+            </ActionButton>
             <Typography variant="body2" sx={{ color: tokens.muted }}>
               Removal is deactivation: accounts and history are retained.
             </Typography>
@@ -517,9 +519,9 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
               <Typography variant="body2" sx={{ color: tokens.muted, alignSelf: 'center' }}>
                 {selectedUsers.length} selected
               </Typography>
-              <Button
-                size="small"
-                color="error"
+              <ActionButton
+                size="sm"
+                tone="danger"
                 disabled={selectedActive.length === 0}
                 onClick={() => {
                   setBulkFailure(null);
@@ -530,9 +532,10 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
                 }}
               >
                 Deactivate selected
-              </Button>
-              <Button
-                size="small"
+              </ActionButton>
+              <ActionButton
+                tone="secondary"
+                size="sm"
                 disabled={selectedInactive.length === 0}
                 onClick={() => {
                   setBulkFailure(null);
@@ -543,7 +546,7 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
                 }}
               >
                 Reactivate selected
-              </Button>
+              </ActionButton>
             </Stack>
           )}
 
@@ -563,9 +566,13 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           ) : filteredUsers.length === 0 && error === null ? (
             <Notice severity="info" role="status">
               {users.length === 0 ? 'No users are recorded yet.' : 'No users match these filters.'}
-              <Button onClick={() => setCreating(true)} sx={{ ml: SPACING.md }}>
+              <ActionButton
+                tone="primary"
+                onClick={() => setCreating(true)}
+                sx={{ ml: SPACING.md }}
+              >
                 Create user
-              </Button>
+              </ActionButton>
             </Notice>
           ) : compact ? (
             <Stack spacing={SPACING.md}>
@@ -745,12 +752,16 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setBulkAction(null)} disabled={bulkBusy}>
+            <ActionButton
+              tone="ghost"
+              size="sm"
+              onClick={() => setBulkAction(null)}
+              disabled={bulkBusy}
+            >
               Cancel
-            </Button>
-            <Button
-              color={bulkAction.verb === 'deactivate' ? 'error' : 'primary'}
-              variant="contained"
+            </ActionButton>
+            <ActionButton
+              tone={bulkAction.verb === 'deactivate' ? 'danger-solid' : 'primary'}
               onClick={() => void runBulkAction()}
               disabled={bulkBusy}
             >
@@ -759,7 +770,7 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
                 : bulkAction.verb === 'deactivate'
                   ? 'Deactivate'
                   : 'Reactivate'}
-            </Button>
+            </ActionButton>
           </DialogActions>
         </Dialog>
       )}

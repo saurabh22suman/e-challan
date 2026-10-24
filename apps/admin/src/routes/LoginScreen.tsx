@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
@@ -12,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { IDLE_TIMEOUT_SECONDS } from '@echallan/contracts';
-import { Notice, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { ActionButton, Notice, SPACING, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
 import { GENERIC_SIGN_IN_FAILURE } from '../auth/api';
 import { useSession } from '../auth/session';
 
@@ -145,9 +144,9 @@ export default function LoginScreen() {
               </Notice>
             )}
 
-            <Button type="submit" variant="contained" disabled={submitting}>
+            <ActionButton type="submit" tone="primary" disabled={submitting}>
               {submitting ? 'Signing in…' : 'Sign in'}
-            </Button>
+            </ActionButton>
 
             <Typography variant="caption" color="text.secondary">
               Marshal sessions end after {IDLE_TIMEOUT_SECONDS.Marshal / 60} minutes without

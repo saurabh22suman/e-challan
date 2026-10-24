@@ -9,7 +9,6 @@ import {
   type ReactNode,
 } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
@@ -48,6 +47,7 @@ import {
   type SignaturePad as SignatureCapture,
 } from '@echallan/contracts';
 import {
+  ActionButton,
   ErrorSummary,
   FONT_MONO,
   FormSection,
@@ -1134,13 +1134,9 @@ export default function EntryFlow({
                 <SummaryRow label={copy.issued}>{formatIssuedAt(issued.issuedAt)}</SummaryRow>
               </Box>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-                <Button
-                  variant="outlined"
-                  onClick={resetEntry}
-                  sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-                >
+                <ActionButton tone="secondary" onClick={resetEntry}>
                   {copy.createAnother}
-                </Button>
+                </ActionButton>
               </Stack>
             </Stack>
           </FormSection>
@@ -1176,13 +1172,9 @@ export default function EntryFlow({
             testId="marshal-service-error"
             title="The server returned an error"
             action={
-              <Button
-                variant="outlined"
-                onClick={() => void catalogues.reload()}
-                sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-              >
+              <ActionButton tone="secondary" onClick={() => void catalogues.reload()}>
                 Retry
-              </Button>
+              </ActionButton>
             }
           >
             {`${catalogues.state.message} The tablet reached the server; the lists could not be loaded. Retry, or ask your supervisor if it continues.`}
@@ -1199,13 +1191,9 @@ export default function EntryFlow({
             role="alert"
             title="The tablet can't reach the server"
             action={
-              <Button
-                variant="outlined"
-                onClick={() => void catalogues.reload()}
-                sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-              >
+              <ActionButton tone="secondary" onClick={() => void catalogues.reload()}>
                 Retry
-              </Button>
+              </ActionButton>
             }
           >
             {`${catalogues.state.message} Check the network connection, then try again.`}
@@ -1217,12 +1205,13 @@ export default function EntryFlow({
       <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
         <Notice severity="error" role="alert">
           {catalogues.state.message}
-          <Button
+          <ActionButton
+            tone="ghost"
             onClick={() => void catalogues.reload()}
-            sx={{ ml: SPACING.md, minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+            sx={{ ml: SPACING.md }}
           >
             Retry
-          </Button>
+          </ActionButton>
         </Notice>
       </Container>
     );
@@ -1291,21 +1280,13 @@ export default function EntryFlow({
                   <Typography variant="body2">Please wait.</Typography>
                 </Stack>
               ) : formCharacter === 'connection' ? (
-                <Button
-                  variant="outlined"
-                  onClick={() => void reviewSummary()}
-                  sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-                >
+                <ActionButton tone="secondary" onClick={() => void reviewSummary()}>
                   Try again
-                </Button>
+                </ActionButton>
               ) : formCharacter === 'welcome' ? (
-                <Button
-                  variant="text"
-                  onClick={focusVehicleField}
-                  sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction, px: 0 }}
-                >
+                <ActionButton tone="ghost" onClick={focusVehicleField} sx={{ px: 0 }}>
                   Go to vehicle number
-                </Button>
+                </ActionButton>
               ) : undefined
             }
           >
@@ -1348,14 +1329,14 @@ export default function EntryFlow({
               }
               label="I acknowledge the duplicate warning"
             />
-            <Button
-              variant="contained"
+            <ActionButton
+              tone="primary"
               onClick={proceedAfterDuplicate}
               disabled={!duplicateAcknowledged}
-              sx={{ ml: SPACING.md, minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+              sx={{ ml: SPACING.md }}
             >
               Continue
-            </Button>
+            </ActionButton>
           </Notice>
         )}
 
@@ -1392,13 +1373,12 @@ export default function EntryFlow({
                       }}
                     >
                       {recentMatches.map((match) => (
-                        <Button
+                        <ActionButton
                           key={match.gatePassRecordId}
-                          variant="outlined"
+                          tone="secondary"
                           onClick={() => chooseMatch(match)}
                           sx={{
                             width: '100%',
-                            minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
                             justifyContent: 'flex-start',
                             textAlign: 'left',
                             whiteSpace: 'normal',
@@ -1428,7 +1408,7 @@ export default function EntryFlow({
                               {match.driverName} · {match.gatePassNumber}
                             </Typography>
                           </Stack>
-                        </Button>
+                        </ActionButton>
                       ))}
                     </Box>
                   </Stack>
@@ -1597,26 +1577,20 @@ export default function EntryFlow({
               spacing={SPACING.md}
               sx={{ alignItems: 'center', flexWrap: 'wrap' }}
             >
-              <Button
-                variant="contained"
+              <ActionButton
+                tone="primary"
                 onClick={() => void reviewSummary()}
                 disabled={reviewing}
+                loading={reviewing}
+                loadingLabel="Checking details…"
                 data-testid="check-details"
                 sx={{
                   width: { xs: '100%', sm: 'auto' },
-                  minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction,
                   px: SPACING.xl,
                 }}
               >
-                {reviewing ? (
-                  <>
-                    <CircularProgress size={20} sx={{ color: 'inherit', mr: 1 }} aria-hidden />
-                    Checking details…
-                  </>
-                ) : (
-                  'Check details'
-                )}
-              </Button>
+                Check details
+              </ActionButton>
             </Stack>
           </Stack>
         )}
@@ -1684,27 +1658,21 @@ export default function EntryFlow({
                   </Notice>
                 )}
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-                  <Button
-                    variant="outlined"
+                  <ActionButton
+                    tone="secondary"
                     onClick={() => setStep('form')}
-                    sx={{
-                      width: { xs: '100%', sm: 'auto' },
-                      minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
-                    }}
+                    sx={{ width: { xs: '100%', sm: 'auto' } }}
                   >
                     Change details
-                  </Button>
-                  <Button
-                    variant="contained"
+                  </ActionButton>
+                  <ActionButton
+                    tone="primary"
                     onClick={() => setStep('signature')}
                     disabled={preview === null}
-                    sx={{
-                      width: { xs: '100%', sm: 'auto' },
-                      minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction,
-                    }}
+                    sx={{ width: { xs: '100%', sm: 'auto' } }}
                   >
                     Continue to photos
-                  </Button>
+                  </ActionButton>
                 </Stack>
               </Stack>
             </FormSection>
@@ -1739,26 +1707,20 @@ export default function EntryFlow({
                   />
                 </Suspense>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-                  <Button
-                    variant="outlined"
+                  <ActionButton
+                    tone="secondary"
                     onClick={() => setStep('refusal')}
-                    sx={{
-                      width: { xs: '100%', sm: 'auto' },
-                      minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
-                    }}
+                    sx={{ width: { xs: '100%', sm: 'auto' } }}
                   >
                     Driver refuses to sign
-                  </Button>
-                  <Button
-                    variant="outlined"
+                  </ActionButton>
+                  <ActionButton
+                    tone="secondary"
                     onClick={() => setStep('summary')}
-                    sx={{
-                      width: { xs: '100%', sm: 'auto' },
-                      minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
-                    }}
+                    sx={{ width: { xs: '100%', sm: 'auto' } }}
                   >
                     Back to summary
-                  </Button>
+                  </ActionButton>
                 </Stack>
                 <CommitPanel
                   disabled={!canCommit}
@@ -1782,13 +1744,9 @@ export default function EntryFlow({
                 />
               </Suspense>
               <Stack direction="row" spacing={SPACING.md}>
-                <Button
-                  variant="outlined"
-                  onClick={() => setStep('signature')}
-                  sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
-                >
+                <ActionButton tone="secondary" onClick={() => setStep('signature')}>
                   Back to signature
-                </Button>
+                </ActionButton>
               </Stack>
               <CommitPanel
                 disabled={!canCommit}
@@ -1842,24 +1800,17 @@ function CommitPanel({
           {error}
         </Notice>
       )}
-      <Button
-        color="success"
-        variant="contained"
+      <ActionButton
+        tone="commit"
         fullWidth
         data-testid="commit-challan"
         onClick={onCommit}
-        disabled={disabled || submitting}
-        sx={{ minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction }}
+        disabled={disabled}
+        loading={submitting}
+        loadingLabel="Issuing challan…"
       >
-        {submitting ? (
-          <>
-            <CircularProgress size={20} sx={{ color: 'inherit', mr: 1 }} aria-hidden />
-            Issuing challan…
-          </>
-        ) : (
-          'Generate challan'
-        )}
-      </Button>
+        Generate challan
+      </ActionButton>
       {disabled && !submitting && (
         <Typography variant="body2" sx={{ color: tokens.muted }}>
           Capture at least one evidence photo and confirm the driver signature or record a refusal
@@ -2037,9 +1988,9 @@ function SuggestionList({
     return (
       <Typography variant="body2" role="alert" sx={{ mt: SPACING.sm }}>
         Couldn&apos;t load suggestions. Try again.{' '}
-        <Button onClick={onRetry} sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}>
+        <ActionButton tone="ghost" onClick={onRetry}>
           Retry
-        </Button>
+        </ActionButton>
       </Typography>
     );
   }
@@ -2052,23 +2003,22 @@ function SuggestionList({
       sx={{ mt: SPACING.sm }}
     >
       {lookup.matches.map((match) => (
-        <Button
+        <ActionButton
           key={match.gatePassRecordId}
+          tone="secondary"
           role="option"
           aria-selected={false}
-          variant="outlined"
           onClick={() => onChoose(match)}
           sx={{
             justifyContent: 'flex-start',
             textAlign: 'left',
             whiteSpace: 'normal',
             lineHeight: 1.35,
-            minHeight: TOUCH_TARGET_MIN.tabletDropdownRow,
             py: SPACING.sm,
           }}
         >
           {`${match.driverName} — ${match.gatePassNumber} — ${match.vehicleRegistrationNumber}`}
-        </Button>
+        </ActionButton>
       ))}
     </Stack>
   );

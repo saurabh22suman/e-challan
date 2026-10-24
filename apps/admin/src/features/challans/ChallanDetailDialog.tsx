@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -19,6 +18,7 @@ import {
   type Role,
 } from '@echallan/contracts';
 import {
+  ActionButton,
   challanStatusKind,
   ErrorSummary,
   Notice,
@@ -402,14 +402,14 @@ export default function ChallanDetailDialog({
             />
 
             {detail.status === 'Issued' && (
-              <Button
-                variant="contained"
+              <ActionButton
+                tone="primary"
                 disabled={submitting}
                 onClick={() => void submitReview({ to: 'Under Review' })}
                 sx={{ alignSelf: 'flex-start' }}
               >
                 Start review
-              </Button>
+              </ActionButton>
             )}
 
             {detail.status === 'Under Review' && (
@@ -450,14 +450,14 @@ export default function ChallanDetailDialog({
                   error={fieldErrors.remarks !== undefined}
                   helperText={fieldErrors.remarks}
                 />
-                <Button
+                <ActionButton
                   type="submit"
-                  variant="contained"
+                  tone="primary"
                   disabled={submitting}
                   sx={{ alignSelf: 'flex-start' }}
                 >
                   Resolve challan
-                </Button>
+                </ActionButton>
               </Stack>
             )}
 
@@ -478,14 +478,14 @@ export default function ChallanDetailDialog({
                   error={reasonError !== null}
                   helperText={reasonError ?? undefined}
                 />
-                <Button
+                <ActionButton
                   type="submit"
-                  variant="outlined"
+                  tone="secondary"
                   disabled={submitting}
                   sx={{ alignSelf: 'flex-start' }}
                 >
                   Reopen challan
-                </Button>
+                </ActionButton>
               </Stack>
             )}
 
@@ -517,15 +517,14 @@ export default function ChallanDetailDialog({
                   error={cancelError !== null}
                   helperText={cancelError ?? undefined}
                 />
-                <Button
+                <ActionButton
                   type="submit"
-                  color="error"
-                  variant="contained"
+                  tone="danger-solid"
                   disabled={submitting || cancelReason.trim() === ''}
                   sx={{ alignSelf: 'flex-start' }}
                 >
                   Cancel challan
-                </Button>
+                </ActionButton>
               </Stack>
             )}
 
@@ -539,14 +538,16 @@ export default function ChallanDetailDialog({
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'space-between' }}>
         <Stack direction="row" spacing={SPACING.sm}>
-          <Button onClick={onPrevious} disabled={previousDisabled}>
+          <ActionButton tone="ghost" size="sm" onClick={onPrevious} disabled={previousDisabled}>
             Previous
-          </Button>
-          <Button onClick={onNext} disabled={nextDisabled}>
+          </ActionButton>
+          <ActionButton tone="ghost" size="sm" onClick={onNext} disabled={nextDisabled}>
             Next
-          </Button>
+          </ActionButton>
         </Stack>
-        <Button onClick={onClose}>Close</Button>
+        <ActionButton tone="ghost" size="sm" onClick={onClose}>
+          Close
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );

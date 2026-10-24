@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -31,7 +30,15 @@ import {
   type ResolutionActionCode,
   type Severity,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusBadge, ToneDialogTitle, tokens, useToast } from '@echallan/theme';
+import {
+  ActionButton,
+  Notice,
+  SPACING,
+  StatusBadge,
+  ToneDialogTitle,
+  tokens,
+  useToast,
+} from '@echallan/theme';
 import {
   deactivateMaster,
   listAdminMasters,
@@ -282,20 +289,20 @@ export default function MasterDataPanel({ token }: { token: string }) {
   function renderActions(master: MasterRecord) {
     return (
       <Stack direction="row" spacing={SPACING.sm} sx={{ flexWrap: 'wrap' }}>
-        <Button size="small" onClick={() => startEdit(master)}>
+        <ActionButton tone="secondary" size="sm" onClick={() => startEdit(master)}>
           Edit
-        </Button>
+        </ActionButton>
         {master.isActive && (
-          <Button
-            size="small"
-            color="error"
+          <ActionButton
+            size="sm"
+            tone="danger"
             onClick={() => {
               setActionFailure(null);
               setDeactivating(master);
             }}
           >
             Deactivate
-          </Button>
+          </ActionButton>
         )}
       </Stack>
     );
@@ -344,9 +351,9 @@ export default function MasterDataPanel({ token }: { token: string }) {
                 </MenuItem>
               ))}
             </TextField>
-            <Button variant="contained" onClick={startCreate}>
+            <ActionButton tone="primary" onClick={startCreate}>
               Add {KIND_LABELS[kind].toLowerCase().replace(/s$/u, '')}
-            </Button>
+            </ActionButton>
           </Stack>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
@@ -370,9 +377,9 @@ export default function MasterDataPanel({ token }: { token: string }) {
               <MenuItem value="inactive">Inactive</MenuItem>
             </TextField>
             {selectedMasters.length > 0 && (
-              <Button color="error" variant="outlined" onClick={() => setBulkOpen(true)}>
+              <ActionButton tone="danger" onClick={() => setBulkOpen(true)}>
                 Deactivate selected ({selectedMasters.length})
-              </Button>
+              </ActionButton>
             )}
           </Stack>
 
@@ -606,12 +613,12 @@ export default function MasterDataPanel({ token }: { token: string }) {
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setEdit(null)} disabled={busy}>
+            <ActionButton tone="ghost" size="sm" onClick={() => setEdit(null)} disabled={busy}>
               Cancel
-            </Button>
-            <Button variant="contained" onClick={submit} disabled={busy}>
+            </ActionButton>
+            <ActionButton tone="primary" onClick={submit} disabled={busy}>
               {busy ? 'Saving…' : edit.mode === 'create' ? 'Create' : 'Save changes'}
-            </Button>
+            </ActionButton>
           </DialogActions>
         </Dialog>
       )}
@@ -642,17 +649,21 @@ export default function MasterDataPanel({ token }: { token: string }) {
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setBulkOpen(false)} disabled={bulkBusy}>
+            <ActionButton
+              tone="ghost"
+              size="sm"
+              onClick={() => setBulkOpen(false)}
+              disabled={bulkBusy}
+            >
               Cancel
-            </Button>
-            <Button
-              color="error"
-              variant="contained"
+            </ActionButton>
+            <ActionButton
+              tone="danger-solid"
               onClick={() => void runBulkDeactivate()}
               disabled={bulkBusy}
             >
               {bulkBusy ? 'Deactivating…' : 'Deactivate'}
-            </Button>
+            </ActionButton>
           </DialogActions>
         </Dialog>
       )}
@@ -683,12 +694,17 @@ export default function MasterDataPanel({ token }: { token: string }) {
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDeactivating(null)} disabled={busy}>
+            <ActionButton
+              tone="ghost"
+              size="sm"
+              onClick={() => setDeactivating(null)}
+              disabled={busy}
+            >
               Cancel
-            </Button>
-            <Button color="error" variant="contained" onClick={confirmDeactivate} disabled={busy}>
+            </ActionButton>
+            <ActionButton tone="danger-solid" onClick={confirmDeactivate} disabled={busy}>
               Deactivate
-            </Button>
+            </ActionButton>
           </DialogActions>
         </Dialog>
       )}

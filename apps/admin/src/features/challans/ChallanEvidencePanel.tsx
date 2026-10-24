@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ChallanEvidenceResponse } from '@echallan/contracts';
-import { Notice, SPACING, tokens } from '@echallan/theme';
+import { ActionButton, Notice, SPACING, tokens } from '@echallan/theme';
 import {
   fetchEvidenceBlob,
   fetchSignatureBlob,
@@ -233,20 +232,28 @@ export default function ChallanEvidencePanel({
           )}
         </DialogContent>
         <DialogActions>
-          <Button
+          <ActionButton
+            tone="ghost"
+            size="sm"
             onClick={() => setZoom((value) => Math.max(1, value - 0.25))}
             disabled={zoom <= 1}
           >
             Zoom out
-          </Button>
-          <Button onClick={() => setZoom(1)}>{Math.round(zoom * 100)}%</Button>
-          <Button
+          </ActionButton>
+          <ActionButton tone="ghost" size="sm" onClick={() => setZoom(1)}>
+            {Math.round(zoom * 100)}%
+          </ActionButton>
+          <ActionButton
+            tone="ghost"
+            size="sm"
             onClick={() => setZoom((value) => Math.min(4, value + 0.25))}
             disabled={zoom >= 4}
           >
             Zoom in
-          </Button>
-          <Button onClick={() => setPreview(null)}>Close</Button>
+          </ActionButton>
+          <ActionButton tone="ghost" size="sm" onClick={() => setPreview(null)}>
+            Close
+          </ActionButton>
         </DialogActions>
       </Dialog>
     </Stack>

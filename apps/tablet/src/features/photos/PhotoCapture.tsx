@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {
@@ -14,7 +13,7 @@ import {
   wouldExceedPhotoLimit,
   type PhotoCapture,
 } from '@echallan/contracts';
-import { Notice, SPACING, StatusBadge, TOUCH_TARGET_MIN, tokens } from '@echallan/theme';
+import { ActionButton, Notice, SPACING, StatusBadge, tokens } from '@echallan/theme';
 import { encodeJpegToBudget } from './encoder.js';
 
 /**
@@ -353,14 +352,14 @@ export default function PhotoCapture({
       {acquiring && (
         <Notice severity="info" role="status">
           Requesting camera permission…
-          <Button
-            variant="outlined"
+          <ActionButton
+            tone="secondary"
             onClick={cancelAcquisition}
-            sx={{ ml: SPACING.md, minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
+            sx={{ ml: SPACING.md }}
             data-testid="photo-cancel-acquire"
           >
             Cancel
-          </Button>
+          </ActionButton>
         </Notice>
       )}
       <Box
@@ -395,47 +394,40 @@ export default function PhotoCapture({
             <Typography variant="body2" sx={{ color: tokens.muted }}>
               The camera is off. Start it to capture evidence.
             </Typography>
-            <Button
-              variant="contained"
+            <ActionButton
+              tone="primary"
               onClick={() => void startCamera()}
               disabled={acquiring}
-              sx={{ minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction }}
               data-testid="photo-start-camera"
             >
               Start camera
-            </Button>
+            </ActionButton>
           </Stack>
         )}
       </Box>
       {streaming && (
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-          <Button
-            variant="contained"
+          <ActionButton
+            tone="primary"
             data-testid="photo-capture-button"
             onClick={() => void handleCapture()}
             disabled={captureDisabled}
-            sx={{
-              width: { xs: '100%', sm: 'auto' },
-              minHeight: TOUCH_TARGET_MIN.tabletPrimaryAction,
-            }}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             {wouldExceedPhotoLimit(store)
               ? `Maximum ${MAX_PHOTOS} photos`
               : encoding
                 ? 'Compressing…'
                 : 'Take photo'}
-          </Button>
-          <Button
-            variant="outlined"
+          </ActionButton>
+          <ActionButton
+            tone="secondary"
             onClick={stopCamera}
-            sx={{
-              width: { xs: '100%', sm: 'auto' },
-              minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
-            }}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
             data-testid="photo-stop-camera"
           >
             Stop camera
-          </Button>
+          </ActionButton>
         </Stack>
       )}
       {store.photos.length > 0 && (
@@ -461,14 +453,13 @@ export default function PhotoCapture({
               <Typography variant="body2" sx={{ color: tokens.muted }}>
                 {photo.width}×{photo.height} · {Math.round(photo.bytes / 1024)} KB
               </Typography>
-              <Button
-                variant="outlined"
+              <ActionButton
+                tone="secondary"
                 onClick={() => handleDelete(photo.id)}
-                sx={{ minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction }}
                 data-testid="photo-retake"
               >
                 Retake
-              </Button>
+              </ActionButton>
             </Stack>
           ))}
         </Stack>

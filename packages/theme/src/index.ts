@@ -26,6 +26,8 @@ export type {
   SeverityChipProps,
   StatusBadgeProps,
 } from './primitives.js';
+export { ActionButton } from './button.js';
+export type { ActionButtonProps, ActionSize, ActionTone } from './button.js';
 export { ToneDialogTitle } from './dialog.js';
 export type { ToneDialogTone, ToneDialogTitleProps } from './dialog.js';
 export { ToastProvider, useToast } from './toast.js';

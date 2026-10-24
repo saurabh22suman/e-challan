@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -12,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import type { AdminUser, Role } from '@echallan/contracts';
-import { ErrorSummary, Notice, SPACING, ToneDialogTitle } from '@echallan/theme';
+import { ActionButton, ErrorSummary, Notice, SPACING, ToneDialogTitle } from '@echallan/theme';
 import { createUser, type LocationOption, OperationsApiError } from '../../api/operations';
 
 const MIN_PASSWORD_LENGTH = 12;
@@ -290,12 +289,12 @@ export default function CreateUserDialog({
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={submitting}>
+        <ActionButton tone="ghost" size="sm" onClick={onClose} disabled={submitting}>
           Cancel
-        </Button>
-        <Button form="create-user-form" type="submit" variant="contained" disabled={submitting}>
+        </ActionButton>
+        <ActionButton form="create-user-form" type="submit" tone="primary" disabled={submitting}>
           Create user
-        </Button>
+        </ActionButton>
       </DialogActions>
     </Dialog>
   );

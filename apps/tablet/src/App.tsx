@@ -2,19 +2,12 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {
-  AppThemeProvider,
-  PwaInstallPrompt,
-  SPACING,
-  TOUCH_TARGET_MIN,
-  tokens,
-} from '@echallan/theme';
+import { ActionButton, AppThemeProvider, PwaInstallPrompt, SPACING, tokens } from '@echallan/theme';
 import LoginScreen from './routes/LoginScreen';
 import HandoffToAdmin, {
   RedirectToDashboardLogin,
@@ -247,13 +240,11 @@ function TabletShell({
                 </Typography>
               </Stack>
             )}
-            <Button
-              color="inherit"
-              variant="outlined"
+            <ActionButton
+              tone="secondary"
               onClick={() => setProfileOpen(true)}
               disabled={token === null}
               sx={{
-                minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
                 color: tokens.surface,
                 borderColor: tokens.onNavy.border,
                 '&:hover': {
@@ -267,13 +258,11 @@ function TabletShell({
               }}
             >
               Profile
-            </Button>
-            <Button
-              color="inherit"
-              variant="outlined"
+            </ActionButton>
+            <ActionButton
+              tone="secondary"
               onClick={() => void signOut()}
               sx={{
-                minHeight: TOUCH_TARGET_MIN.tabletSecondaryAction,
                 color: tokens.surface,
                 borderColor: tokens.onNavy.border,
                 '&:hover': {
@@ -287,7 +276,7 @@ function TabletShell({
               }}
             >
               Log out
-            </Button>
+            </ActionButton>
           </Stack>
         </Toolbar>
       </AppBar>

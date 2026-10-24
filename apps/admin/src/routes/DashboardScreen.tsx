@@ -1,6 +1,5 @@
 import { Suspense, lazy } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Stack from '@mui/material/Stack';
@@ -8,7 +7,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { SPACING, tokens } from '@echallan/theme';
+import { ActionButton, SPACING, tokens } from '@echallan/theme';
 import ChallanReviewPanel from '../features/challans/ChallanReviewPanel';
 import MasterDataPanel from '../features/masters/MasterDataPanel';
 import ProfilePanel from '../features/profile/ProfilePanel';
@@ -29,9 +28,9 @@ function NotFound() {
           <Typography variant="body1" sx={{ color: tokens.muted }}>
             That address does not match a dashboard screen.
           </Typography>
-          <Button variant="contained" onClick={() => navigate('/challans')}>
+          <ActionButton tone="primary" onClick={() => navigate('/challans')}>
             Go to challans
-          </Button>
+          </ActionButton>
         </Stack>
       </CardContent>
     </Card>

@@ -1,6 +1,5 @@
 import { useEffect, useState, type MouseEvent } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -16,6 +15,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import type { ChallanTrendResponse, ChallanTrendTotals } from '@echallan/contracts';
 import {
+  ActionButton,
   Notice,
   SPACING,
   StatusBadge,
@@ -270,14 +270,14 @@ export default function TrendPanel({ token }: { token: string }) {
             sx={{ alignItems: { sm: 'center' }, justifyContent: 'space-between' }}
           >
             <Box>{error}</Box>
-            <Button
-              size="small"
-              variant="outlined"
-              color="inherit"
+            <ActionButton
+              size="sm"
+              tone="secondary"
               onClick={() => setRequestVersion((value) => value + 1)}
+              sx={{ color: 'inherit', borderColor: 'currentColor' }}
             >
               Retry
-            </Button>
+            </ActionButton>
           </Stack>
         </Notice>
       )}
@@ -303,15 +303,15 @@ export default function TrendPanel({ token }: { token: string }) {
                         {formatTrendDay(trend.from)} to {formatTrendDay(trend.to)}
                       </Typography>
                     </Box>
-                    <Button
-                      size="small"
-                      variant="outlined"
+                    <ActionButton
+                      size="sm"
+                      tone="secondary"
                       onClick={() =>
                         setView((current) => (current === 'chart' ? 'table' : 'chart'))
                       }
                     >
                       {view === 'chart' ? 'View as table' : 'View as chart'}
-                    </Button>
+                    </ActionButton>
                   </Stack>
 
                   {view === 'chart' ? (
