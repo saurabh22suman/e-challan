@@ -9,6 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import Drawer from '@mui/material/Drawer';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -547,21 +548,19 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     </MenuItem>
                   ))}
                 </TextField>
-                {compact && (
-                  <Button
-                    variant={filtersOpen ? 'contained' : 'outlined'}
-                    startIcon={<FilterListIcon />}
-                    onClick={() => setFiltersOpen((previous) => !previous)}
-                    aria-expanded={filtersOpen}
-                    aria-controls="challan-filters"
-                  >
-                    {filtersOpen
-                      ? 'Hide filters'
-                      : hasFilters
-                        ? `Filters (${activeChips.length})`
-                        : 'Filters'}
-                  </Button>
-                )}
+                <Button
+                  variant={filtersOpen ? 'contained' : 'outlined'}
+                  startIcon={<FilterListIcon />}
+                  onClick={() => setFiltersOpen((previous) => !previous)}
+                  aria-expanded={filtersOpen}
+                  aria-controls="challan-filters-drawer"
+                >
+                  {filtersOpen
+                    ? 'Hide filters'
+                    : hasFilters
+                      ? `Filters (${activeChips.length})`
+                      : 'Filters'}
+                </Button>
                 <Button variant="outlined" onClick={() => setSaveViewOpen(true)}>
                   Save current view
                 </Button>
@@ -609,33 +608,46 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
               </Stack>
             )}
 
-            {(!compact || filtersOpen) && (
-              <Box
-                id="challan-filters"
-                sx={{
-                  padding: SPACING.lg,
-                  border: `1px solid ${tokens.lineSoft}`,
-                  borderRadius: 2,
-                  backgroundColor: tokens.canvas,
-                }}
-              >
-                <Box sx={{ marginBottom: SPACING.lg }}>
-                  <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700 }}>
-                    Refine results
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: tokens.muted }}>
-                    Filters are applied by the server across the authorised records.
-                  </Typography>
-                </Box>
+            <Drawer
+              anchor="right"
+              open={filtersOpen}
+              onClose={() => setFiltersOpen(false)}
+              slotProps={{
+                paper: {
+                  sx: {
+                    width: { xs: '100%', sm: 460 },
+                    boxSizing: 'border-box',
+                    padding: SPACING.lg,
+                  },
+                },
+              }}
+            >
+              <Stack id="challan-filters-drawer" spacing={SPACING.lg} sx={{ minHeight: '100%' }}>
+                <Stack
+                  direction="row"
+                  spacing={SPACING.md}
+                  sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }}
+                >
+                  <Box>
+                    <Typography component="h2" variant="h3">
+                      Filters
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: tokens.muted }}>
+                      Applied by the server across the authorised records.
+                    </Typography>
+                  </Box>
+                  <Button size="small" onClick={() => setFiltersOpen(false)}>
+                    Close
+                  </Button>
+                </Stack>
                 <Box
                   sx={{
+                    flex: '1 1 auto',
+                    overflowY: 'auto',
                     display: 'grid',
-                    gridTemplateColumns: {
-                      xs: '1fr',
-                      sm: 'repeat(2, 1fr)',
-                      lg: 'repeat(4, 1fr)',
-                    },
+                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
                     gap: SPACING.md,
+                    alignContent: 'start',
                   }}
                 >
                   <TextField
@@ -757,8 +769,32 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                     slotProps={{ inputLabel: { shrink: true } }}
                   />
                 </Box>
-              </Box>
-            )}
+                <Stack
+                  direction="row"
+                  spacing={SPACING.md}
+                  sx={{
+                    justifyContent: 'flex-end',
+                    borderTop: `1px solid ${tokens.lineSoft}`,
+                    paddingTop: SPACING.md,
+                  }}
+                >
+                  <Button
+                    onClick={() => {
+                      setFilters(EMPTY_FILTERS);
+                      setAppliedFilters(EMPTY_FILTERS);
+                      setSelectedView('');
+                      setPage(0);
+                    }}
+                    disabled={!hasFilters}
+                  >
+                    Clear all
+                  </Button>
+                  <Button variant="contained" onClick={() => setFiltersOpen(false)}>
+                    Done
+                  </Button>
+                </Stack>
+              </Stack>
+            </Drawer>
 
             <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
               <Button variant="contained" onClick={() => void download()} disabled={exporting}>

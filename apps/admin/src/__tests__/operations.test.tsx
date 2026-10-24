@@ -92,7 +92,7 @@ const detail = (status: DetailFixture['status'] = 'Issued'): DetailFixture => ({
   contractorLabel: 'West Contractors',
   vehicleTypeLabel: 'Car',
   gateLabel: 'Gate 1 — Main Entrance',
-  remarks: 'Synthetic issued remark.',
+  remarks: 'Issued remark.',
   violations: [{ label: 'No seatbelt', severity: 'Major' }],
   actions:
     status === 'Issued'
@@ -303,16 +303,18 @@ describe('Supervisor review surface', () => {
     expect(calls.listUrls[0]).toContain('/api/challans');
 
     const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'Filters' }));
     await user.click(screen.getByLabelText('Filter by status'));
     await user.click(await screen.findByRole('option', { name: 'Issued' }));
     await waitFor(() => {
       expect(calls.listUrls.at(-1)).toContain('status=Issued');
     });
+    await user.click(screen.getByRole('button', { name: 'Done' }));
 
-    await user.click(screen.getByRole('button', { name: 'Open HZL/EC/2026/10/0005' }));
+    await user.click(await screen.findByRole('button', { name: 'Open HZL/EC/2026/10/0005' }));
     const dialog = await screen.findByRole('dialog', { name: /challan details/i });
     expect(within(dialog).getByText(/No seatbelt/)).toBeInTheDocument();
-    expect(within(dialog).getByText('Synthetic issued remark.')).toBeInTheDocument();
+    expect(within(dialog).getByText('Issued remark.')).toBeInTheDocument();
     expect(within(dialog).getByRole('heading', { name: /tracking history/i })).toBeInTheDocument();
   });
 

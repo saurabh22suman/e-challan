@@ -42,9 +42,11 @@ test.describe('review and user administration', () => {
 
     await expect(page.getByText('HZL/EC/2026/10/0005')).toBeVisible();
 
+    await page.getByRole('button', { name: 'Filters' }).click();
     await page.getByLabel('Filter by status').click();
     await page.getByRole('option', { name: 'Issued' }).click();
     await expect(page.getByText('HZL/EC/2026/10/0005')).toBeVisible();
+    await page.getByRole('button', { name: 'Done' }).click();
 
     await page.getByRole('button', { name: 'Open HZL/EC/2026/10/0005' }).click();
     const dialog = page.getByRole('dialog', { name: /challan details/i });
@@ -63,9 +65,11 @@ test.describe('review and user administration', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await signIn(page, 'supervisor');
 
+    await page.getByRole('button', { name: 'Filters' }).click();
     const filter = page.getByLabel('Filter by status');
     await expect(filter).toBeVisible();
     await expect(filter).toHaveText('All statuses');
+    await page.getByRole('button', { name: 'Close' }).click();
     await expect(page.getByRole('table', { name: 'Challans' })).toBeVisible();
 
     const overflow = await page.evaluate(
