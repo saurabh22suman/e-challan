@@ -52,10 +52,10 @@ test.describe('pre-issuance entry journey', () => {
     await signIn(page);
 
     await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
-    await selectSuggestion(page, /Kavita Joshi.*DEMO-GP-0010/);
+    await selectSuggestion(page, /Kavita Joshi.*HZ-GP-1051/);
 
     await expect(page.getByLabel('Driver name')).toHaveValue('Kavita Joshi');
-    await expect(page.getByLabel('Gate pass number')).toHaveValue('DEMO-GP-0010');
+    await expect(page.getByLabel('Gate pass number')).toHaveValue('HZ-GP-1051');
     await expect(page.getByLabel('Department')).not.toHaveValue('');
     await expect(page.getByLabel('Vehicle type')).not.toHaveValue('');
 
@@ -72,8 +72,8 @@ test.describe('pre-issuance entry journey', () => {
     await page.getByLabel('Vehicle registration').click();
     const listbox = page.getByRole('listbox', { name: /Registry suggestions/i });
     await expect(listbox).toBeVisible();
-    await expect(listbox.getByRole('option', { name: /Kavita Joshi.*DEMO-GP-0010/ })).toBeVisible();
-    await expect(listbox.getByRole('option', { name: /Ramesh Kumar.*DEMO-GP-0001/ })).toBeVisible();
+    await expect(listbox.getByRole('option', { name: /Kavita Joshi.*HZ-GP-1051/ })).toBeVisible();
+    await expect(listbox.getByRole('option', { name: /Ramesh Kumar.*HZ-GP-1042/ })).toBeVisible();
     await expect(
       page.getByRole('option', { name: /MH12RT7306/ }),
       'dispatch-location vehicles must not be offered to the main marshal',
@@ -91,7 +91,7 @@ test.describe('pre-issuance entry journey', () => {
     await page.getByLabel('Vehicle registration').click();
     await page.getByTestId('vehicle-new-entry').click();
     await page.getByLabel('Vehicle registration').fill('GJ99XX9999');
-    await page.getByLabel('Gate pass number').fill('DEMO-GP-9999');
+    await page.getByLabel('Gate pass number').fill('HZ-GP-9999');
     await page.getByLabel('Driver name').fill('New Driver');
     await page.getByLabel('Department').selectOption({ label: 'Logistics' });
     await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });
@@ -129,7 +129,7 @@ test.describe('pre-issuance entry journey', () => {
 
     // Complete a valid draft.
     await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
-    await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+    await page.getByLabel('Gate pass number').fill('HZ-GP-1051');
     await page.getByLabel('Driver name').fill('Kavita Joshi');
     await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });
     await page.getByLabel('Department').selectOption({ label: 'Other' });
@@ -158,7 +158,7 @@ test.describe('pre-issuance entry journey', () => {
     await signIn(page);
 
     await page.getByLabel('Vehicle registration').fill('GJ05DS4821');
-    await page.getByLabel('Gate pass number').fill('DEMO-GP-0001');
+    await page.getByLabel('Gate pass number').fill('HZ-GP-1042');
     await page.getByLabel('Driver name').fill('Ramesh Kumar');
     await page.getByLabel('Department').selectOption({ label: 'Logistics' });
     await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });

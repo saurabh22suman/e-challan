@@ -12,9 +12,9 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
  */
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 interface LoginBody {
@@ -68,12 +68,12 @@ describe('self-service profile', () => {
     expect(result.status).toBe(200);
     expect(result.body.user).toStrictEqual({
       id: expect.any(String),
-      username: 'DEMO-EMP-002',
+      username: 'EMP-2217',
       displayName: 'Sunil Deshmukh',
-      employeeId: 'DEMO-EMP-002',
+      employeeId: 'EMP-2217',
       role: 'Supervisor',
       isActive: true,
-      locationLabels: ['Demo industrial campus — main entrance'],
+      locationLabels: ['Hazira Industrial Estate — Main Gate'],
     });
     expect(result.body.session.post).toBeNull();
     expect(result.body.session.shift).toBeNull();
@@ -89,10 +89,10 @@ describe('self-service profile', () => {
     const result = await profile(token);
     expect(result.status).toBe(200);
     expect(result.body.user.role).toBe('Marshal');
-    expect(result.body.user.username).toBe('DEMO-EMP-004');
-    expect(result.body.session.post?.label).toBe('DEMO-POST-01');
+    expect(result.body.user.username).toBe('EMP-3106');
+    expect(result.body.session.post?.label).toBe('Main Gate Post');
     expect(result.body.session.shift?.label).toBeTruthy();
-    expect(result.body.user.locationLabels).toEqual(['Demo industrial campus — main entrance']);
+    expect(result.body.user.locationLabels).toEqual(['Hazira Industrial Estate — Main Gate']);
   });
 
   it('returns the Admin with all assigned locations', async () => {
@@ -111,7 +111,7 @@ describe('self-service profile', () => {
     const adminProfile = await profile(admin);
     const result = await profile(token, `?userId=${adminProfile.body.user.id}`);
     expect(result.status).toBe(200);
-    expect(result.body.user.username).toBe('DEMO-EMP-002');
+    expect(result.body.user.username).toBe('EMP-2217');
     expect(result.body.user.id).not.toBe(adminProfile.body.user.id);
   });
 

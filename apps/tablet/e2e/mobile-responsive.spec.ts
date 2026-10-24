@@ -32,7 +32,7 @@ async function openEntry(page: Page): Promise<void> {
 
 async function openSummary(page: Page): Promise<void> {
   await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
-  await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+  await page.getByLabel('Gate pass number').fill('HZ-GP-1051');
   await page.getByLabel('Driver name').fill('Kavita Joshi');
   await page.getByLabel('Department', { exact: true }).selectOption({ label: 'Logistics' });
   await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });

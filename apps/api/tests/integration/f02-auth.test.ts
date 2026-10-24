@@ -31,9 +31,9 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
  * of anything present in the repository or the environment.
  */
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 const MARSHAL_PASSWORD = CREDENTIALS.marshal.password;
@@ -43,13 +43,13 @@ const ADMIN_PASSWORD = CREDENTIALS.admin.password;
 /**
  * Q4: a deliberately mismatched but internally valid configuration. Three **distinct**
  * usernames, so the loader cannot refuse it as ambiguous; the marshal account maps to
- * DEMO-EMP-002, which is stored as a Supervisor. The only possible refusal is the
+ * EMP-2217, which is stored as a Supervisor. The only possible refusal is the
  * stored-role guard.
  */
 const MISMATCHED_CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-002', password: 'mismatch-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-003', password: 'mismatch-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'mismatch-admin-secret' },
+  marshal: { username: 'EMP-2217', password: 'mismatch-marshal-secret' },
+  supervisor: { username: 'EMP-2284', password: 'mismatch-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'mismatch-admin-secret' },
 } as const;
 
 const DEMO_ENV_KEYS = [
@@ -104,7 +104,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
   async function loginOk(extra: Record<string, unknown> = {}): Promise<SessionBody> {
     const result = await login({
-      username: 'DEMO-EMP-004',
+      username: 'EMP-3106',
       password: MARSHAL_PASSWORD,
       ...extra,
     });
@@ -124,13 +124,13 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     it('logs in each configured role and returns its stored identity', async () => {
       const marshal = await loginOk();
       expect(marshal.user.role).toBe('Marshal');
-      expect(marshal.user.username).toBe('DEMO-EMP-004');
+      expect(marshal.user.username).toBe('EMP-3106');
 
-      const supervisor = await login({ username: 'DEMO-EMP-002', password: SUPERVISOR_PASSWORD });
+      const supervisor = await login({ username: 'EMP-2217', password: SUPERVISOR_PASSWORD });
       expect(supervisor.status).toBe(200);
       expect((supervisor.json as SessionBody).user.role).toBe('Supervisor');
 
-      const admin = await login({ username: 'DEMO-EMP-001', password: ADMIN_PASSWORD });
+      const admin = await login({ username: 'EMP-1042', password: ADMIN_PASSWORD });
       expect(admin.status).toBe(200);
       expect((admin.json as SessionBody).user.role).toBe('Admin');
     });
@@ -138,7 +138,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     it('never returns the password or any password material in a successful login response', async () => {
       // A successful login is required first: inspecting a generic failure body
       // proves nothing, because a failure body trivially contains no password.
-      const result = await login({ username: 'DEMO-EMP-001', password: ADMIN_PASSWORD });
+      const result = await login({ username: 'EMP-1042', password: ADMIN_PASSWORD });
       expect(
         result.status,
         `a genuine successful login is required before checking its body: ${JSON.stringify(result.json)}`,
@@ -151,7 +151,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('refuses a wrong password and an unknown username identically', async () => {
-      const wrongPassword = await login({ username: 'DEMO-EMP-001', password: 'not-the-secret' });
+      const wrongPassword = await login({ username: 'EMP-1042', password: 'not-the-secret' });
       const unknownUser = await login({ username: 'DEMO-NOBODY', password: ADMIN_PASSWORD });
 
       expect(wrongPassword.status).toBe(401);
@@ -165,7 +165,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
     it('ignores any client-supplied role and never escalates the session', async () => {
       const result = await login({
-        username: 'DEMO-EMP-004',
+        username: 'EMP-3106',
         password: MARSHAL_PASSWORD,
         role: 'Admin',
       });
@@ -193,7 +193,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
       await control.ready();
       try {
         const controlLogin = await login(
-          { username: 'DEMO-EMP-004', password: MARSHAL_PASSWORD },
+          { username: 'EMP-3106', password: MARSHAL_PASSWORD },
           control,
         );
         expect(controlLogin.status, 'the valid control must authenticate').toBe(200);
@@ -201,12 +201,12 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
         await control.close();
       }
 
-      // DEMO-EMP-002 is stored as a Supervisor but presented as the Marshal account.
+      // EMP-2217 is stored as a Supervisor but presented as the Marshal account.
       const mismatched = createApp({ db, credentials: MISMATCHED_CREDENTIALS });
       await mismatched.ready();
       try {
         const result = await login(
-          { username: 'DEMO-EMP-002', password: 'mismatch-marshal-secret' },
+          { username: 'EMP-2217', password: 'mismatch-marshal-secret' },
           mismatched,
         );
         expect(
@@ -238,7 +238,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
       const bare = createApp({ db });
       await bare.ready();
       try {
-        const result = await login({ username: 'DEMO-EMP-004', password: MARSHAL_PASSWORD }, bare);
+        const result = await login({ username: 'EMP-3106', password: MARSHAL_PASSWORD }, bare);
         expect(
           result.status,
           'omitting factory credentials must mean "no configured accounts", whatever the environment holds',
@@ -258,7 +258,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
   describe('sessions are server-side and revocable', () => {
     it('stores only a hash of the session token, never the token itself', async () => {
-      const token = await tokenFor('DEMO-EMP-004', MARSHAL_PASSWORD);
+      const token = await tokenFor('EMP-3106', MARSHAL_PASSWORD);
       const rows = await db.pool.query<{ token_hash: string }>(
         'SELECT token_hash FROM sessions ORDER BY created_at DESC LIMIT 1',
       );
@@ -274,7 +274,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('resolves a valid session and rejects an anonymous request', async () => {
-      const token = await tokenFor('DEMO-EMP-004', MARSHAL_PASSWORD);
+      const token = await tokenFor('EMP-3106', MARSHAL_PASSWORD);
       const ok = await server.inject({
         method: 'GET',
         url: '/auth/session',
@@ -295,7 +295,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('revokes on logout so an old token cannot regain access', async () => {
-      const token = await tokenFor('DEMO-EMP-004', MARSHAL_PASSWORD);
+      const token = await tokenFor('EMP-3106', MARSHAL_PASSWORD);
       const out = await server.inject({
         method: 'POST',
         url: '/auth/logout',
@@ -312,7 +312,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('rejects a session idle beyond the approved window and accepts allowed activity inside it', async () => {
-      const token = await tokenFor('DEMO-EMP-004', MARSHAL_PASSWORD);
+      const token = await tokenFor('EMP-3106', MARSHAL_PASSWORD);
       const session = await db.pool.query<{ id: string }>(
         'SELECT id FROM sessions WHERE revoked_at IS NULL ORDER BY created_at DESC LIMIT 1',
       );
@@ -349,7 +349,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('refuses a session past its absolute expiry', async () => {
-      const token = await tokenFor('DEMO-EMP-004', MARSHAL_PASSWORD);
+      const token = await tokenFor('EMP-3106', MARSHAL_PASSWORD);
       const session = await db.pool.query<{ id: string }>(
         'SELECT id FROM sessions WHERE revoked_at IS NULL ORDER BY created_at DESC LIMIT 1',
       );
@@ -369,7 +369,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
   describe('AUTH-05 attribution binds user, post and shift', () => {
     it('binds the authorised post and shift to a marshal session', async () => {
       const post = await db.pool.query<{ id: string }>(
-        "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-01'",
+        "SELECT id FROM posts WHERE demo_source_id = 'Main Gate Post'",
       );
       const shift = await db.pool.query<{ id: string }>(
         "SELECT id FROM shifts WHERE demo_source_id = 'shift-main-day'",
@@ -397,7 +397,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
       // from stored data rather than demanded from the client.
       const session = await loginOk();
       const post = await db.pool.query<{ id: string }>(
-        "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-01'",
+        "SELECT id FROM posts WHERE demo_source_id = 'Main Gate Post'",
       );
       const shift = await db.pool.query<{ id: string }>(
         "SELECT id FROM shifts WHERE demo_source_id = 'shift-main-day'",
@@ -409,18 +409,18 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     it('refuses a marshal who supplies a post they are not authorised for', async () => {
       // Prove the known-valid login succeeds first, so a missing-route 404 can never
       // be mistaken for this enforcement.
-      const control = await login({ username: 'DEMO-EMP-004', password: MARSHAL_PASSWORD });
+      const control = await login({ username: 'EMP-3106', password: MARSHAL_PASSWORD });
       expect(control.status, 'the known-valid login must succeed before the refusal case').toBe(
         200,
       );
 
       const otherPost = await db.pool.query<{ id: string }>(
-        "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-02'",
+        "SELECT id FROM posts WHERE demo_source_id = 'Dispatch Gate Post'",
       );
       expect(otherPost.rows, 'a second seeded post is required for this case').toHaveLength(1);
 
       const result = await login({
-        username: 'DEMO-EMP-004',
+        username: 'EMP-3106',
         password: MARSHAL_PASSWORD,
         postId: otherPost.rows[0]?.id,
       });
@@ -439,7 +439,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
       expect(dispatchShift.rows, 'a dispatch shift is required for this case').toHaveLength(1);
 
       const result = await login({
-        username: 'DEMO-EMP-004',
+        username: 'EMP-3106',
         password: MARSHAL_PASSWORD,
         shiftId: dispatchShift.rows[0]?.id,
       });
@@ -452,7 +452,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
     it('R3: refuses a marshal login when no compatible active shift exists', async () => {
       const marshal = await db.pool.query<{ id: string }>(
-        "SELECT id FROM users WHERE username = 'DEMO-EMP-004'",
+        "SELECT id FROM users WHERE username = 'EMP-3106'",
       );
       const marshalId = marshal.rows[0]?.id as string;
 
@@ -460,7 +460,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
         marshalId,
       ]);
       try {
-        const result = await login({ username: 'DEMO-EMP-004', password: MARSHAL_PASSWORD });
+        const result = await login({ username: 'EMP-3106', password: MARSHAL_PASSWORD });
         expect(
           result.status,
           `a marshal session must never succeed without a shift, got ${result.status}`,
@@ -484,13 +484,13 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
         "SELECT id FROM gates WHERE demo_source_id = 'gate-01'",
       );
       const marshal = await db.pool.query<{ id: string }>(
-        "SELECT id FROM users WHERE username = 'DEMO-EMP-004'",
+        "SELECT id FROM users WHERE username = 'EMP-3106'",
       );
       const supervisor = await db.pool.query<{ id: string }>(
-        "SELECT id FROM users WHERE username = 'DEMO-EMP-002'",
+        "SELECT id FROM users WHERE username = 'EMP-2217'",
       );
       const post = await db.pool.query<{ id: string }>(
-        "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-01'",
+        "SELECT id FROM posts WHERE demo_source_id = 'Main Gate Post'",
       );
       const shift = await db.pool.query<{ id: string }>(
         "SELECT id FROM shifts WHERE demo_source_id = 'shift-main-day'",
@@ -529,7 +529,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
         )
       ).rows;
       const dispatchPost = await db.pool.query<{ id: string }>(
-        "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-02'",
+        "SELECT id FROM posts WHERE demo_source_id = 'Dispatch Gate Post'",
       );
       const dispatchShift = await db.pool.query<{ id: string }>(
         "SELECT id FROM shifts WHERE demo_source_id = 'shift-dispatch-day'",
@@ -538,7 +538,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
       try {
         // Step 1: two authorised active posts → the API must refuse and offer the
         // stored candidates rather than guess.
-        const ambiguousPost = await login({ username: 'DEMO-EMP-004', password: MARSHAL_PASSWORD });
+        const ambiguousPost = await login({ username: 'EMP-3106', password: MARSHAL_PASSWORD });
         expect(ambiguousPost.status).toBe(422);
         const postBody = ambiguousPost.json as {
           error?: string;
@@ -565,7 +565,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
         // Step 2: choose the post explicitly. Two active shifts now run at its gate,
         // so the API must offer the compatible shifts next.
         const ambiguousShift = await login({
-          username: 'DEMO-EMP-004',
+          username: 'EMP-3106',
           password: MARSHAL_PASSWORD,
           postId: post.rows[0]?.id,
         });
@@ -593,7 +593,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
         // Step 3: an explicit authorised selection always wins over ambiguity.
         const resolved = await login({
-          username: 'DEMO-EMP-004',
+          username: 'EMP-3106',
           password: MARSHAL_PASSWORD,
           postId: post.rows[0]?.id,
           shiftId: shift.rows[0]?.id,
@@ -634,7 +634,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
     it('lets a supervisor read its own location but not another location', async () => {
       const ids = await challanIds();
-      const token = await tokenFor('DEMO-EMP-002', SUPERVISOR_PASSWORD);
+      const token = await tokenFor('EMP-2217', SUPERVISOR_PASSWORD);
 
       const own = await server.inject({
         method: 'GET',
@@ -655,7 +655,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
     it('lets an admin read across locations', async () => {
       const ids = await challanIds();
-      const token = await tokenFor('DEMO-EMP-001', ADMIN_PASSWORD);
+      const token = await tokenFor('EMP-1042', ADMIN_PASSWORD);
       for (const id of [ids.main, ids.dispatch]) {
         const response = await server.inject({
           method: 'GET',
@@ -669,9 +669,9 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     it('scopes a marshal to their own post location', async () => {
       const ids = await challanIds();
       const post = await db.pool.query<{ id: string }>(
-        "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-01'",
+        "SELECT id FROM posts WHERE demo_source_id = 'Main Gate Post'",
       );
-      const token = await tokenFor('DEMO-EMP-004', MARSHAL_PASSWORD, {
+      const token = await tokenFor('EMP-3106', MARSHAL_PASSWORD, {
         postId: post.rows[0]?.id,
       });
 
@@ -691,7 +691,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('Q3: returns 404 for an unknown id only after proving the read succeeds for a known record', async () => {
-      const token = await tokenFor('DEMO-EMP-001', ADMIN_PASSWORD);
+      const token = await tokenFor('EMP-1042', ADMIN_PASSWORD);
       const known = await db.pool.query<{ id: string }>(
         'SELECT id FROM challans ORDER BY id LIMIT 1',
       );
@@ -720,7 +720,7 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
     });
 
     it('R4: returns a controlled error for a malformed id without SQL, parameters or internal detail', async () => {
-      const token = await tokenFor('DEMO-EMP-001', ADMIN_PASSWORD);
+      const token = await tokenFor('EMP-1042', ADMIN_PASSWORD);
       const malformedIds = ['not-a-uuid', "1' OR '1'='1", '00000000-0000-4000-8000', 'challan-1'];
 
       for (const malformed of malformedIds) {
@@ -765,14 +765,14 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
 
     it('never returns issued fields that the caller may not see to an out-of-scope caller', async () => {
       const ids = await challanIds();
-      const token = await tokenFor('DEMO-EMP-002', SUPERVISOR_PASSWORD);
+      const token = await tokenFor('EMP-2217', SUPERVISOR_PASSWORD);
       const response = await server.inject({
         method: 'GET',
         url: `/challans/${ids.dispatch}`,
         headers: { authorization: `Bearer ${token}` },
       });
       expect(response.statusCode).toBe(403);
-      expect(JSON.stringify(response.json())).not.toContain('DEMO/2026');
+      expect(JSON.stringify(response.json())).not.toContain('HZL/EC/2026');
     });
   });
 });

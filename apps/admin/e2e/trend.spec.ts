@@ -40,7 +40,7 @@ async function signIn(page: Page): Promise<void> {
   await page.getByLabel('Username').fill(ACCOUNTS.supervisor.username);
   await page.getByLabel('Password', { exact: true }).fill(ACCOUNTS.supervisor.password);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
-  await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
 }
 
 test.describe('Supervisor challan trend', () => {

@@ -13,7 +13,7 @@ import App from '../App';
  */
 
 const TOKEN = 'b'.repeat(64);
-const SUPERVISOR = { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' };
+const SUPERVISOR = { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' };
 const ID = (suffix: string): string => `00000000-0000-4000-8000-${suffix.padStart(12, '0')}`;
 
 const jsonResponse = (body: unknown, status = 200): Response =>
@@ -34,7 +34,7 @@ const NO_CONTENT = (): Response =>
 
 const SESSION_BODY = {
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: ID('1'), username: 'DEMO-EMP-002', role: 'Supervisor' },
+  user: { id: ID('1'), username: 'EMP-2217', role: 'Supervisor' },
   post: null,
   shift: null,
 };
@@ -81,7 +81,7 @@ async function renderSignedIn() {
   await user.type(await screen.findByLabelText(/username/i), SUPERVISOR.username);
   await user.type(screen.getByLabelText('Password', { exact: true }), SUPERVISOR.password);
   await user.click(screen.getByRole('button', { name: /sign in|log in/i }));
-  await screen.findByRole('heading', { name: /demo review workspace/i });
+  await screen.findByRole('heading', { name: /review workspace/i });
 }
 
 afterEach(() => {
@@ -95,7 +95,7 @@ describe('dashboard shell (F-04)', () => {
     stubApi();
     await renderSignedIn();
 
-    expect(screen.getByRole('heading', { name: /demo review workspace/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /review workspace/i })).toBeInTheDocument();
     expect(await screen.findByText(/no challans match this filter/i)).toBeInTheDocument();
     // Reporting tiles are now backed by the server report.
     expect(screen.getByText('Total')).toBeInTheDocument();
@@ -110,8 +110,6 @@ describe('dashboard shell (F-04)', () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole('button', { name: /log ?out|sign out/i }));
     expect(await screen.findByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: /demo review workspace/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
   });
 });

@@ -31,7 +31,7 @@ const USER_ID = '00000000-0000-4000-8000-00000000bb01';
 const LOGIN_BODY = {
   token: TOKEN,
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: USER_ID, username: 'DEMO-EMP-002', role: 'Supervisor' },
+  user: { id: USER_ID, username: 'EMP-2217', role: 'Supervisor' },
   post: null,
   shift: null,
 };
@@ -52,9 +52,9 @@ const MARSHAL_TOKEN = 'e'.repeat(64);
 const MARSHAL_LOGIN_BODY = {
   token: MARSHAL_TOKEN,
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: '00000000-0000-4000-8000-00000000bb11', username: 'DEMO-EMP-004', role: 'Marshal' },
-  post: { id: '00000000-0000-4000-8000-00000000bb12', label: 'DEMO-POST-01' },
-  shift: { id: '00000000-0000-4000-8000-00000000bb13', label: 'Demo day shift' },
+  user: { id: '00000000-0000-4000-8000-00000000bb11', username: 'EMP-3106', role: 'Marshal' },
+  post: { id: '00000000-0000-4000-8000-00000000bb12', label: 'Main Gate Post' },
+  shift: { id: '00000000-0000-4000-8000-00000000bb13', label: 'A Shift (06:00–14:00)' },
 };
 const MARSHAL_SESSION_BODY = {
   expiresAt: MARSHAL_LOGIN_BODY.expiresAt,
@@ -174,7 +174,7 @@ function stubFetch(options: StubOptions = {}) {
 
 const signIn = async (
   account: { username: string; password: string } = {
-    username: 'DEMO-EMP-002',
+    username: 'EMP-2217',
     password: 'planner-demo-supervisor-secret',
   },
 ) => {
@@ -208,9 +208,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText('Password', { exact: true })).toHaveAttribute('type', 'password');
     expect(screen.getByRole('button', { name: /sign in|log in/i })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: /demo review workspace/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
   });
 
   it('reveals the dashboard shell after a successful sign in', async () => {
@@ -219,9 +217,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
 
     await signIn();
 
-    expect(
-      await screen.findByRole('heading', { name: /demo review workspace/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /review workspace/i })).toBeInTheDocument();
   });
 
   it('reports a login error and stays on the login screen', async () => {
@@ -231,26 +227,20 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
     await signIn();
 
     expect(await screen.findByRole('alert')).toHaveTextContent(/sign in failed|incorrect|invalid/i);
-    expect(
-      screen.queryByRole('heading', { name: /demo review workspace/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
   });
 
   it('logs out on request, clears the session and tells the API', async () => {
     const fetchMock = stubFetch();
     render(<App />);
     await signIn();
-    expect(
-      await screen.findByRole('heading', { name: /demo review workspace/i }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /review workspace/i })).toBeInTheDocument();
 
     const user = userEvent.setup();
     await user.click(await screen.findByRole('button', { name: /log ?out|sign out/i }));
 
     expect(await screen.findByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: /demo review workspace/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
     const logoutCall = fetchMock.mock.calls.find(
       ([url, init]) =>
         String(url).includes('/api/auth/logout') &&
@@ -273,14 +263,12 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
       const fetchMock = stubFetch({ loginBody: MARSHAL_LOGIN_BODY });
       render(<App />);
 
-      await signIn({ username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' });
+      await signIn({ username: 'EMP-3106', password: 'planner-demo-marshal-secret' });
 
       expect(
         await screen.findByRole('heading', { name: /opening the marshal tablet/i }),
       ).toBeInTheDocument();
-      expect(
-        screen.queryByRole('heading', { name: /demo review workspace/i }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
       expect(localStorage.getItem(STORAGE_KEY)).toBe(MARSHAL_TOKEN);
 
       const handoffCall = fetchMock.mock.calls.find(
@@ -308,9 +296,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
       expect(
         await screen.findByRole('heading', { name: /opening the marshal tablet/i }),
       ).toBeInTheDocument();
-      expect(
-        screen.queryByRole('heading', { name: /demo review workspace/i }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
       expect(localStorage.getItem(STORAGE_KEY)).toBe(MARSHAL_TOKEN);
 
       await vi.waitFor(() => {
@@ -331,9 +317,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
       render(<App />);
 
       await signIn();
-      expect(
-        await screen.findByRole('heading', { name: /demo review workspace/i }),
-      ).toBeInTheDocument();
+      expect(await screen.findByRole('heading', { name: /review workspace/i })).toBeInTheDocument();
       const issuedToken = localStorage.getItem(STORAGE_KEY);
       expect(issuedToken).toBe(TOKEN);
 
@@ -343,7 +327,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
       });
 
       expect(
-        screen.getByRole('heading', { name: /demo review workspace/i }),
+        screen.getByRole('heading', { name: /review workspace/i }),
         'a stale refusal must not erase the newer session',
       ).toBeInTheDocument();
       expect(localStorage.getItem(STORAGE_KEY)).toBe(issuedToken);
@@ -358,9 +342,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
 
       expect(await screen.findByLabelText(/username/i)).toBeInTheDocument();
       await signIn();
-      expect(
-        await screen.findByRole('heading', { name: /demo review workspace/i }),
-      ).toBeInTheDocument();
+      expect(await screen.findByRole('heading', { name: /review workspace/i })).toBeInTheDocument();
 
       const user = userEvent.setup();
       await user.click(await screen.findByRole('button', { name: /log ?out|sign out/i }));
@@ -373,7 +355,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
       });
 
       expect(
-        screen.queryByRole('heading', { name: /demo review workspace/i }),
+        screen.queryByRole('heading', { name: /review workspace/i }),
         'a stale valid restoration must not sign the operator back in',
       ).not.toBeInTheDocument();
       expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
@@ -400,7 +382,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
           'a token that cannot be restored must be removed',
         ).toBeNull();
         expect(
-          screen.queryByRole('heading', { name: /demo review workspace/i }),
+          screen.queryByRole('heading', { name: /review workspace/i }),
         ).not.toBeInTheDocument();
       } finally {
         tracker.stop();
@@ -420,7 +402,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
         expect(tracker.errors).toEqual([]);
         expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
         expect(
-          screen.queryByRole('heading', { name: /demo review workspace/i }),
+          screen.queryByRole('heading', { name: /review workspace/i }),
         ).not.toBeInTheDocument();
       } finally {
         tracker.stop();
@@ -435,7 +417,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
         render(<App />);
 
         expect(
-          await screen.findByRole('heading', { name: /demo review workspace/i }),
+          await screen.findByRole('heading', { name: /review workspace/i }),
         ).toBeInTheDocument();
         await settle();
 
@@ -456,7 +438,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
 
         await signIn();
         expect(
-          await screen.findByRole('heading', { name: /demo review workspace/i }),
+          await screen.findByRole('heading', { name: /review workspace/i }),
         ).toBeInTheDocument();
         expect(localStorage.getItem(STORAGE_KEY)).toBe(TOKEN);
 
@@ -469,7 +451,7 @@ describe('AUTH-01: admin login, protected routes and logout', () => {
 
         expect(tracker.errors, 'the stale failure must be handled, not unhandled').toEqual([]);
         expect(
-          screen.getByRole('heading', { name: /demo review workspace/i }),
+          screen.getByRole('heading', { name: /review workspace/i }),
           'a stale decoding failure must not erase the newer login',
         ).toBeInTheDocument();
         expect(localStorage.getItem(STORAGE_KEY)).toBe(TOKEN);

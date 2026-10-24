@@ -18,7 +18,7 @@ vi.mock('../auth/navigate', () => ({ replaceLocation: replaceLocationMock }));
  * tablet holds. No draft is claimed to be proven.
  */
 
-const MARSHAL = { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' };
+const MARSHAL = { username: 'EMP-3106', password: 'planner-demo-marshal-secret' };
 
 const jsonResponse = (body: unknown, status = 200) =>
   ({
@@ -36,9 +36,9 @@ const SHIFT_ID = '00000000-0000-4000-8000-00000000aa03';
 const LOGIN_BODY = {
   token: TOKEN,
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: USER_ID, username: 'DEMO-EMP-004', role: 'Marshal' },
-  post: { id: POST_ID, label: 'DEMO-POST-01' },
-  shift: { id: SHIFT_ID, label: 'Demo day shift' },
+  user: { id: USER_ID, username: 'EMP-3106', role: 'Marshal' },
+  post: { id: POST_ID, label: 'Main Gate Post' },
+  shift: { id: SHIFT_ID, label: 'A Shift (06:00–14:00)' },
 };
 
 /** The identity-only body the session lookup returns; it never re-issues a token. */
@@ -59,7 +59,7 @@ const SUPERVISOR_LOGIN_BODY = {
   expiresAt: '2099-01-01T00:00:00.000Z',
   user: {
     id: '00000000-0000-4000-8000-00000000aa11',
-    username: 'DEMO-EMP-002',
+    username: 'EMP-2217',
     role: 'Supervisor',
   },
   post: null,
@@ -363,7 +363,7 @@ describe('AUTH-01/AUTH-04: tablet login, protected routes and idle logout', () =
       const fetchMock = stubFetch({ loginBody: SUPERVISOR_LOGIN_BODY });
       render(<App />);
 
-      await signIn({ username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' });
+      await signIn({ username: 'EMP-2217', password: 'planner-demo-supervisor-secret' });
 
       expect(await screen.findByRole('heading', { name: /opening the dashboard/i })).toBeVisible();
       expect(
@@ -520,7 +520,7 @@ describe('AUTH-01/AUTH-04: tablet login, protected routes and idle logout', () =
             {
               token: TOKEN,
               expiresAt: '2099-01-01T00:00:00.000Z',
-              user: { id: USER_ID, username: 'DEMO-EMP-004', role: 'Marshal' },
+              user: { id: USER_ID, username: 'EMP-3106', role: 'Marshal' },
               post: { id: POST_ALPHA, label: 'Post Alpha' },
               shift: { id: SHIFT_NIGHT, label: 'Night shift' },
             },

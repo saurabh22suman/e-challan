@@ -22,7 +22,7 @@ describe('I-03 refusal schema (SIG-04)', () => {
     const result = RefusalSchema.safeParse({
       reason: '   ',
       witnessName: 'S. Iyer',
-      witnessStaffId: 'DEMO-EMP-007',
+      witnessStaffId: 'EMP-007',
     });
     expect(result.success).toBe(false);
   });
@@ -30,7 +30,7 @@ describe('I-03 refusal schema (SIG-04)', () => {
     const result = RefusalSchema.safeParse({
       reason: 'Driver left the scene',
       witnessName: 'S. Iyer',
-      witnessStaffId: 'DEMO-EMP-007',
+      witnessStaffId: 'EMP-007',
     });
     expect(result.success).toBe(true);
     if (result.success) {
@@ -48,7 +48,7 @@ describe('I-03 refusal form (SIG-04)', () => {
         summaryRevision={deriveSummaryRevision({
           draft: {
             vehicleRegistration: 'GJ05JP6207',
-            gatePassNumber: 'DEMO-GP-0010',
+            gatePassNumber: 'HZ-GP-1051',
             driverName: 'Kavita Joshi',
             departmentId: ID('4'),
             contractorId: '',
@@ -73,7 +73,7 @@ describe('I-03 refusal form (SIG-04)', () => {
     render(<RefusalForm summaryRevision={'abc12345'} onChange={onChange} />);
     await user.type(screen.getByLabelText(/Reason/i), 'Driver left the scene');
     await user.type(screen.getByLabelText(/witnessing supervisor name/i), 'S. Iyer');
-    await user.type(screen.getByLabelText(/witnessing supervisor staff id/i), 'DEMO-EMP-007');
+    await user.type(screen.getByLabelText(/witnessing supervisor staff id/i), 'EMP-007');
     await user.click(screen.getByTestId('refusal-confirm'));
     await waitFor(() => expect(onChange).toHaveBeenCalled());
     const record = screen.getByTestId('refusal-record');

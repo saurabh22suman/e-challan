@@ -6,9 +6,9 @@ import type { Db } from '../../src/db/client.js';
 import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/testTarget.js';
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 describe('recent vehicles at the marshal location', () => {
@@ -52,7 +52,7 @@ describe('recent vehicles at the marshal location', () => {
     const parsed = RegistryLookupResponseSchema.parse(response.json());
     expect(parsed.matches.length).toBeGreaterThan(0);
     expect(parsed.matches.length).toBeLessThanOrEqual(5);
-    expect(parsed.matches[0]?.gatePassNumber).toMatch(/^DEMO-GP-/);
+    expect(parsed.matches[0]?.gatePassNumber).toMatch(/^HZ-GP-/);
   });
 
   it('is Marshal-only', async () => {

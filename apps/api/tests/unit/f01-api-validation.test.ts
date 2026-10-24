@@ -39,8 +39,8 @@ describe('DOM-01: API consumes the shared contract', () => {
     const input = {
       operationId: id,
       vehicleNumber: ' gj 05 ds 4821 ',
-      gatePassNumber: 'demo-gp-0001',
-      driverName: ' Demo Driver ',
+      gatePassNumber: 'hz-gp-1042',
+      driverName: ' Ramesh Kumar ',
       departmentId: id,
       vehicleTypeId: id,
       violationIds: [id],

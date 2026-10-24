@@ -12,9 +12,9 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
  */
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 const SUP_USER = 'SUP-CREATE-001';
@@ -147,7 +147,7 @@ describe('Admin user management over real PostgreSQL', () => {
       expect(user.username).toBe(SUP_USER);
       expect(user.role).toBe('Supervisor');
       expect(user.isActive).toBe(true);
-      expect(user.locationLabels).toEqual(['Demo industrial campus — main entrance']);
+      expect(user.locationLabels).toEqual(['Hazira Industrial Estate — Main Gate']);
       expect(JSON.stringify(created.body).toLowerCase()).not.toContain('password');
       expect(JSON.stringify(created.body)).not.toContain('$argon2');
 
@@ -169,7 +169,9 @@ describe('Admin user management over real PostgreSQL', () => {
       expect(list.statusCode).toBe(200);
       const items = (list.json() as { items: Array<{ locationLabel: string }> }).items;
       expect(items).toHaveLength(8);
-      expect(items.every((item) => item.locationLabel.includes('main entrance'))).toBe(true);
+      expect(
+        items.every((item) => item.locationLabel === 'Hazira Industrial Estate — Main Gate'),
+      ).toBe(true);
     });
 
     it('creates an Admin with no location assignment and a Marshal bound to its post', async () => {
@@ -200,7 +202,7 @@ describe('Admin user management over real PostgreSQL', () => {
       const marshalLogin = await login(MARSHAL_USER, MARSHAL_PASSWORD);
       expect(marshalLogin.status).toBe(200);
       expect(marshalLogin.body.user.role).toBe('Marshal');
-      expect(marshalLogin.body.post?.label).toBe('DEMO-POST-01');
+      expect(marshalLogin.body.post?.label).toBe('Main Gate Post');
     });
 
     it('refuses duplicates, missing locations, inactive locations and non-Admins', async () => {

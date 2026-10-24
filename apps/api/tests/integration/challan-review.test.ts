@@ -19,22 +19,22 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
  */
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
-const MAIN_ISSUED = 'DEMO/2026/10/0005';
-const MAIN_ISSUED_FOR_INVALID = 'DEMO/2026/10/0004';
-const MAIN_RESOLVED = 'DEMO/2026/09/0004';
-const MAIN_RESOLVED_REOPEN_DENIED = 'DEMO/2026/06/0001';
-const MAIN_CANCELLED = 'DEMO/2026/09/0005';
-const MAIN_UNDER_REVIEW = 'DEMO/2026/09/0001';
-const DISPATCH_ISSUED = 'DEMO/2026/10/0002';
-const DISPATCH_ISSUED_FOR_ADMIN = 'DEMO/2026/09/0003';
+const MAIN_ISSUED = 'HZL/EC/2026/10/0005';
+const MAIN_ISSUED_FOR_INVALID = 'HZL/EC/2026/10/0004';
+const MAIN_RESOLVED = 'HZL/EC/2026/09/0004';
+const MAIN_RESOLVED_REOPEN_DENIED = 'HZL/EC/2026/06/0001';
+const MAIN_CANCELLED = 'HZL/EC/2026/09/0005';
+const MAIN_UNDER_REVIEW = 'HZL/EC/2026/09/0001';
+const DISPATCH_ISSUED = 'HZL/EC/2026/10/0002';
+const DISPATCH_ISSUED_FOR_ADMIN = 'HZL/EC/2026/09/0003';
 
 const DISPATCH_SUPERVISOR = {
-  username: 'DEMO-EMP-003',
+  username: 'EMP-2284',
   password: 'reset-dispatch-supervisor-secret-1',
 } as const;
 
@@ -193,7 +193,7 @@ describe('review and user administration over real PostgreSQL', () => {
       expect(supervisorItems).toHaveLength(8);
       expect(
         supervisorItems.every(
-          (item) => item.locationLabel === 'Demo industrial campus — main entrance',
+          (item) => item.locationLabel === 'Hazira Industrial Estate — Main Gate',
         ),
       ).toBe(true);
       expect(supervisorItems.some((item) => item.challanNumber === DISPATCH_ISSUED)).toBe(false);
@@ -231,14 +231,14 @@ describe('review and user administration over real PostgreSQL', () => {
       const resolvedId = await challanId(MAIN_RESOLVED);
       const resolved = await detail(supervisor, resolvedId);
       expect(resolved.status).toBe(200);
-      expect(resolved.body.locationLabel).toBe('Demo industrial campus — main entrance');
-      expect(resolved.body.issuedBy.username).toBe('DEMO-EMP-004');
+      expect(resolved.body.locationLabel).toBe('Hazira Industrial Estate — Main Gate');
+      expect(resolved.body.issuedBy.username).toBe('EMP-3106');
       expect(resolved.body.issuedBy.displayName).toBe('Ravi Patel');
       expect(resolved.body.violations.length).toBeGreaterThan(0);
       expect(resolved.body.actions).toHaveLength(1);
       expect(resolved.body.actions[0]?.toStatus).toBe('Resolved');
-      expect(resolved.body.actions[0]?.performerUsername).toBe('DEMO-EMP-002');
-      expect(resolved.body.remarks).toContain('Synthetic');
+      expect(resolved.body.actions[0]?.performerUsername).toBe('EMP-2217');
+      expect(resolved.body.remarks).toContain('Parked in a restricted area');
 
       const underReview = await detail(supervisor, await challanId(MAIN_UNDER_REVIEW));
       expect(underReview.status).toBe(200);
@@ -250,7 +250,7 @@ describe('review and user administration over real PostgreSQL', () => {
       const refused = await detail(supervisor, await challanId(DISPATCH_ISSUED));
       expect(refused.status).toBe(403);
       expect(refused.body.error).toBe('forbidden');
-      expect(JSON.stringify(refused.body)).not.toContain('DEMO/2026');
+      expect(JSON.stringify(refused.body)).not.toContain('HZL/EC/2026');
     });
   });
 
@@ -266,7 +266,7 @@ describe('review and user administration over real PostgreSQL', () => {
       expect(started.status, JSON.stringify(started.body)).toBe(200);
       expect(started.body.status).toBe('Under Review');
       expect(started.body.actions.map((action) => action.toStatus)).toEqual(['Under Review']);
-      expect(started.body.actions[0]?.performerUsername).toBe('DEMO-EMP-002');
+      expect(started.body.actions[0]?.performerUsername).toBe('EMP-2217');
 
       const resolved = await review(supervisor, id, {
         to: 'Resolved',
@@ -283,7 +283,7 @@ describe('review and user administration over real PostgreSQL', () => {
       expect(resolved.body.actions[1]?.remarks).toBe(
         'Warning issued and acknowledged at the gate.',
       );
-      expect(resolved.body.actions[1]?.performerUsername).toBe('DEMO-EMP-002');
+      expect(resolved.body.actions[1]?.performerUsername).toBe('EMP-2217');
 
       // Issued fields are not rewritten by a review transition.
       for (const field of [
@@ -385,7 +385,7 @@ describe('review and user administration over real PostgreSQL', () => {
       const id = await challanId(DISPATCH_ISSUED_FOR_ADMIN);
       const started = await review(admin, id, { to: 'Under Review' });
       expect(started.status).toBe(200);
-      expect((await detail(admin, id)).body.actions[0]?.performerUsername).toBe('DEMO-EMP-001');
+      expect((await detail(admin, id)).body.actions[0]?.performerUsername).toBe('EMP-1042');
     });
 
     it('lets only an Admin reopen a Resolved challan, with a mandatory reason', async () => {
@@ -411,7 +411,7 @@ describe('review and user administration over real PostgreSQL', () => {
       expect(reopened.body.reopeningReason).toBe('New evidence requires another review.');
       expect(reopened.body.reopenedAt).not.toBeNull();
       expect(reopened.body.actions.at(-1)?.reason).toBe('New evidence requires another review.');
-      expect(reopened.body.actions.at(-1)?.performerUsername).toBe('DEMO-EMP-001');
+      expect(reopened.body.actions.at(-1)?.performerUsername).toBe('EMP-1042');
     });
 
     it('allows only an Admin to cancel with a mandatory reason, retains history and is terminal', async () => {
@@ -439,7 +439,7 @@ describe('review and user administration over real PostgreSQL', () => {
       expect(cancelled.body.actions.at(-1)?.reason).toBe(
         'Duplicate paper record; retained for audit.',
       );
-      expect(cancelled.body.actions.at(-1)?.performerUsername).toBe('DEMO-EMP-001');
+      expect(cancelled.body.actions.at(-1)?.performerUsername).toBe('EMP-1042');
 
       const terminal = await review(admin, id, { to: 'Under Review' });
       expect(terminal.status).toBe(409);
@@ -481,11 +481,11 @@ describe('review and user administration over real PostgreSQL', () => {
       };
       expect(body.users).toHaveLength(5);
       expect(body.users.map((user) => user.username).sort()).toEqual([
-        'DEMO-EMP-001',
-        'DEMO-EMP-002',
-        'DEMO-EMP-003',
-        'DEMO-EMP-004',
-        'DEMO-EMP-005',
+        'EMP-1042',
+        'EMP-2217',
+        'EMP-2284',
+        'EMP-3106',
+        'EMP-3142',
       ]);
       expect(JSON.stringify(body).toLowerCase()).not.toContain('password');
       expect(JSON.stringify(body)).not.toContain('$argon2');
@@ -594,7 +594,7 @@ describe('review and user administration over real PostgreSQL', () => {
       expect(audit.rows[0]?.actor_user_id).toBe(
         (
           await db.pool.query<{ id: string }>('SELECT id FROM users WHERE username = $1', [
-            'DEMO-EMP-001',
+            'EMP-1042',
           ])
         ).rows[0]?.id,
       );
@@ -604,7 +604,7 @@ describe('review and user administration over real PostgreSQL', () => {
       const admin = await tokenFor('admin');
       const target = await db.pool.query<{ id: string }>(
         'SELECT id FROM users WHERE username = $1',
-        ['DEMO-EMP-005'],
+        ['EMP-3142'],
       );
       const targetId = target.rows[0]?.id as string;
       await db.pool.query('UPDATE users SET is_active = false WHERE id = $1', [targetId]);
@@ -617,7 +617,7 @@ describe('review and user administration over real PostgreSQL', () => {
       });
       expect(reset.statusCode).toBe(204);
 
-      const refused = await login('DEMO-EMP-005', 'disabled-user-reset-secret');
+      const refused = await login('EMP-3142', 'disabled-user-reset-secret');
       expect(refused.status).toBe(401);
 
       await db.pool.query('UPDATE users SET is_active = true WHERE id = $1', [targetId]);

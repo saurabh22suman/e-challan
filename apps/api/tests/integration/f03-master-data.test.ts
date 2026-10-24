@@ -21,9 +21,9 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
  */
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 const ADMIN_PASSWORD = CREDENTIALS.admin.password;
@@ -101,7 +101,7 @@ describe('MST-01/02/03: master-data API and historical meaning over real Postgre
   }
 
   async function adminToken(): Promise<string> {
-    return tokenFor('DEMO-EMP-001', ADMIN_PASSWORD);
+    return tokenFor('EMP-1042', ADMIN_PASSWORD);
   }
 
   async function createMaster(
@@ -306,8 +306,8 @@ describe('MST-01/02/03: master-data API and historical meaning over real Postgre
 
   it('MST-01: non-admin attempts are refused with no side effects', async () => {
     const admin = await adminToken();
-    const marshal = await tokenFor('DEMO-EMP-004', CREDENTIALS.marshal.password);
-    const supervisor = await tokenFor('DEMO-EMP-002', SUPERVISOR_PASSWORD);
+    const marshal = await tokenFor('EMP-3106', CREDENTIALS.marshal.password);
+    const supervisor = await tokenFor('EMP-2217', SUPERVISOR_PASSWORD);
     const department = await createMaster(
       'departments',
       { label: nextLabel('F-03 protected') },

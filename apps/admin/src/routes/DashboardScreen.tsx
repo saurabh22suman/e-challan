@@ -66,7 +66,7 @@ export default function DashboardScreen() {
     <Stack spacing={SPACING.lg}>
       <Box>
         <Typography component="h1" variant="h2">
-          Demo review workspace
+          Review workspace
         </Typography>
         <Typography variant="body1" sx={{ color: tokens.muted, mt: SPACING.xs }}>
           Review issued challans for your authorised locations. Start a review, record the action

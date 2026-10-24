@@ -11,7 +11,7 @@ import App from '../App';
  * Read-only planner input. Do not replace, skip or weaken these assertions.
  */
 
-const MARSHAL = { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' };
+const MARSHAL = { username: 'EMP-3106', password: 'planner-demo-marshal-secret' };
 const TOKEN = 'a'.repeat(64);
 
 const ID = (suffix: string): string => `00000000-0000-4000-8000-${suffix.padStart(12, '0')}`;
@@ -52,9 +52,9 @@ const NO_CONTENT = (): Response =>
 const LOGIN_BODY = {
   token: TOKEN,
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: IDS.user, username: 'DEMO-EMP-004', role: 'Marshal' },
-  post: { id: IDS.post, label: 'DEMO-POST-01' },
-  shift: { id: IDS.shift, label: 'Demo day shift' },
+  user: { id: IDS.user, username: 'EMP-3106', role: 'Marshal' },
+  post: { id: IDS.post, label: 'Main Gate Post' },
+  shift: { id: IDS.shift, label: 'A Shift (06:00–14:00)' },
 };
 
 const SESSION_BODY = {
@@ -118,7 +118,7 @@ const CATALOGUES: Record<string, unknown> = {
 
 const MATCH = {
   gatePassRecordId: IDS.passRecord,
-  gatePassNumber: 'DEMO-GP-0010',
+  gatePassNumber: 'HZ-GP-1051',
   driverId: IDS.driver,
   driverName: 'Kavita Joshi',
   vehicleId: IDS.vehicle,
@@ -300,12 +300,12 @@ describe('pre-issuance entry flow (ENT-01–ENT-06, UI-01)', () => {
     await renderSignedIn();
 
     await typeInto('Vehicle registration', 'GJ05JP6207');
-    const option = await screen.findByRole('option', { name: /Kavita Joshi.*DEMO-GP-0010/ });
+    const option = await screen.findByRole('option', { name: /Kavita Joshi.*HZ-GP-1051/ });
     const user = userEvent.setup();
     await user.click(option);
 
     expect(screen.getByLabelText('Driver name')).toHaveValue('Kavita Joshi');
-    expect(screen.getByLabelText('Gate pass number')).toHaveValue('DEMO-GP-0010');
+    expect(screen.getByLabelText('Gate pass number')).toHaveValue('HZ-GP-1051');
     expect(screen.getByLabelText('Department')).toHaveValue(IDS.department);
     expect(screen.getByLabelText('Vehicle type')).toHaveValue(IDS.vehicleType);
 
@@ -327,7 +327,7 @@ describe('pre-issuance entry flow (ENT-01–ENT-06, UI-01)', () => {
     await user.click(screen.getByLabelText('Vehicle registration'));
     const listbox = await screen.findByRole('listbox', { name: /registry suggestions/i });
     expect(
-      within(listbox).getByRole('option', { name: /Kavita Joshi.*DEMO-GP-0010/ }),
+      within(listbox).getByRole('option', { name: /Kavita Joshi.*HZ-GP-1051/ }),
     ).toBeInTheDocument();
 
     const urls = fetchMock.mock.calls.map(([url]) => String(url));
@@ -358,7 +358,7 @@ describe('pre-issuance entry flow (ENT-01–ENT-06, UI-01)', () => {
     expect(await screen.findByText(/manual entry\./i)).toBeInTheDocument();
 
     await typeInto('Vehicle registration', 'GJ99XX9999');
-    await typeInto('Gate pass number', 'DEMO-GP-9999');
+    await typeInto('Gate pass number', 'HZ-GP-9999');
     await typeInto('Driver name', 'New Driver');
     await user.selectOptions(screen.getByLabelText('Department'), IDS.department);
     await user.selectOptions(screen.getByLabelText('Vehicle type'), IDS.vehicleType);
@@ -375,7 +375,7 @@ describe('pre-issuance entry flow (ENT-01–ENT-06, UI-01)', () => {
     const second = {
       ...MATCH,
       gatePassRecordId: ID('20'),
-      gatePassNumber: 'DEMO-GP-0006',
+      gatePassNumber: 'HZ-GP-1047',
       driverId: ID('21'),
       driverName: 'Sanjay Patil',
       contractorId: null,
@@ -389,23 +389,23 @@ describe('pre-issuance entry flow (ENT-01–ENT-06, UI-01)', () => {
     const options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(2);
     const user = userEvent.setup();
-    await user.click(screen.getByRole('option', { name: /Sanjay Patil.*DEMO-GP-0006/ }));
+    await user.click(screen.getByRole('option', { name: /Sanjay Patil.*HZ-GP-1047/ }));
     expect(screen.getByLabelText('Driver name')).toHaveValue('Sanjay Patil');
-    expect(screen.getByLabelText('Gate pass number')).toHaveValue('DEMO-GP-0006');
+    expect(screen.getByLabelText('Gate pass number')).toHaveValue('HZ-GP-1047');
   });
 
   it('shows an expiry notice for an expired registry match', async () => {
     const expired = {
       ...MATCH,
-      gatePassNumber: 'DEMO-GP-0008',
+      gatePassNumber: 'HZ-GP-1049',
       status: 'expired',
       validUntil: '2026-09-25T00:00:00.000Z',
     };
     stubApi({ lookup: () => jsonResponse({ matches: [expired] }, 200) });
     await renderSignedIn();
 
-    await typeInto('Gate pass number', 'DEMO-GP-0008');
-    const option = await screen.findByRole('option', { name: /Kavita Joshi.*DEMO-GP-0008/ });
+    await typeInto('Gate pass number', 'HZ-GP-1049');
+    const option = await screen.findByRole('option', { name: /Kavita Joshi.*HZ-GP-1049/ });
     const user = userEvent.setup();
     await user.click(option);
     expect(await screen.findByText(/expired/i)).toBeInTheDocument();
@@ -491,7 +491,7 @@ describe('pre-issuance entry flow (ENT-01–ENT-06, UI-01)', () => {
 
     // Complete the rest of the draft so only the Other-remarks rule can block.
     await typeInto('Vehicle registration', 'GJ05JP6207');
-    await typeInto('Gate pass number', 'DEMO-GP-0010');
+    await typeInto('Gate pass number', 'HZ-GP-1051');
     await typeInto('Driver name', 'Kavita Joshi');
     const user = userEvent.setup();
     await user.selectOptions(screen.getByLabelText('Vehicle type'), IDS.vehicleType);

@@ -35,7 +35,7 @@ async function signIn(page: Page) {
 
 async function fillDraft(page: Page) {
   await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
-  await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+  await page.getByLabel('Gate pass number').fill('HZ-GP-1051');
   await page.getByLabel('Driver name').fill('Kavita Joshi');
   await page.getByLabel('Department', { exact: true }).selectOption({ label: 'Logistics' });
   await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });
@@ -170,7 +170,7 @@ test('UXA-04: linked summary focuses every control, edits keep unrelated errors,
     });
   });
   await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
-  await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+  await page.getByLabel('Gate pass number').fill('HZ-GP-1051');
   await page.getByLabel('Department', { exact: true }).selectOption({ label: 'Logistics' });
   await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });
   await page.getByRole('checkbox', { name: 'Not wearing a seat belt' }).check();
@@ -399,7 +399,7 @@ test('UXA-25: refusal reports blank fields and limit breaches, then confirms pla
 
   await reason.fill('Driver left the scene');
   await page.getByLabel(/witnessing supervisor name/i).fill('S. Iyer');
-  await page.getByLabel(/witnessing supervisor staff id/i).fill('DEMO-EMP-007');
+  await page.getByLabel(/witnessing supervisor staff id/i).fill('EMP-007');
   await page.getByTestId('refusal-confirm').click();
   await expect(page.getByText(/Refusal recorded with witness S. Iyer/u)).toBeVisible();
   await expect(page.getByText(/Bound to summary revision/u)).toHaveCount(0);

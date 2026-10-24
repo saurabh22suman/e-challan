@@ -114,7 +114,7 @@ test.describe('F-02 single sign-in as entered from the tablet', () => {
 
     await signInAtAdmin(page, 'supervisor');
 
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
 
     const token = await page.evaluate(() =>
@@ -143,7 +143,7 @@ test.describe('F-02 single sign-in as entered from the tablet', () => {
     ] as const);
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`${ADMIN_ORIGIN.replaceAll('.', '\\.')}/`));
 
     await expect

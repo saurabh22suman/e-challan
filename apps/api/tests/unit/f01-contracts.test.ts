@@ -17,7 +17,7 @@ function schema(name: string): z.ZodType {
 const valid = () => ({
   operationId: id(1),
   vehicleNumber: 'GJ05DS4821',
-  gatePassNumber: 'DEMO-GP-0001',
+  gatePassNumber: 'HZ-GP-1042',
   driverName: 'Ramesh Kumar',
   departmentId: id(2),
   vehicleTypeId: id(3),
@@ -32,12 +32,12 @@ describe('DOM-01: approved demo contracts', () => {
       ...valid(),
       vehicleNumber: ' gj 05 ds 4821 ',
       driverName: ' Ramesh Kumar ',
-      gatePassNumber: ' demo-gp-0001 ',
+      gatePassNumber: ' hz-gp-1042 ',
     };
     const parsed = schema('ChallanSubmissionSchema').parse(request) as Record<string, unknown>;
     expect(parsed['vehicleNumber']).toBe('GJ05DS4821');
     expect(parsed['driverName']).toBe('Ramesh Kumar');
-    expect(parsed['gatePassNumber']).toBe('DEMO-GP-0001');
+    expect(parsed['gatePassNumber']).toBe('HZ-GP-1042');
   });
 
   it('accepts refusal with mandatory reason and witnessing-supervisor identity', () => {

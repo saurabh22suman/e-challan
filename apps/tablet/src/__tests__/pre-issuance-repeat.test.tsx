@@ -11,7 +11,7 @@ import App from '../App';
  * Read-only planner input. Do not replace, skip or weaken these assertions.
  */
 
-const MARSHAL = { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' };
+const MARSHAL = { username: 'EMP-3106', password: 'planner-demo-marshal-secret' };
 const TOKEN = 'a'.repeat(64);
 const ID = (suffix: string): string => `00000000-0000-4000-8000-${suffix.padStart(12, '0')}`;
 const IDS = {
@@ -42,9 +42,9 @@ const NO_CONTENT = (): Response =>
 
 const SESSION_BODY = {
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: IDS.user, username: 'DEMO-EMP-004', role: 'Marshal' },
-  post: { id: IDS.post, label: 'DEMO-POST-01' },
-  shift: { id: IDS.shift, label: 'Demo day shift' },
+  user: { id: IDS.user, username: 'EMP-3106', role: 'Marshal' },
+  post: { id: IDS.post, label: 'Main Gate Post' },
+  shift: { id: IDS.shift, label: 'A Shift (06:00–14:00)' },
 };
 
 const catalogue = (kind: string, rows: Array<{ id: string; label: string }>) => ({
@@ -128,7 +128,7 @@ async function renderSignedIn() {
 async function fillMinimalDraft() {
   const user = userEvent.setup();
   await user.type(screen.getByLabelText('Vehicle registration'), 'GJ05JP6207');
-  await user.type(screen.getByLabelText('Gate pass number'), 'DEMO-GP-0010');
+  await user.type(screen.getByLabelText('Gate pass number'), 'HZ-GP-1051');
   await user.type(screen.getByLabelText('Driver name'), 'Kavita Joshi');
   await user.selectOptions(screen.getByLabelText('Department'), IDS.department);
   await user.selectOptions(screen.getByLabelText('Vehicle type'), IDS.vehicleType);

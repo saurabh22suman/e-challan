@@ -22,9 +22,9 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
 
 const FIXED_NOW = new Date('2026-10-07T12:00:00.000Z');
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 interface FixtureIds {
@@ -83,7 +83,7 @@ describe('I-06 atomic submission over real PostgreSQL', () => {
       (await db.pool.query<T>(query, params)).rows[0] as T;
     ids = {
       postId: (
-        await one<{ id: string }>("SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-01'")
+        await one<{ id: string }>("SELECT id FROM posts WHERE demo_source_id = 'Main Gate Post'")
       ).id,
       locationId: (
         await one<{ id: string }>("SELECT id FROM locations WHERE demo_source_id = 'loc-main'")
@@ -199,8 +199,8 @@ describe('I-06 atomic submission over real PostgreSQL', () => {
     expect(first.statusCode, first.body).toBe(201);
     const issued = first.json() as ChallanCommitResponse;
     signedChallanId = issued.id;
-    expect(issued.challanNumber).toMatch(/^DEMO\/2026\/10\/[0-9]{4,}$/);
-    expect(issued.challanNumber).toBe('DEMO/2026/10/0007');
+    expect(issued.challanNumber).toMatch(/^HZL\/EC\/2026\/10\/[0-9]{4,}$/);
+    expect(issued.challanNumber).toBe('HZL/EC/2026/10/0007');
     expect(issued.replayed).toBe(false);
     expect(issued.status).toBe('Issued');
 
@@ -316,7 +316,7 @@ describe('I-06 atomic submission over real PostgreSQL', () => {
         refusal: {
           reason: 'Driver declined to sign.',
           witnessName: 'Sunil Deshmukh',
-          witnessStaffId: 'DEMO-EMP-002',
+          witnessStaffId: 'EMP-2217',
         },
       }),
     });

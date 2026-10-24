@@ -6,9 +6,9 @@ import type { Db } from '../../src/db/client.js';
 import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/testTarget.js';
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 const FIXED_NOW = new Date('2026-10-07T12:00:00.000Z');
@@ -92,7 +92,7 @@ describe('E4 reporting over real PostgreSQL', () => {
     expect(supervisorBody.total).toBe(8);
     expect(
       supervisorBody.items.every(
-        (item) => item.locationLabel === 'Demo industrial campus — main entrance',
+        (item) => item.locationLabel === 'Hazira Industrial Estate — Main Gate',
       ),
     ).toBe(true);
 
@@ -124,7 +124,7 @@ describe('E4 reporting over real PostgreSQL', () => {
     expect(search.statusCode).toBe(200);
     const searchBody = search.json() as ReportBody;
     expect(searchBody.items.length).toBeGreaterThan(0);
-    expect(searchBody.items.every((item) => item.challanNumber.includes('DEMO/'))).toBe(true);
+    expect(searchBody.items.every((item) => item.challanNumber.includes('HZL/EC/'))).toBe(true);
 
     const bad = await report('admin', '?severity=Extreme');
     expect(bad.statusCode).toBe(400);

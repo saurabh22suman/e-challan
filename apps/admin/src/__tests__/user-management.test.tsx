@@ -18,7 +18,7 @@ const OTHER_LOCATION_ID = '00000000-0000-4000-8000-0000000000c2';
 
 const session = {
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: ADMIN_ID, username: 'DEMO-EMP-001', role: 'Admin' },
+  user: { id: ADMIN_ID, username: 'EMP-1042', role: 'Admin' },
   post: null,
   shift: null,
 };
@@ -26,7 +26,7 @@ const session = {
 const initialUsers = [
   {
     id: ADMIN_ID,
-    username: 'DEMO-EMP-001',
+    username: 'EMP-1042',
     displayName: 'Meera Shah',
     role: 'Admin',
     isActive: true,
@@ -34,7 +34,7 @@ const initialUsers = [
   },
   {
     id: TARGET_ID,
-    username: 'DEMO-EMP-003',
+    username: 'EMP-2284',
     displayName: 'Farah Ansari',
     role: 'Supervisor',
     isActive: true,
@@ -145,10 +145,10 @@ function stubApi() {
 
 async function openUsers() {
   const user = userEvent.setup();
-  await user.type(await screen.findByLabelText(/username/i), 'DEMO-EMP-001');
+  await user.type(await screen.findByLabelText(/username/i), 'EMP-1042');
   await user.type(screen.getByLabelText('Password', { exact: true }), 'planner-demo-secret');
   await user.click(screen.getByRole('button', { name: /sign in|log in/i }));
-  await screen.findByRole('heading', { name: /demo review workspace/i });
+  await screen.findByRole('heading', { name: /review workspace/i });
   await user.click(await screen.findByRole('tab', { name: 'Users' }));
   await screen.findByText('Farah Ansari');
   return user;
@@ -245,31 +245,27 @@ describe('Admin deactivate and reactivate', () => {
     render(<App />);
     const user = await openUsers();
 
-    await user.click(screen.getByRole('button', { name: 'Deactivate DEMO-EMP-003' }));
+    await user.click(screen.getByRole('button', { name: 'Deactivate EMP-2284' }));
     const confirm = await screen.findByRole('dialog', { name: /deactivate user/i });
     expect(within(confirm).getByText(/retained/i)).toBeInTheDocument();
     await user.click(within(confirm).getByRole('button', { name: 'Cancel' }));
     expect(calls.deactivates).toHaveLength(0);
 
-    await user.click(screen.getByRole('button', { name: 'Deactivate DEMO-EMP-003' }));
+    await user.click(screen.getByRole('button', { name: 'Deactivate EMP-2284' }));
     const retry = await screen.findByRole('dialog', { name: /deactivate user/i });
     await user.click(within(retry).getByRole('button', { name: 'Deactivate user' }));
 
     await waitFor(() => {
       expect(calls.deactivates).toStrictEqual([TARGET_ID]);
     });
-    expect(
-      await screen.findByRole('button', { name: 'Reactivate DEMO-EMP-003' }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Reactivate EMP-2284' })).toBeInTheDocument();
     expect(await screen.findByText(/user deactivated/i)).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Reactivate DEMO-EMP-003' }));
+    await user.click(screen.getByRole('button', { name: 'Reactivate EMP-2284' }));
     await waitFor(() => {
       expect(calls.reactivates).toStrictEqual([TARGET_ID]);
     });
-    expect(
-      await screen.findByRole('button', { name: 'Deactivate DEMO-EMP-003' }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Deactivate EMP-2284' })).toBeInTheDocument();
   });
 
   it('disables self-deactivation with an explanation', async () => {
@@ -277,7 +273,7 @@ describe('Admin deactivate and reactivate', () => {
     render(<App />);
     await openUsers();
 
-    expect(screen.getByRole('button', { name: 'Deactivate DEMO-EMP-001' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Deactivate EMP-1042' })).toBeDisabled();
     expect(screen.getByText(/cannot deactivate your own account/i)).toBeInTheDocument();
   });
 });

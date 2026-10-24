@@ -49,10 +49,8 @@ test('UXA-06/UXA-28: dashboard sign-in toggles the password and states the hones
   await page.getByLabel(/username/i).fill(credentials.username);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
 
-  await expect(
-    page.getByRole('heading', { level: 1, name: /demo review workspace/i }),
-  ).toBeVisible();
-  await expect(page.getByText('DEMO/2026/10/0005')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: /review workspace/i })).toBeVisible();
+  await expect(page.getByText('HZL/EC/2026/10/0005')).toBeVisible();
   await expect(page.getByText(/Signed in as .*\bSupervisor\b/i)).toBeVisible();
   await expect(page.getByText(/R-01/u)).toHaveCount(0);
 });

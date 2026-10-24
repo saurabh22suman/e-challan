@@ -27,7 +27,7 @@ async function openDashboard(page: Page): Promise<void> {
     token,
   ] as const);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
 }
 
 async function offerInstall(page: Page): Promise<void> {

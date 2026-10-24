@@ -24,14 +24,14 @@ import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/t
 const FIXED_NOW = new Date('2026-10-07T12:00:00.000Z');
 
 const BASE_CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 const DISPATCH_CREDENTIALS = {
   ...BASE_CREDENTIALS,
-  marshal: { username: 'DEMO-EMP-005', password: 'planner-demo-dispatch-secret' },
+  marshal: { username: 'EMP-3142', password: 'planner-demo-dispatch-secret' },
 } as const;
 
 const MAIN_MARSHAL_PASSWORD = BASE_CREDENTIALS.marshal.password;
@@ -76,7 +76,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
     const one = async <T extends Record<string, unknown>>(sql: string, params: unknown[] = []) =>
       (await db.pool.query<T>(sql, params)).rows[0] as T;
     const main = await one<{ id: string }>(
-      "SELECT id FROM posts WHERE demo_source_id = 'DEMO-POST-01'",
+      "SELECT id FROM posts WHERE demo_source_id = 'Main Gate Post'",
     );
     const mainShift = await one<{ id: string }>(
       "SELECT id FROM shifts WHERE demo_source_id = 'shift-main-day'",
@@ -168,11 +168,11 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
     return token as string;
   }
 
-  const mainMarshal = () => login(server, 'DEMO-EMP-004', MAIN_MARSHAL_PASSWORD);
+  const mainMarshal = () => login(server, 'EMP-3106', MAIN_MARSHAL_PASSWORD);
   const dispatchMarshal = () =>
-    login(dispatchServer, 'DEMO-EMP-005', DISPATCH_CREDENTIALS.marshal.password);
-  const admin = () => login(server, 'DEMO-EMP-001', ADMIN_PASSWORD);
-  const supervisor = () => login(server, 'DEMO-EMP-002', 'planner-demo-supervisor-secret');
+    login(dispatchServer, 'EMP-3142', DISPATCH_CREDENTIALS.marshal.password);
+  const admin = () => login(server, 'EMP-1042', ADMIN_PASSWORD);
+  const supervisor = () => login(server, 'EMP-2217', 'planner-demo-supervisor-secret');
 
   async function inject(
     app: FastifyInstance,
@@ -196,7 +196,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
 
   const draft = (overrides: Record<string, unknown> = {}): Record<string, unknown> => ({
     vehicleRegistration: 'GJ05JP6207',
-    gatePassNumber: 'DEMO-GP-0010',
+    gatePassNumber: 'HZ-GP-1051',
     driverName: 'Kavita Joshi',
     vehicleTypeId: ids.vehicleTypeId,
     departmentId: ids.departmentId,
@@ -299,11 +299,11 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
         2,
       );
 
-      expect((await lookup(server, main, 'gatePassNumber', 'DEMO-GP-0002')).status).toBe(200);
+      expect((await lookup(server, main, 'gatePassNumber', 'HZ-GP-1043')).status).toBe(200);
       expect(
         parseContract(
           RegistryLookupResponseSchema,
-          (await lookup(server, main, 'gatePassNumber', 'DEMO-GP-0002')).json,
+          (await lookup(server, main, 'gatePassNumber', 'HZ-GP-1043')).json,
         ).matches,
       ).toHaveLength(0);
     });
@@ -320,12 +320,12 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const matches = parseContract(RegistryLookupResponseSchema, response.json).matches;
       expect(matches).toHaveLength(1);
       const match = matches[0];
-      expect(match?.gatePassNumber).toBe('DEMO-GP-0010');
+      expect(match?.gatePassNumber).toBe('HZ-GP-1051');
       expect(match?.driverName).toBe('Kavita Joshi');
       expect(match?.vehicleRegistrationNumber).toBe('GJ05JP6207');
       expect(match?.departmentLabel).toBe('Plant operations');
       expect(match?.vehicleTypeLabel).toBe('Car');
-      expect(match?.contractorLabel).toBe('Demo Unity Engineering Works');
+      expect(match?.contractorLabel).toBe('Unity Engineering Works');
       expect(match?.status).toBe('active');
     });
 
@@ -340,7 +340,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
         new Set(['Imran Shaikh', 'Sanjay Patil']),
       );
       expect(new Set(matches.map((m) => m.gatePassNumber))).toEqual(
-        new Set(['DEMO-GP-0002', 'DEMO-GP-0006']),
+        new Set(['HZ-GP-1043', 'HZ-GP-1047']),
       );
     });
 
@@ -348,7 +348,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const token = await dispatchMarshal();
       const matches = parseContract(
         RegistryLookupResponseSchema,
-        (await lookup(dispatchServer, token, 'gatePassNumber', 'DEMO-GP-0008')).json,
+        (await lookup(dispatchServer, token, 'gatePassNumber', 'HZ-GP-1049')).json,
       ).matches;
       expect(matches).toHaveLength(1);
       expect(matches[0]?.status).toBe('expired');
@@ -363,7 +363,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       ).matches;
       expect(matches).toHaveLength(2);
       expect(new Set(matches.map((m) => m.gatePassNumber))).toEqual(
-        new Set(['DEMO-GP-0001', 'DEMO-GP-0009']),
+        new Set(['HZ-GP-1042', 'HZ-GP-1050']),
       );
     });
 
@@ -505,7 +505,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
         (unknown.json as { fields: Array<{ field: string; code: string }> }).fields,
       ).toContainEqual(expect.objectContaining({ field: 'registry', code: 'provenance_mismatch' }));
 
-      // DEMO-GP-0002 is dispatch-only; the main marshal may not claim it.
+      // HZ-GP-1043 is dispatch-only; the main marshal may not claim it.
       const outOfScope = await db.pool.query<{
         gate_pass_record_id: string;
         driver_id: string;
@@ -549,7 +549,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const response = await preview(token, {
         draft: draft({
           vehicleRegistration: 'GJ05DS4821',
-          gatePassNumber: 'DEMO-GP-0001',
+          gatePassNumber: 'HZ-GP-1042',
           driverName: 'Ramesh Kumar',
         }),
         warningAcknowledged: false,
@@ -568,7 +568,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const cancelledPass = await preview(token, {
         draft: draft({
           vehicleRegistration: 'DL8CAF6193',
-          gatePassNumber: 'DEMO-GP-0005',
+          gatePassNumber: 'HZ-GP-1046',
           driverName: 'Anita Verma',
         }),
         warningAcknowledged: false,
@@ -580,14 +580,14 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       await insertSyntheticChallan({
         templateId: ids.templateChallanId,
         registration: 'GJ05DS4821',
-        gatePassNumber: 'DEMO-GP-0001',
+        gatePassNumber: 'HZ-GP-1042',
         issuedAt: new Date(FIXED_NOW.getTime() - 60 * 60 * 1000),
         status: 'Cancelled',
       });
       const stillFive = await preview(token, {
         draft: draft({
           vehicleRegistration: 'GJ05DS4821',
-          gatePassNumber: 'DEMO-GP-0001',
+          gatePassNumber: 'HZ-GP-1042',
           driverName: 'Ramesh Kumar',
         }),
         warningAcknowledged: false,
@@ -602,7 +602,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
         payload: {
           draft: draft({
             vehicleRegistration: 'MH12RT7306',
-            gatePassNumber: 'DEMO-GP-0002',
+            gatePassNumber: 'HZ-GP-1043',
             driverName: 'Imran Shaikh',
           }),
           warningAcknowledged: false,
@@ -614,14 +614,14 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const otherPass = await preview(token, {
         draft: draft({
           vehicleRegistration: 'KA03MN8176',
-          gatePassNumber: 'DEMO-GP-0009',
+          gatePassNumber: 'HZ-GP-1050',
           driverName: 'Ramesh Kumar',
         }),
         warningAcknowledged: false,
       });
       expect(
         parseContract(ChallanPreviewResponseSchema, otherPass.json).occurrenceNumber,
-        'the same driver name on a different pass must not merge histories (DEMO-GP-0001 has five priors; a merge would give six)',
+        'the same driver name on a different pass must not merge histories (HZ-GP-1042 has five priors; a merge would give six)',
       ).toBe(2);
     });
 
@@ -738,7 +738,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const otherVehicle = await preview(token, {
         draft: draft({
           vehicleRegistration: 'GJ05JP6207',
-          gatePassNumber: 'DEMO-GP-0010',
+          gatePassNumber: 'HZ-GP-1051',
           driverName: 'Kavita Joshi',
         }),
         warningAcknowledged: false,
@@ -816,7 +816,7 @@ describe('ENT/REP pre-issuance acceptance over real PostgreSQL', () => {
       const acknowledged = await preview(token, {
         draft: draft({
           vehicleRegistration: 'GJ05DS4821',
-          gatePassNumber: 'DEMO-GP-0001',
+          gatePassNumber: 'HZ-GP-1042',
           driverName: 'Ramesh Kumar',
         }),
         warningAcknowledged: true,

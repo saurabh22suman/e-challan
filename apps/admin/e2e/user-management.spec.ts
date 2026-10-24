@@ -55,7 +55,7 @@ async function signIn(page: Page): Promise<void> {
   await page.getByLabel('Username').fill(ACCOUNTS.admin.username);
   await page.getByLabel('Password', { exact: true }).fill(ACCOUNTS.admin.password);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
-  await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
   await page.getByRole('tab', { name: 'Users' }).click();
   await expect(page.getByRole('table', { name: 'Users' })).toBeVisible();
 }
@@ -76,7 +76,7 @@ test('Admin creates, deactivates and reactivates a Supervisor through the UI', a
   await page.getByRole('option', { name: 'Supervisor' }).click();
 
   await create.getByLabel(/^locations/i).click();
-  await page.getByRole('option', { name: 'Demo industrial campus — main entrance' }).click();
+  await page.getByRole('option', { name: 'Hazira Industrial Estate — Main Gate' }).click();
   await page.keyboard.press('Escape');
 
   await create.getByLabel(/^initial password/i).fill(password);

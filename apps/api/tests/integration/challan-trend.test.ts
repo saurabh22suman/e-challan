@@ -6,9 +6,9 @@ import type { Db } from '../../src/db/client.js';
 import { resetAndMigrateTestDatabase, resolveTestDatabaseUrl } from './helpers/testTarget.js';
 
 const CREDENTIALS = {
-  marshal: { username: 'DEMO-EMP-004', password: 'planner-demo-marshal-secret' },
-  supervisor: { username: 'DEMO-EMP-002', password: 'planner-demo-supervisor-secret' },
-  admin: { username: 'DEMO-EMP-001', password: 'planner-demo-admin-secret' },
+  marshal: { username: 'EMP-3106', password: 'planner-demo-marshal-secret' },
+  supervisor: { username: 'EMP-2217', password: 'planner-demo-supervisor-secret' },
+  admin: { username: 'EMP-1042', password: 'planner-demo-admin-secret' },
 } as const;
 
 /** Fixed reference clock: the response must never depend on the machine clock. */
@@ -74,10 +74,10 @@ describe('Supervisor challan trend over real PostgreSQL', () => {
         WHERE challan_number = ANY($1::text[])`,
       [
         [
-          'DEMO/2026/09/0001', // main, 2026-09-24
-          'DEMO/2026/09/0002', // dispatch, 2026-09-28
-          'DEMO/2026/09/0004', // main, 2026-09-30
-          'DEMO/2026/09/0005', // main, 2026-09-30 (cancelled)
+          'HZL/EC/2026/09/0001', // main, 2026-09-24
+          'HZL/EC/2026/09/0002', // dispatch, 2026-09-28
+          'HZL/EC/2026/09/0004', // main, 2026-09-30
+          'HZL/EC/2026/09/0005', // main, 2026-09-30 (cancelled)
         ],
       ],
     );
@@ -97,28 +97,28 @@ describe('Supervisor challan trend over real PostgreSQL', () => {
     }> = [
       // Two distinct resolved challans in the same bucket.
       {
-        challanNumber: 'DEMO/2026/09/0001',
+        challanNumber: 'HZL/EC/2026/09/0001',
         toStatus: 'Resolved',
         createdAt: '2026-09-25T04:00:00.000Z',
       },
       {
-        challanNumber: 'DEMO/2026/09/0002',
+        challanNumber: 'HZL/EC/2026/09/0002',
         toStatus: 'Resolved',
         createdAt: '2026-09-25T05:00:00.000Z',
       },
       // A duplicate action for the same challan in the same bucket must not count twice.
       {
-        challanNumber: 'DEMO/2026/09/0002',
+        challanNumber: 'HZL/EC/2026/09/0002',
         toStatus: 'Resolved',
         createdAt: '2026-09-25T06:00:00.000Z',
       },
       {
-        challanNumber: 'DEMO/2026/09/0004',
+        challanNumber: 'HZL/EC/2026/09/0004',
         toStatus: 'Resolved',
         createdAt: '2026-10-01T00:30:00.000Z',
       },
       {
-        challanNumber: 'DEMO/2026/09/0005',
+        challanNumber: 'HZL/EC/2026/09/0005',
         toStatus: 'Cancelled',
         createdAt: '2026-09-30T05:00:00.000Z',
       },

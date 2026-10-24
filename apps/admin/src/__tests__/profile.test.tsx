@@ -14,7 +14,7 @@ const USER_ID = '00000000-0000-4000-8000-0000000000a1';
 
 const supervisorSession = {
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: USER_ID, username: 'DEMO-EMP-002', role: 'Supervisor' },
+  user: { id: USER_ID, username: 'EMP-2217', role: 'Supervisor' },
   post: null,
   shift: null,
 };
@@ -22,12 +22,12 @@ const supervisorSession = {
 const profile = {
   user: {
     id: USER_ID,
-    username: 'DEMO-EMP-002',
+    username: 'EMP-2217',
     displayName: 'Sunil Deshmukh',
-    employeeId: 'DEMO-EMP-002',
+    employeeId: 'EMP-2217',
     role: 'Supervisor',
     isActive: true,
-    locationLabels: ['Demo industrial campus — main entrance'],
+    locationLabels: ['Hazira Industrial Estate — Main Gate'],
   },
   session: {
     expiresAt: '2099-01-01T12:30:00.000Z',
@@ -87,10 +87,10 @@ function stubApi() {
 
 async function signIn() {
   const user = userEvent.setup();
-  await user.type(await screen.findByLabelText(/username/i), 'DEMO-EMP-002');
+  await user.type(await screen.findByLabelText(/username/i), 'EMP-2217');
   await user.type(screen.getByLabelText('Password', { exact: true }), 'planner-demo-secret');
   await user.click(screen.getByRole('button', { name: /sign in|log in/i }));
-  await screen.findByRole('heading', { name: /demo review workspace/i });
+  await screen.findByRole('heading', { name: /review workspace/i });
   return user;
 }
 
@@ -111,9 +111,9 @@ describe('dashboard profile', () => {
     expect(await screen.findByRole('heading', { name: 'Profile' })).toBeInTheDocument();
     const main = screen.getByRole('main');
     expect(within(main).getByText('Sunil Deshmukh')).toBeInTheDocument();
-    expect(within(main).getAllByText('DEMO-EMP-002').length).toBeGreaterThan(0);
+    expect(within(main).getAllByText('EMP-2217').length).toBeGreaterThan(0);
     expect(within(main).getByText('Supervisor')).toBeInTheDocument();
-    expect(within(main).getByText('Demo industrial campus — main entrance')).toBeInTheDocument();
+    expect(within(main).getByText('Hazira Industrial Estate — Main Gate')).toBeInTheDocument();
     expect(within(main).getByText(/session ends/i)).toBeInTheDocument();
     expect(screen.queryByLabelText(/password/i)).not.toBeInTheDocument();
 

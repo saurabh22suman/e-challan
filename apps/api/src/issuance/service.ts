@@ -45,7 +45,7 @@ interface CommitContext {
   now: Date;
 }
 
-const NUMBER_PREFIX = 'DEMO';
+const NUMBER_PREFIX = 'HZL/EC';
 
 function operationHash(request: ChallanCommitRequest): string {
   return createHash('sha256').update(JSON.stringify(request), 'utf8').digest('hex');
@@ -74,7 +74,7 @@ async function allocateChallanNumber(
   await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${'echallan:number:' + prefix}))`);
   const result = await tx.execute<{ next: number }>(sql`
     SELECT COALESCE(
-      MAX((regexp_match(challan_number, '^DEMO/[0-9]{4}/[0-9]{2}/([0-9]+)$'))[1]::int),
+      MAX((regexp_match(challan_number, '^HZL/EC/[0-9]{4}/[0-9]{2}/([0-9]+)$'))[1]::int),
       0
     ) + 1 AS next
       FROM challans

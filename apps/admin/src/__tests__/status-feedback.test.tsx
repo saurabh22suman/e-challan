@@ -23,14 +23,14 @@ const CHALLAN_IDS = [
 
 const session = {
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: ADMIN_ID, username: 'DEMO-EMP-001', role: 'Admin' },
+  user: { id: ADMIN_ID, username: 'EMP-1042', role: 'Admin' },
   post: null,
   shift: null,
 };
 
 const adminUser: AdminUser = {
   id: ADMIN_ID,
-  username: 'DEMO-EMP-001',
+  username: 'EMP-1042',
   displayName: 'Meera Shah',
   role: 'Admin',
   isActive: true,
@@ -39,7 +39,7 @@ const adminUser: AdminUser = {
 
 const activeTarget: AdminUser = {
   id: TARGET_ID,
-  username: 'DEMO-EMP-003',
+  username: 'EMP-2284',
   displayName: 'Farah Ansari',
   role: 'Supervisor',
   isActive: true,
@@ -69,12 +69,12 @@ const masterEntries: MasterRecord[] = [
 
 const summary = (index: number, status: ChallanStatus): ChallanSummary => ({
   id: CHALLAN_IDS[index] ?? CHALLAN_IDS[0]!,
-  challanNumber: `DEMO/2026/10/000${index + 1}`,
+  challanNumber: `HZL/EC/2026/10/000${index + 1}`,
   status,
   severity: 'Major',
   occurrenceNumber: 1,
   recommendedAction: 'warning_issued',
-  gatePassNumber: `DEMO-GP-000${index + 1}`,
+  gatePassNumber: `HZ-GP-000${index + 1}`,
   vehicleRegistrationNumber: 'GJ05DS4821',
   driverName: 'Ramesh Kumar',
   locationId: LOCATION_ID,
@@ -88,10 +88,10 @@ const challanDetail = (item: ChallanSummary, status: ChallanStatus = item.status
   departmentLabel: 'Logistics',
   contractorLabel: null,
   vehicleTypeLabel: 'Car',
-  gateLabel: 'Gate 1 — main entry',
+  gateLabel: 'Gate 1 — Main Entrance',
   issuedBy: {
     id: '00000000-0000-4000-8000-0000000000f1',
-    username: 'DEMO-EMP-004',
+    username: 'EMP-3106',
     displayName: 'Ravi Patel',
   },
   remarks: 'Synthetic issued remark.',
@@ -107,7 +107,7 @@ const challanDetail = (item: ChallanSummary, status: ChallanStatus = item.status
             remarks: null,
             reason: null,
             performerUserId: ADMIN_ID,
-            performerUsername: 'DEMO-EMP-001',
+            performerUsername: 'EMP-1042',
             performerDisplayName: 'Meera Shah',
             createdAt: '2026-10-02T05:30:00.000Z',
           },
@@ -229,10 +229,10 @@ function stubApi(fixtures: Fixtures = {}) {
 
 async function signIn() {
   const user = userEvent.setup();
-  await user.type(await screen.findByLabelText(/username/i), 'DEMO-EMP-001');
+  await user.type(await screen.findByLabelText(/username/i), 'EMP-1042');
   await user.type(screen.getByLabelText('Password', { exact: true }), 'planner-demo-secret');
   await user.click(screen.getByRole('button', { name: /sign in|log in/i }));
-  await screen.findByRole('heading', { name: /demo review workspace/i });
+  await screen.findByRole('heading', { name: /review workspace/i });
   return user;
 }
 
@@ -310,7 +310,7 @@ describe('admin status feedback', () => {
     const user = await signIn();
 
     await user.click(await screen.findByRole('tab', { name: 'Users' }));
-    await user.click(await screen.findByRole('button', { name: 'Deactivate DEMO-EMP-003' }));
+    await user.click(await screen.findByRole('button', { name: 'Deactivate EMP-2284' }));
 
     const dialog = await screen.findByRole('dialog', { name: /deactivate user/i });
     expect(within(dialog).getByRole('heading', { name: 'Deactivate user' })).toHaveAttribute(
@@ -330,7 +330,7 @@ describe('admin status feedback', () => {
     render(<App />);
     const user = await signIn();
 
-    await user.click(await screen.findByRole('button', { name: 'Open DEMO/2026/10/0001' }));
+    await user.click(await screen.findByRole('button', { name: 'Open HZL/EC/2026/10/0001' }));
     await screen.findByRole('dialog', { name: /challan details/i });
     await user.click(screen.getByRole('button', { name: 'Start review' }));
 

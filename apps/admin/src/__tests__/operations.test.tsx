@@ -21,7 +21,7 @@ const identity = (role: 'Supervisor' | 'Admin', id: string) => ({
   expiresAt: '2099-01-01T00:00:00.000Z',
   user: {
     id,
-    username: role === 'Admin' ? 'DEMO-EMP-001' : 'DEMO-EMP-002',
+    username: role === 'Admin' ? 'EMP-1042' : 'EMP-2217',
     role,
   },
   post: null,
@@ -30,12 +30,12 @@ const identity = (role: 'Supervisor' | 'Admin', id: string) => ({
 
 const summary = {
   id: CHALLAN_ID,
-  challanNumber: 'DEMO/2026/10/0005',
+  challanNumber: 'HZL/EC/2026/10/0005',
   status: 'Issued' as const,
   severity: 'Major' as const,
   occurrenceNumber: 1,
   recommendedAction: 'warning_issued' as const,
-  gatePassNumber: 'DEMO-GP-0001',
+  gatePassNumber: 'HZ-GP-1042',
   vehicleRegistrationNumber: 'GJ05DS4821',
   driverName: 'Ramesh Kumar',
   locationId: LOCATION_ID,
@@ -85,13 +85,13 @@ const detail = (status: DetailFixture['status'] = 'Issued'): DetailFixture => ({
   status,
   issuedBy: {
     id: '00000000-0000-4000-8000-0000000000f1',
-    username: 'DEMO-EMP-004',
+    username: 'EMP-3106',
     displayName: 'Ravi Patel',
   },
   departmentLabel: 'Logistics',
   contractorLabel: 'West Contractors',
   vehicleTypeLabel: 'Car',
-  gateLabel: 'Gate 1 — main entry',
+  gateLabel: 'Gate 1 — Main Entrance',
   remarks: 'Synthetic issued remark.',
   violations: [{ label: 'No seatbelt', severity: 'Major' }],
   actions:
@@ -105,7 +105,7 @@ const detail = (status: DetailFixture['status'] = 'Issued'): DetailFixture => ({
             remarks: null,
             reason: null,
             performerUserId: SUPERVISOR_ID,
-            performerUsername: 'DEMO-EMP-002',
+            performerUsername: 'EMP-2217',
             performerDisplayName: 'Sunil Deshmukh',
             createdAt: '2026-10-02T05:30:00.000Z',
           },
@@ -119,7 +119,7 @@ const detail = (status: DetailFixture['status'] = 'Issued'): DetailFixture => ({
 const users = [
   {
     id: ADMIN_ID,
-    username: 'DEMO-EMP-001',
+    username: 'EMP-1042',
     displayName: 'Meera Shah',
     role: 'Admin',
     isActive: true,
@@ -127,7 +127,7 @@ const users = [
   },
   {
     id: SUPERVISOR_ID,
-    username: 'DEMO-EMP-002',
+    username: 'EMP-2217',
     displayName: 'Sunil Deshmukh',
     role: 'Supervisor',
     isActive: true,
@@ -135,7 +135,7 @@ const users = [
   },
   {
     id: TARGET_ID,
-    username: 'DEMO-EMP-003',
+    username: 'EMP-2284',
     displayName: 'Farah Ansari',
     role: 'Supervisor',
     isActive: true,
@@ -209,7 +209,7 @@ function stubApi(options: { role?: 'Supervisor' | 'Admin'; listStatus?: number }
                   remarks: String(body['remarks']),
                   reason: null,
                   performerUserId: SUPERVISOR_ID,
-                  performerUsername: 'DEMO-EMP-002',
+                  performerUsername: 'EMP-2217',
                   performerDisplayName: 'Sunil Deshmukh',
                   createdAt: '2026-10-03T05:30:00.000Z',
                 },
@@ -227,7 +227,7 @@ function stubApi(options: { role?: 'Supervisor' | 'Admin'; listStatus?: number }
                   remarks: null,
                   reason: null,
                   performerUserId: SUPERVISOR_ID,
-                  performerUsername: 'DEMO-EMP-002',
+                  performerUsername: 'EMP-2217',
                   performerDisplayName: 'Sunil Deshmukh',
                   createdAt: '2026-10-03T05:30:00.000Z',
                 },
@@ -277,11 +277,11 @@ async function signIn(role: 'Supervisor' | 'Admin' = 'Supervisor') {
   const user = userEvent.setup();
   await user.type(
     await screen.findByLabelText(/username/i),
-    role === 'Admin' ? 'DEMO-EMP-001' : 'DEMO-EMP-002',
+    role === 'Admin' ? 'EMP-1042' : 'EMP-2217',
   );
   await user.type(screen.getByLabelText('Password', { exact: true }), 'planner-demo-secret');
   await user.click(screen.getByRole('button', { name: /sign in|log in/i }));
-  await screen.findByRole('heading', { name: /demo review workspace/i });
+  await screen.findByRole('heading', { name: /review workspace/i });
 }
 
 afterEach(() => {
@@ -296,7 +296,7 @@ describe('Supervisor review surface', () => {
     render(<App />);
     await signIn('Supervisor');
 
-    expect(await screen.findByText('DEMO/2026/10/0005')).toBeInTheDocument();
+    expect(await screen.findByText('HZL/EC/2026/10/0005')).toBeInTheDocument();
     expect(screen.getByText('Ramesh Kumar')).toBeInTheDocument();
     expect(screen.getByText('Main gate')).toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: 'Users' })).not.toBeInTheDocument();
@@ -309,7 +309,7 @@ describe('Supervisor review surface', () => {
       expect(calls.listUrls.at(-1)).toContain('status=Issued');
     });
 
-    await user.click(screen.getByRole('button', { name: 'Open DEMO/2026/10/0005' }));
+    await user.click(screen.getByRole('button', { name: 'Open HZL/EC/2026/10/0005' }));
     const dialog = await screen.findByRole('dialog', { name: /challan details/i });
     expect(within(dialog).getByText(/No seatbelt/)).toBeInTheDocument();
     expect(within(dialog).getByText('Synthetic issued remark.')).toBeInTheDocument();
@@ -351,7 +351,7 @@ describe('Supervisor review surface', () => {
     await signIn('Supervisor');
 
     const user = userEvent.setup();
-    await user.click(await screen.findByRole('button', { name: 'Open DEMO/2026/10/0005' }));
+    await user.click(await screen.findByRole('button', { name: 'Open HZL/EC/2026/10/0005' }));
     await screen.findByRole('dialog', { name: /challan details/i });
 
     await user.click(screen.getByRole('button', { name: 'Start review' }));
@@ -410,9 +410,7 @@ describe('Admin user administration', () => {
 
     const user = userEvent.setup();
     await user.click(await screen.findByRole('tab', { name: 'Users' }));
-    await user.click(
-      await screen.findByRole('button', { name: 'Reset password for DEMO-EMP-003' }),
-    );
+    await user.click(await screen.findByRole('button', { name: 'Reset password for EMP-2284' }));
 
     const dialog = await screen.findByRole('dialog', { name: /reset password/i });
     const newPassword = within(dialog).getByLabelText(/^new password/i);
@@ -445,9 +443,7 @@ describe('Admin user administration', () => {
 
     const user = userEvent.setup();
     await user.click(await screen.findByRole('tab', { name: 'Users' }));
-    await user.click(
-      await screen.findByRole('button', { name: 'Reset password for DEMO-EMP-001' }),
-    );
+    await user.click(await screen.findByRole('button', { name: 'Reset password for EMP-1042' }));
     const dialog = await screen.findByRole('dialog', { name: /reset password/i });
     await user.type(within(dialog).getByLabelText(/^new password/i), 'a-valid-reset-password');
     await user.type(
@@ -457,8 +453,6 @@ describe('Admin user administration', () => {
     await user.click(within(dialog).getByRole('button', { name: 'Reset password' }));
 
     expect(await screen.findByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: /demo review workspace/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /review workspace/i })).not.toBeInTheDocument();
   });
 });

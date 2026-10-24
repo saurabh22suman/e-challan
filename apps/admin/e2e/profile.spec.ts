@@ -18,13 +18,13 @@ test('Supervisor sees their own profile and session details', async ({ page }) =
   await page.getByLabel('Username').fill(ACCOUNTS.supervisor.username);
   await page.getByLabel('Password', { exact: true }).fill(ACCOUNTS.supervisor.password);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
-  await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
 
   await page.getByRole('tab', { name: 'Profile' }).click();
   await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
   await expect(page.getByText('Sunil Deshmukh')).toBeVisible();
-  await expect(page.getByText('DEMO-EMP-002').first()).toBeVisible();
-  await expect(page.getByText('Demo industrial campus — main entrance')).toBeVisible();
+  await expect(page.getByText('EMP-2217').first()).toBeVisible();
+  await expect(page.getByText('Hazira Industrial Estate — Main Gate')).toBeVisible();
   await expect(page.getByText(/session ends/i)).toBeVisible();
   await expect(page.locator('input[type="password"]')).toHaveCount(0);
 });

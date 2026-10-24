@@ -37,11 +37,11 @@ test.describe('F-02 admin authentication', () => {
   test('requires a real sign in before showing the dashboard shell', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toHaveCount(0);
 
     await signIn(page, 'supervisor');
 
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
   });
 
   test('shows an error for wrong credentials', async ({ page }) => {
@@ -52,7 +52,7 @@ test.describe('F-02 admin authentication', () => {
     await page.getByRole('button', { name: /sign in|log in/i }).click();
 
     await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toHaveCount(0);
   });
 
   test('logs out, and the API then rejects the token the browser was holding', async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe('F-02 admin authentication', () => {
     });
 
     await signIn(page, 'supervisor');
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
     expect(issued, 'the API must have issued a real session token').toHaveLength(1);
     const token = issued[0] as string;
 

@@ -31,14 +31,14 @@ async function signIn(page: Page): Promise<void> {
     token,
   ] as const);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
 }
 
 test.describe('dashboard shell (F-04)', () => {
   test('shows the labelled shell with real review data and server totals', async ({ page }) => {
     await signIn(page);
 
-    await expect(page.getByText('DEMO/2026/10/0005')).toBeVisible();
+    await expect(page.getByText('HZL/EC/2026/10/0005')).toBeVisible();
     await expect(page.getByText('Total', { exact: true })).toBeVisible();
     await expect(page.getByText('Pending', { exact: true })).toBeVisible();
     await expect(page.getByText('Issued today', { exact: true })).toBeVisible();
@@ -49,7 +49,7 @@ test.describe('dashboard shell (F-04)', () => {
 
     await page.getByRole('button', { name: /log ?out|sign out/i }).click();
     await expect(page.getByLabel('Password', { exact: true })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Review workspace' })).toHaveCount(0);
   });
 
   test('fits a desktop viewport without horizontal overflow', async ({ page }) => {

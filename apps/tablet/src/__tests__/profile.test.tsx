@@ -19,20 +19,20 @@ const IDS = {
 
 const session = {
   expiresAt: '2099-01-01T00:00:00.000Z',
-  user: { id: IDS.user, username: 'DEMO-EMP-004', role: 'Marshal' },
-  post: { id: IDS.post, label: 'DEMO-POST-01' },
-  shift: { id: IDS.shift, label: 'Demo day shift' },
+  user: { id: IDS.user, username: 'EMP-3106', role: 'Marshal' },
+  post: { id: IDS.post, label: 'Main Gate Post' },
+  shift: { id: IDS.shift, label: 'A Shift (06:00–14:00)' },
 };
 
 const profile = {
   user: {
     id: IDS.user,
-    username: 'DEMO-EMP-004',
+    username: 'EMP-3106',
     displayName: 'Ravi Patel',
-    employeeId: 'DEMO-EMP-004',
+    employeeId: 'EMP-3106',
     role: 'Marshal',
     isActive: true,
-    locationLabels: ['Demo industrial campus — main entrance'],
+    locationLabels: ['Hazira Industrial Estate — Main Gate'],
   },
   session: {
     expiresAt: session.expiresAt,
@@ -84,7 +84,7 @@ function stubApi() {
 async function signedIn() {
   render(<App />);
   const user = userEvent.setup();
-  await user.type(await screen.findByLabelText(/username/i), 'DEMO-EMP-004');
+  await user.type(await screen.findByLabelText(/username/i), 'EMP-3106');
   await user.type(screen.getByLabelText('Password', { exact: true }), 'planner-demo-secret');
   await user.click(screen.getByRole('button', { name: /sign in|log in/i }));
   await screen.findByLabelText('Vehicle registration');
@@ -106,11 +106,11 @@ describe('tablet profile', () => {
     const dialog = await screen.findByRole('dialog', { name: /profile/i });
 
     expect(within(dialog).getByText('Ravi Patel')).toBeInTheDocument();
-    expect(within(dialog).getAllByText('DEMO-EMP-004').length).toBeGreaterThan(0);
+    expect(within(dialog).getAllByText('EMP-3106').length).toBeGreaterThan(0);
     expect(within(dialog).getByText('Marshal')).toBeInTheDocument();
-    expect(within(dialog).getByText('DEMO-POST-01')).toBeInTheDocument();
-    expect(within(dialog).getByText('Demo day shift')).toBeInTheDocument();
-    expect(within(dialog).getByText(/main entrance/)).toBeInTheDocument();
+    expect(within(dialog).getByText('Main Gate Post')).toBeInTheDocument();
+    expect(within(dialog).getByText('A Shift (06:00–14:00)')).toBeInTheDocument();
+    expect(within(dialog).getByText(/Hazira Industrial Estate — Main Gate/)).toBeInTheDocument();
     expect(within(dialog).queryByText(/password/i)).not.toBeInTheDocument();
 
     expect(

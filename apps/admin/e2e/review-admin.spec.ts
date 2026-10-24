@@ -33,20 +33,20 @@ async function signIn(page: Page, account: 'supervisor' | 'admin'): Promise<void
   await page.getByLabel('Username').fill(username);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: /sign in|log in/i }).click();
-  await expect(page.getByRole('heading', { name: 'Demo review workspace' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Review workspace' })).toBeVisible();
 }
 
 test.describe('review and user administration', () => {
   test('Supervisor sees the scoped list, filters and opens a seeded detail', async ({ page }) => {
     await signIn(page, 'supervisor');
 
-    await expect(page.getByText('DEMO/2026/10/0005')).toBeVisible();
+    await expect(page.getByText('HZL/EC/2026/10/0005')).toBeVisible();
 
     await page.getByLabel('Filter by status').click();
     await page.getByRole('option', { name: 'Issued' }).click();
-    await expect(page.getByText('DEMO/2026/10/0005')).toBeVisible();
+    await expect(page.getByText('HZL/EC/2026/10/0005')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Open DEMO/2026/10/0005' }).click();
+    await page.getByRole('button', { name: 'Open HZL/EC/2026/10/0005' }).click();
     const dialog = page.getByRole('dialog', { name: /challan details/i });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText('Ramesh Kumar')).toBeVisible();
@@ -73,7 +73,7 @@ test.describe('review and user administration', () => {
     );
     expect(overflow).toBeLessThanOrEqual(0);
 
-    await page.getByRole('button', { name: 'Open DEMO/2026/10/0005' }).click();
+    await page.getByRole('button', { name: 'Open HZL/EC/2026/10/0005' }).click();
     const dialog = page.getByRole('dialog', { name: /challan details/i });
     await expect(dialog).toBeVisible();
     const box = await dialog.boundingBox();
@@ -85,7 +85,7 @@ test.describe('review and user administration', () => {
     await signIn(page, 'admin');
 
     await page.getByRole('tab', { name: 'Users' }).click();
-    await page.getByRole('button', { name: 'Reset password for DEMO-EMP-003' }).click();
+    await page.getByRole('button', { name: 'Reset password for EMP-2284' }).click();
 
     const dialog = page.getByRole('dialog', { name: /reset password/i });
     const newPassword = 'e2e-dispatch-supervisor-reset-2026';
@@ -98,11 +98,11 @@ test.describe('review and user administration', () => {
     await expect(page.getByText(/password reset/i)).toBeVisible();
 
     const login = await page.request.post('/api/auth/login', {
-      data: { username: 'DEMO-EMP-003', password: newPassword },
+      data: { username: 'EMP-2284', password: newPassword },
     });
     expect(login.status()).toBe(200);
     const body = (await login.json()) as { user?: { username?: string; role?: string } };
-    expect(body.user?.username).toBe('DEMO-EMP-003');
+    expect(body.user?.username).toBe('EMP-2284');
     expect(body.user?.role).toBe('Supervisor');
   });
 });

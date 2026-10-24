@@ -42,7 +42,7 @@ test.describe('Camera and signature journey', () => {
     // surface renders (EM-05: media and acknowledgement must live in the
     // active issuance flow).
     await page.getByLabel('Vehicle registration').fill('GJ05JP6207');
-    await page.getByLabel('Gate pass number').fill('DEMO-GP-0010');
+    await page.getByLabel('Gate pass number').fill('HZ-GP-1051');
     await page.getByLabel('Driver name').fill('Kavita Joshi');
     await page.getByLabel('Department').selectOption({ label: 'Logistics' });
     await page.getByLabel('Vehicle type').selectOption({ label: 'Car' });

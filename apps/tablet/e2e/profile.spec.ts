@@ -24,10 +24,10 @@ test('Marshal opens their own profile from the tablet toolbar', async ({ page })
   const dialog = page.getByRole('dialog', { name: /profile/i });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText('Ravi Patel')).toBeVisible();
-  await expect(dialog.getByText('DEMO-EMP-004').first()).toBeVisible();
+  await expect(dialog.getByText('EMP-3106').first()).toBeVisible();
   await expect(dialog.getByText('Marshal')).toBeVisible();
-  await expect(dialog.getByText('DEMO-POST-01')).toBeVisible();
-  await expect(dialog.getByText(/main entrance/)).toBeVisible();
+  await expect(dialog.getByText('Main Gate Post')).toBeVisible();
+  await expect(dialog.getByText(/Hazira Industrial Estate — Main Gate/)).toBeVisible();
   await expect(dialog.getByText(/password/i)).toHaveCount(0);
 
   await dialog.getByRole('button', { name: 'Close' }).click();

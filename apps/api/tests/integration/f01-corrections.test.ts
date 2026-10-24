@@ -201,17 +201,17 @@ describe('F-01 corrections R1/R2/R3: real PostgreSQL invariants', () => {
     });
 
     it('rejects a second gate-pass number that differs only by case and whitespace', async () => {
-      const id = await otherRowId('gate_pass_records', 'gate_pass_number', 'DEMO-GP-0007');
+      const id = await otherRowId('gate_pass_records', 'gate_pass_number', 'HZ-GP-1048');
       await expectRefused(
         'UPDATE gate_pass_records SET gate_pass_number=$1 WHERE id=$2',
-        [' demo-gp-0007 ', id],
+        [' hz-gp-1048 ', id],
         CANONICAL_KEY_CODES,
         'R1: a gate pass differing only by case/whitespace must be refused',
       );
     });
 
     it('rejects a gate-pass number containing internal whitespace', async () => {
-      const id = await otherRowId('gate_pass_records', 'gate_pass_number', 'DEMO-GP-0007');
+      const id = await otherRowId('gate_pass_records', 'gate_pass_number', 'HZ-GP-1048');
       // The approved rule invalidates internal whitespace rather than stripping it.
       await expectRefused(
         'UPDATE gate_pass_records SET gate_pass_number=$1 WHERE id=$2',
@@ -239,7 +239,7 @@ describe('F-01 corrections R1/R2/R3: real PostgreSQL invariants', () => {
         'INSERT INTO gate_pass_records(id, gate_pass_number, driver_id, vehicle_id) VALUES ($1,$2,$3,$4)',
         [
           '00000000-0000-4000-8000-00000000a002',
-          'DEMO-GP-0011',
+          'HZ-GP-0011',
           driver.rows[0]?.id,
           vehicle.rows[0]?.id,
         ],
@@ -269,17 +269,17 @@ describe('F-01 corrections R1/R2/R3: real PostgreSQL invariants', () => {
         1,
       );
 
-      const pass = await otherRowId('gate_pass_records', 'gate_pass_number', 'DEMO-GP-0007');
+      const pass = await otherRowId('gate_pass_records', 'gate_pass_number', 'HZ-GP-1048');
       await expectRefused(
         'UPDATE gate_pass_records SET gate_pass_number=$1 WHERE id=$2',
-        [' demo-gp-0007 ', pass],
+        [' hz-gp-1048 ', pass],
         CANONICAL_KEY_CODES,
         'R1 (lookup): the gate-pass variant attempt must be refused',
       );
       const gatePass = await db.pool.query<{ n: number }>(
         `SELECT count(*)::int AS n FROM gate_pass_records
           WHERE ${canonicalGatePass('gate_pass_number')} = ${canonicalGatePass('$1')}`,
-        [' demo-gp-0007 '],
+        [' hz-gp-1048 '],
       );
       expect(gatePass.rows[0]?.n, 'R1: normalised gate-pass lookup must match one row').toBe(1);
     });
@@ -381,11 +381,11 @@ describe('F-01 corrections R1/R2/R3: real PostgreSQL invariants', () => {
     const pairs = await db.pool.query<{ post_source: string; gate_source: string }>(
       'SELECT p.demo_source_id AS post_source, g.demo_source_id AS gate_source FROM posts p JOIN gates g ON g.id = p.gate_id ORDER BY 1',
     );
-    // docs/demo-data.json: gate-01 -> DEMO-POST-01, gate-02 -> DEMO-POST-02.
+    // docs/demo-data.json: gate-01 -> Main Gate Post, gate-02 -> Dispatch Gate Post.
     expect(pairs.rows.map((row) => [row.post_source, row.gate_source])).toEqual(
       expect.arrayContaining([
-        ['DEMO-POST-01', 'gate-01'],
-        ['DEMO-POST-02', 'gate-02'],
+        ['Main Gate Post', 'gate-01'],
+        ['Dispatch Gate Post', 'gate-02'],
       ]),
     );
   });

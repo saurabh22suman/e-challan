@@ -141,7 +141,7 @@ describe('DOM-02/DOM-03: real PostgreSQL domain foundation', () => {
   it('retains a gate pass with no challan history and distinct drivers sharing a vehicle', async () => {
     await seed();
     const zeroHistory = await db.pool.query(
-      "SELECT g.gate_pass_number FROM gate_pass_records g LEFT JOIN challans c ON c.gate_pass_number = g.gate_pass_number WHERE g.gate_pass_number = 'DEMO-GP-0010' AND c.id IS NULL",
+      "SELECT g.gate_pass_number FROM gate_pass_records g LEFT JOIN challans c ON c.gate_pass_number = g.gate_pass_number WHERE g.gate_pass_number = 'HZ-GP-1051' AND c.id IS NULL",
     );
     expect(zeroHistory.rows).toHaveLength(1);
     const shared = await db.pool.query(

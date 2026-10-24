@@ -12,7 +12,7 @@ phone numbers, Aadhaar numbers or other identity-document data are needed here.
 
 ## Useful examples
 
-- Ramesh Kumar, `DEMO-GP-0001`, car **GJ05DS4821**: multiple records using exactly
+- Ramesh Kumar, `HZ-GP-1042`, car **GJ05DS4821**: multiple records using exactly
   the same registration and gate pass; includes recent history and a record older
   than 90 days.
 - Truck **MH12RT7306**: used by Imran Shaikh and Sanjay Patil with different gate
@@ -43,9 +43,9 @@ autofill location from the pass: the current post/session determines the actual
 issuance location. Never fill violation, remarks, evidence or signature from history.
 
 Examples:
-- `GJ05DS4821` → Ramesh Kumar / DEMO-GP-0001 / Logistics / Demo Western Freight Services / Car.
+- `GJ05DS4821` → Ramesh Kumar / HZ-GP-1042 / Logistics / Western Freight Services / Car.
 - `MH12RT7306` → Imran Shaikh or Sanjay Patil; selection required.
-- `GJ05JP6207` → Kavita Joshi / DEMO-GP-0010 / Plant operations / Demo Unity Engineering Works / Car,
+- `GJ05JP6207` → Kavita Joshi / HZ-GP-1051 / Plant operations / Unity Engineering Works / Car,
   even though she has no previous challans.
 
 The expired pass provides a status-display fixture, not an approved admission or

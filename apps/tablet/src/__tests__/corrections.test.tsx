@@ -129,7 +129,7 @@ describe('R1 lookup invalidation', () => {
 describe('R2 canonical draft revision', () => {
   const baseDraft: UseDraftRevisionArgs['draft'] = {
     vehicleRegistration: 'GJ05JP6207',
-    gatePassNumber: 'DEMO-GP-0010',
+    gatePassNumber: 'HZ-GP-1051',
     driverName: 'Kavita Joshi',
     departmentId: ID('4'),
     contractorId: ID('7'),
@@ -202,7 +202,7 @@ describe('R2 canonical draft revision', () => {
 describe('R3 re-preview acknowledgement invalidation', () => {
   const baseDraft: UseDraftRevisionArgs['draft'] = {
     vehicleRegistration: 'GJ05JP6207',
-    gatePassNumber: 'DEMO-GP-0010',
+    gatePassNumber: 'HZ-GP-1051',
     driverName: 'Kavita Joshi',
     departmentId: ID('4'),
     contractorId: ID('7'),
