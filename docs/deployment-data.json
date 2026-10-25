@@ -3,14 +3,15 @@
     "version": 2,
     "purpose": "Fictional but realistic-looking deployment seed for the gate pilot",
     "synthetic": true,
-    "referenceNow": "2026-10-01T12:00:00+05:30",
+    "referenceNow": "2026-10-25T12:00:00+05:30",
     "displayTimezone": "Asia/Kolkata",
     "notes": [
       "Names, staff, contractors, site and events are fictional; the data is illustrative only.",
       "Vehicle numbers use Indian registration-style syntax and may coincidentally match real registrations; no real ownership is asserted.",
       "Severity, statuses and review actions do not approve unresolved production formats, escalation or resolution rules.",
       "No photos or signatures are supplied by this fixture; captured media is stored separately when issued through the app.",
-      "Use the fixed reference clock for reproducible scenarios; do not derive age from the machine clock."
+      "Use the fixed reference clock for reproducible scenarios; do not derive age from the machine clock.",
+      "Deployment fixture includes 100 synthetic historical challans across June–October 2026 for dashboard, review and trend demonstration; the test fixture docs/demo-data.json remains the smaller deterministic 14-record set, and pass-01 history is preserved for field repeat checks."
     ]
   },
   "locations": [
@@ -795,6 +796,1663 @@
       "remarks": "Restricted parking on the dispatch route; repeat within the current window.",
       "media": {
         "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-001",
+      "demoNumber": "HZL/EC/2026/07/0001",
+      "issuedAt": "2026-07-27T08:15:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-002",
+      "demoNumber": "HZL/EC/2026/07/0002",
+      "issuedAt": "2026-07-28T09:40:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-003",
+      "demoNumber": "HZL/EC/2026/07/0003",
+      "issuedAt": "2026-07-29T11:10:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-004",
+      "demoNumber": "HZL/EC/2026/07/0004",
+      "issuedAt": "2026-07-30T14:05:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-005",
+      "demoNumber": "HZL/EC/2026/07/0005",
+      "issuedAt": "2026-07-31T16:20:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-006",
+      "demoNumber": "HZL/EC/2026/08/0002",
+      "issuedAt": "2026-08-01T08:15:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-007",
+      "demoNumber": "HZL/EC/2026/08/0003",
+      "issuedAt": "2026-08-02T09:40:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-008",
+      "demoNumber": "HZL/EC/2026/08/0004",
+      "issuedAt": "2026-08-03T11:10:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-009",
+      "demoNumber": "HZL/EC/2026/08/0005",
+      "issuedAt": "2026-08-04T14:05:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-010",
+      "demoNumber": "HZL/EC/2026/08/0006",
+      "issuedAt": "2026-08-05T16:20:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-011",
+      "demoNumber": "HZL/EC/2026/08/0007",
+      "issuedAt": "2026-08-06T08:15:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-012",
+      "demoNumber": "HZL/EC/2026/08/0008",
+      "issuedAt": "2026-08-07T09:40:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-013",
+      "demoNumber": "HZL/EC/2026/08/0009",
+      "issuedAt": "2026-08-08T11:10:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-014",
+      "demoNumber": "HZL/EC/2026/08/0010",
+      "issuedAt": "2026-08-09T14:05:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-015",
+      "demoNumber": "HZL/EC/2026/08/0011",
+      "issuedAt": "2026-08-10T16:20:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-016",
+      "demoNumber": "HZL/EC/2026/08/0012",
+      "issuedAt": "2026-08-11T08:15:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-017",
+      "demoNumber": "HZL/EC/2026/08/0013",
+      "issuedAt": "2026-08-12T09:40:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-018",
+      "demoNumber": "HZL/EC/2026/08/0014",
+      "issuedAt": "2026-08-13T11:10:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-019",
+      "demoNumber": "HZL/EC/2026/08/0015",
+      "issuedAt": "2026-08-14T14:05:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-020",
+      "demoNumber": "HZL/EC/2026/08/0016",
+      "issuedAt": "2026-08-15T16:20:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-021",
+      "demoNumber": "HZL/EC/2026/08/0017",
+      "issuedAt": "2026-08-16T08:15:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-022",
+      "demoNumber": "HZL/EC/2026/08/0018",
+      "issuedAt": "2026-08-17T09:40:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-023",
+      "demoNumber": "HZL/EC/2026/08/0019",
+      "issuedAt": "2026-08-18T11:10:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-024",
+      "demoNumber": "HZL/EC/2026/08/0020",
+      "issuedAt": "2026-08-19T14:05:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-025",
+      "demoNumber": "HZL/EC/2026/08/0021",
+      "issuedAt": "2026-08-20T16:20:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-026",
+      "demoNumber": "HZL/EC/2026/08/0022",
+      "issuedAt": "2026-08-21T08:15:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-027",
+      "demoNumber": "HZL/EC/2026/08/0023",
+      "issuedAt": "2026-08-22T09:40:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-028",
+      "demoNumber": "HZL/EC/2026/08/0024",
+      "issuedAt": "2026-08-23T11:10:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-029",
+      "demoNumber": "HZL/EC/2026/08/0025",
+      "issuedAt": "2026-08-24T14:05:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-030",
+      "demoNumber": "HZL/EC/2026/08/0026",
+      "issuedAt": "2026-08-25T16:20:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-031",
+      "demoNumber": "HZL/EC/2026/08/0027",
+      "issuedAt": "2026-08-26T08:15:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-032",
+      "demoNumber": "HZL/EC/2026/08/0028",
+      "issuedAt": "2026-08-27T09:40:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-033",
+      "demoNumber": "HZL/EC/2026/08/0029",
+      "issuedAt": "2026-08-28T11:10:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-034",
+      "demoNumber": "HZL/EC/2026/08/0030",
+      "issuedAt": "2026-08-29T14:05:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-035",
+      "demoNumber": "HZL/EC/2026/08/0031",
+      "issuedAt": "2026-08-30T16:20:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-036",
+      "demoNumber": "HZL/EC/2026/08/0032",
+      "issuedAt": "2026-08-31T08:15:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-037",
+      "demoNumber": "HZL/EC/2026/09/0007",
+      "issuedAt": "2026-09-01T09:40:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-038",
+      "demoNumber": "HZL/EC/2026/09/0008",
+      "issuedAt": "2026-09-02T11:10:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-039",
+      "demoNumber": "HZL/EC/2026/09/0009",
+      "issuedAt": "2026-09-03T14:05:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-040",
+      "demoNumber": "HZL/EC/2026/09/0010",
+      "issuedAt": "2026-09-04T16:20:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-041",
+      "demoNumber": "HZL/EC/2026/09/0011",
+      "issuedAt": "2026-09-05T08:15:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-042",
+      "demoNumber": "HZL/EC/2026/09/0012",
+      "issuedAt": "2026-09-06T09:40:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-043",
+      "demoNumber": "HZL/EC/2026/09/0013",
+      "issuedAt": "2026-09-07T11:10:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-044",
+      "demoNumber": "HZL/EC/2026/09/0014",
+      "issuedAt": "2026-09-08T14:05:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-045",
+      "demoNumber": "HZL/EC/2026/09/0015",
+      "issuedAt": "2026-09-09T16:20:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-046",
+      "demoNumber": "HZL/EC/2026/09/0016",
+      "issuedAt": "2026-09-10T08:15:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-047",
+      "demoNumber": "HZL/EC/2026/09/0017",
+      "issuedAt": "2026-09-11T09:40:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-048",
+      "demoNumber": "HZL/EC/2026/09/0018",
+      "issuedAt": "2026-09-12T11:10:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-049",
+      "demoNumber": "HZL/EC/2026/09/0019",
+      "issuedAt": "2026-09-13T14:05:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-050",
+      "demoNumber": "HZL/EC/2026/09/0020",
+      "issuedAt": "2026-09-14T16:20:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-051",
+      "demoNumber": "HZL/EC/2026/09/0021",
+      "issuedAt": "2026-09-15T08:15:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-052",
+      "demoNumber": "HZL/EC/2026/09/0022",
+      "issuedAt": "2026-09-16T09:40:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-053",
+      "demoNumber": "HZL/EC/2026/09/0023",
+      "issuedAt": "2026-09-17T11:10:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-054",
+      "demoNumber": "HZL/EC/2026/09/0024",
+      "issuedAt": "2026-09-18T14:05:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-055",
+      "demoNumber": "HZL/EC/2026/09/0025",
+      "issuedAt": "2026-09-19T16:20:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-056",
+      "demoNumber": "HZL/EC/2026/09/0026",
+      "issuedAt": "2026-09-20T08:15:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-057",
+      "demoNumber": "HZL/EC/2026/09/0027",
+      "issuedAt": "2026-09-21T09:40:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-058",
+      "demoNumber": "HZL/EC/2026/09/0028",
+      "issuedAt": "2026-09-22T11:10:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-059",
+      "demoNumber": "HZL/EC/2026/09/0029",
+      "issuedAt": "2026-09-23T14:05:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-060",
+      "demoNumber": "HZL/EC/2026/09/0030",
+      "issuedAt": "2026-09-24T16:20:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-061",
+      "demoNumber": "HZL/EC/2026/09/0031",
+      "issuedAt": "2026-09-25T08:15:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-062",
+      "demoNumber": "HZL/EC/2026/09/0032",
+      "issuedAt": "2026-09-26T09:40:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-063",
+      "demoNumber": "HZL/EC/2026/09/0033",
+      "issuedAt": "2026-09-27T11:10:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-064",
+      "demoNumber": "HZL/EC/2026/09/0034",
+      "issuedAt": "2026-09-28T14:05:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-065",
+      "demoNumber": "HZL/EC/2026/09/0035",
+      "issuedAt": "2026-09-29T16:20:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-066",
+      "demoNumber": "HZL/EC/2026/09/0036",
+      "issuedAt": "2026-09-30T08:15:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-067",
+      "demoNumber": "HZL/EC/2026/10/0008",
+      "issuedAt": "2026-10-01T09:40:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-068",
+      "demoNumber": "HZL/EC/2026/10/0009",
+      "issuedAt": "2026-10-02T11:10:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-069",
+      "demoNumber": "HZL/EC/2026/10/0010",
+      "issuedAt": "2026-10-03T14:05:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-070",
+      "demoNumber": "HZL/EC/2026/10/0011",
+      "issuedAt": "2026-10-04T16:20:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-071",
+      "demoNumber": "HZL/EC/2026/10/0012",
+      "issuedAt": "2026-10-05T08:15:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-072",
+      "demoNumber": "HZL/EC/2026/10/0013",
+      "issuedAt": "2026-10-06T09:40:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-073",
+      "demoNumber": "HZL/EC/2026/10/0014",
+      "issuedAt": "2026-10-07T11:10:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Cancelled",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-074",
+      "demoNumber": "HZL/EC/2026/10/0015",
+      "issuedAt": "2026-10-08T14:05:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-075",
+      "demoNumber": "HZL/EC/2026/10/0016",
+      "issuedAt": "2026-10-09T16:20:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-076",
+      "demoNumber": "HZL/EC/2026/10/0017",
+      "issuedAt": "2026-10-10T08:15:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-speed"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-077",
+      "demoNumber": "HZL/EC/2026/10/0018",
+      "issuedAt": "2026-10-11T09:40:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-078",
+      "demoNumber": "HZL/EC/2026/10/0019",
+      "issuedAt": "2026-10-12T11:10:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-seatbelt",
+        "violation-speed"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-079",
+      "demoNumber": "HZL/EC/2026/10/0020",
+      "issuedAt": "2026-10-13T14:05:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-seatbelt"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-080",
+      "demoNumber": "HZL/EC/2026/10/0021",
+      "issuedAt": "2026-10-14T16:20:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-081",
+      "demoNumber": "HZL/EC/2026/10/0022",
+      "issuedAt": "2026-10-15T08:15:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-route"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-082",
+      "demoNumber": "HZL/EC/2026/10/0023",
+      "issuedAt": "2026-10-16T09:40:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Under Review",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 1,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-083",
+      "demoNumber": "HZL/EC/2026/10/0024",
+      "issuedAt": "2026-10-17T11:10:00+05:30",
+      "driverId": "driver-09",
+      "vehicleId": "vehicle-06",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 2,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-084",
+      "demoNumber": "HZL/EC/2026/10/0025",
+      "issuedAt": "2026-10-18T14:05:00+05:30",
+      "driverId": "driver-07",
+      "vehicleId": "vehicle-07",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-parking"
+      ],
+      "demoStatus": "Issued",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 3,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-085",
+      "demoNumber": "HZL/EC/2026/10/0026",
+      "issuedAt": "2026-10-19T16:20:00+05:30",
+      "driverId": "driver-04",
+      "vehicleId": "vehicle-04",
+      "gateId": "gate-01",
+      "shiftId": "shift-main-day",
+      "violationIds": [
+        "violation-other"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic Other record; explanatory remarks retained for review.",
+      "media": {
+        "photoCount": 4,
+        "signatureState": "signed",
+        "assetsAvailable": false
+      }
+    },
+    {
+      "id": "demo-challan-hist-086",
+      "demoNumber": "HZL/EC/2026/10/0027",
+      "issuedAt": "2026-10-20T08:15:00+05:30",
+      "driverId": "driver-03",
+      "vehicleId": "vehicle-03",
+      "gateId": "gate-02",
+      "shiftId": "shift-dispatch-day",
+      "violationIds": [
+        "violation-phone",
+        "violation-route"
+      ],
+      "demoStatus": "Resolved",
+      "remarks": "Historical synthetic record retained for reporting and review demonstration.",
+      "media": {
+        "photoCount": 0,
         "signatureState": "signed",
         "assetsAvailable": false
       }

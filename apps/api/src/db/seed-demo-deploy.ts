@@ -72,7 +72,7 @@ export async function assignEnvUsersToDemoContext(
     const stored = await db.orm
       .select({ id: s.users.id, role: s.users.role })
       .from(s.users)
-      .where(eq(s.users.username, username))
+      .where(sql`lower(${s.users.username}) = lower(${username})`)
       .limit(1);
     const user = stored[0];
     if (user === undefined || user.role !== role) {

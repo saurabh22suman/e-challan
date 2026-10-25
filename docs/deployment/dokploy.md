@@ -106,7 +106,8 @@ demo seed below or add masters and assignments through the dashboard first.
 Set `SEED_DEMO_DATA=true` in the Dokploy environment on the first deployment.
 `deploy-start` then loads the deployment fixture: fictional but realistic-looking
 locations, gates, posts, shifts, staff, drivers, gate passes, contractors,
-departments, vehicles and challan history. It gives the env Marshal/Supervisor a
+departments, vehicles and a **100-record synthetic historical challan history**.
+It gives the env Marshal/Supervisor a
 demo location when they have none. The selected location has exactly one active
 post and one active shift, so Marshal login resolves its context without an
 ambiguity prompt. The example env usernames (`EMP-1042`, `EMP-3106`, `EMP-2217`)
@@ -114,7 +115,10 @@ reuse the seeded profiles, so the UI shows the matching real-looking names.
 Custom usernames also work; the seed assigns a location to a custom
 Marshal/Supervisor.
 
-The seed is insert-if-absent and safe to run repeatedly. It is refused for any
+The deployment fixture currently contains 100 historical challans (June–October
+2026), 5 staff accounts, 2 posts and 2 shifts. The smaller `docs/demo-data.json`
+fixture remains the deterministic 14-record test fixture. The seed is
+insert-if-absent and safe to run repeatedly. It is refused for any
 database name other than `echallan_demo` or `echallan_test`. If an older demo
 seed already populated the same database, reset the demo database/volume before
 enabling this fixture: existing rows are not rewritten, and issued challan rows

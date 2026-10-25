@@ -161,6 +161,11 @@ describe('Admin user management over real PostgreSQL', () => {
       expect(loggedIn.status, JSON.stringify(loggedIn.body)).toBe(200);
       expect(loggedIn.body.user.role).toBe('Supervisor');
 
+      const lowerCaseLogin = await login(SUP_USER.toLowerCase(), SUP_PASSWORD);
+      expect(lowerCaseLogin.status, JSON.stringify(lowerCaseLogin.body)).toBe(200);
+      expect(lowerCaseLogin.body.user.username).toBe(SUP_USER);
+      expect(lowerCaseLogin.body.user.role).toBe('Supervisor');
+
       const list = await server.inject({
         method: 'GET',
         url: '/challans',
@@ -212,6 +217,14 @@ describe('Admin user management over real PostgreSQL', () => {
       });
       expect(duplicate.status).toBe(409);
       expect(duplicate.body['error']).toBe('conflict');
+
+      const caseVariant = await create(adminToken, {
+        ...BASE_SUPERVISOR,
+        username: SUP_USER.toLowerCase(),
+        locationIds: [mainLocationId],
+      });
+      expect(caseVariant.status).toBe(409);
+      expect(caseVariant.body['error']).toBe('conflict');
 
       for (const role of ['Marshal', 'Supervisor']) {
         const missing = await create(adminToken, {

@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
 import type { FastifyInstance } from 'fastify';
 import {
   API_ERROR_CODES,
@@ -121,7 +121,7 @@ export function registerAdminRoutes(app: FastifyInstance, options: AdminRouteOpt
     const existing = await db.orm
       .select({ id: s.users.id })
       .from(s.users)
-      .where(eq(s.users.username, input.username))
+      .where(sql`lower(${s.users.username}) = lower(${input.username})`)
       .limit(1);
     if (existing.length > 0) {
       return sendError(

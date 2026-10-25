@@ -3,7 +3,10 @@
 Data: `docs/demo-data.json`. This is a portable, framework-independent fixture
 for the future demo UI and test/seed adapter, not an API request or production DB
 dump. It contains 10 drivers, 9 vehicles, 10 explicit gate-pass records, 5 staff,
-2 gate locations and 14 challans.
+2 gate locations and 14 challans. The separate deployment fixture
+`docs/deployment-data.json` carries the same masters/staff plus **100 historical
+challans** for dashboard, review and trend demonstration; tests continue to use
+the smaller deterministic 14-record fixture.
 
 Indian names and vehicle-registration-style examples are illustrative. All events
 and associations are fictional; this is not a demographic sample or real violation

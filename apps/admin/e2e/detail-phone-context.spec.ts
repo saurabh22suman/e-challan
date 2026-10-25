@@ -37,10 +37,7 @@ test('phone detail shows record context before the action and hides cancellation
   page,
 }) => {
   await signIn(page);
-  await page
-    .getByRole('button', { name: /^Open / })
-    .first()
-    .click();
+  await page.getByRole('button', { name: 'Open HZL/EC/2026/10/0005' }).click();
   const dialog = page.getByRole('dialog', { name: 'Challan details' });
   await expect(dialog).toBeVisible();
 

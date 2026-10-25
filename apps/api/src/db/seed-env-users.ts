@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import {
   DEMO_ROLES,
   loadDemoCredentials,
@@ -103,7 +103,7 @@ export async function seedEnvUsers(
         const stored = await tx
           .select({ id: s.users.id, role: s.users.role, isActive: s.users.isActive })
           .from(s.users)
-          .where(eq(s.users.username, username))
+          .where(sql`lower(${s.users.username}) = lower(${username})`)
           .limit(1);
 
         const user = stored[0];

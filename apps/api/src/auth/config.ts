@@ -87,7 +87,8 @@ export function loadDemoCredentials(
 
   const seen = new Map<string, DemoRole>();
   for (const role of DEMO_ROLES) {
-    const previous = seen.get(credentials[role].username);
+    const key = credentials[role].username.toLowerCase();
+    const previous = seen.get(key);
     if (previous !== undefined) {
       throw new Error(
         `Refusing to start: ambiguous demo configuration. Roles "${previous}" and "${role}" are ` +
@@ -95,7 +96,7 @@ export function loadDemoCredentials(
           'be matched unambiguously. Each approved role needs a unique username.',
       );
     }
-    seen.set(credentials[role].username, role);
+    seen.set(key, role);
   }
 
   return credentials;
@@ -126,7 +127,9 @@ export function matchConfiguredRole(
 ): DemoRole | undefined {
   let matched: DemoRole | undefined;
   for (const role of DEMO_ROLES) {
-    if (credentialsMatch(credentials[role].username, username)) matched = role;
+    if (credentialsMatch(credentials[role].username.toLowerCase(), username.toLowerCase())) {
+      matched = role;
+    }
   }
   return matched;
 }

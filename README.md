@@ -109,6 +109,8 @@ Rules the API enforces, not just the UI:
 
 - Missing, blank or whitespace-only values stop the process at startup. Two roles
   sharing one username is refused as ambiguous. Nothing is ever defaulted.
+- Usernames are matched case-insensitively; the stored spelling is returned in
+  the session identity. Passwords remain exact and case-sensitive.
 - Each username must resolve to a seeded `users` row whose stored `role` equals
   the variable's role; a mismatch is refused, so no identity can gain a role.
 - No role may be requested by a client, and there is no `VITE_`-prefixed

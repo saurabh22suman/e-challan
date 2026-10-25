@@ -135,6 +135,18 @@ describe('AUTH-01/02/03/05 + R3/R4: demo authentication over real PostgreSQL', (
       expect((admin.json as SessionBody).user.role).toBe('Admin');
     });
 
+    it('accepts lower-case or mixed-case usernames while returning stored spelling', async () => {
+      const admin = await login({ username: 'emp-1042', password: ADMIN_PASSWORD });
+      expect(admin.status, JSON.stringify(admin.json)).toBe(200);
+      expect((admin.json as SessionBody).user.username).toBe('EMP-1042');
+      expect((admin.json as SessionBody).user.role).toBe('Admin');
+
+      const supervisor = await login({ username: 'EmP-2217', password: SUPERVISOR_PASSWORD });
+      expect(supervisor.status, JSON.stringify(supervisor.json)).toBe(200);
+      expect((supervisor.json as SessionBody).user.username).toBe('EMP-2217');
+      expect((supervisor.json as SessionBody).user.role).toBe('Supervisor');
+    });
+
     it('never returns the password or any password material in a successful login response', async () => {
       // A successful login is required first: inspecting a generic failure body
       // proves nothing, because a failure body trivially contains no password.

@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import type { Db } from '../db/client.js';
 import * as s from '../db/schema.js';
 import {
@@ -164,8 +164,15 @@ function roleFromDemoRole(role: 'marshal' | 'supervisor' | 'admin'): Role {
 }
 
 async function findUserByUsername(db: Db, username: string): Promise<s.User | undefined> {
-  const rows = await db.orm.select().from(s.users).where(eq(s.users.username, username)).limit(1);
-  return rows[0];
+  // Usernames are matched case-insensitively, but the stored spelling remains
+  // authoritative for identity responses. More than one stored case variant is
+  // ambiguous and therefore refuses the login rather than guessing.
+  const rows = await db.orm
+    .select()
+    .from(s.users)
+    .where(sql`lower(${s.users.username}) = lower(${username})`)
+    .limit(2);
+  return rows.length === 1 ? rows[0] : undefined;
 }
 
 /* -------------------------------------------------------------------------- */
