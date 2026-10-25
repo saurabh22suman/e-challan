@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,6 +18,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Typography from '@mui/material/Typography';
 import {
@@ -32,7 +32,12 @@ import {
 } from '@echallan/contracts';
 import {
   ActionButton,
+  EmptyState,
+  LIST_CARD_BREAKPOINT,
   Notice,
+  PageHeader,
+  RADIUS,
+  RecordCard,
   SPACING,
   StatusBadge,
   ToneDialogTitle,
@@ -99,7 +104,10 @@ export default function MasterDataPanel({ token }: { token: string }) {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkBusy, setBulkBusy] = useState(false);
   const [bulkFailure, setBulkFailure] = useState<string | null>(null);
-  const compact = useMediaQuery('(max-width:1199.95px)');
+  const compactQuery = `(max-width:${LIST_CARD_BREAKPOINT}px)`;
+  const compact = useMediaQuery(compactQuery, {
+    defaultMatches: typeof window !== 'undefined' && window.matchMedia(compactQuery).matches,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -323,101 +331,96 @@ export default function MasterDataPanel({ token }: { token: string }) {
   }
 
   return (
-    <Card>
-      <CardHeader
-        title={
-          <Typography component="h2" variant="h2">
-            Master data
-          </Typography>
+    <Stack spacing={SPACING.xl}>
+      <PageHeader
+        eyebrow="Administration"
+        title="Master data"
+        titleComponent="h2"
+        description="Manage the controlled values used by new challans. Entries are deactivated, never deleted."
+        actions={
+          <ActionButton tone="primary" onClick={startCreate}>
+            Add {KIND_LABELS[kind].toLowerCase().replace(/s$/u, '')}
+          </ActionButton>
         }
-        subheader="Manage controlled values. Entries are deactivated, never deleted."
       />
-      <CardContent>
-        <Stack spacing={SPACING.lg}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-            <TextField
-              select
-              label="Master kind"
-              value={kind}
-              onChange={(event) => {
-                setKind(event.target.value as MasterKind);
-                setError(null);
-              }}
-              sx={{ minWidth: 260 }}
-            >
-              {MASTER_KINDS.map((candidate) => (
-                <MenuItem key={candidate} value={candidate}>
-                  {KIND_LABELS[candidate]}
-                </MenuItem>
-              ))}
-            </TextField>
-            <ActionButton tone="primary" onClick={startCreate}>
-              Add {KIND_LABELS[kind].toLowerCase().replace(/s$/u, '')}
-            </ActionButton>
-          </Stack>
+      <ToggleButtonGroup
+        exclusive
+        value={kind}
+        onChange={(_event, value: MasterKind | null) => {
+          if (value === null) return;
+          setKind(value);
+          setError(null);
+        }}
+        aria-label="Master kind"
+        sx={{
+          flexWrap: 'wrap',
+          gap: SPACING.sm,
+          '& .MuiToggleButtonGroup-grouped': {
+            borderRadius: `${RADIUS.control} !important`,
+            border: `1px solid ${tokens.line} !important`,
+          },
+        }}
+      >
+        {MASTER_KINDS.map((candidate) => (
+          <ToggleButton key={candidate} value={candidate} size="small">
+            {KIND_LABELS[candidate]}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <Card>
+        <CardContent>
+          <Stack spacing={SPACING.lg}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
+              <TextField
+                label="Search master entries"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                sx={{ flex: 1 }}
+              />
+              <TextField
+                select
+                label="Status"
+                value={statusFilter}
+                onChange={(event) =>
+                  setStatusFilter(event.target.value as 'all' | 'active' | 'inactive')
+                }
+                sx={{ minWidth: 170 }}
+              >
+                <MenuItem value="all">All statuses</MenuItem>
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Inactive</MenuItem>
+              </TextField>
+              {selectedMasters.length > 0 && (
+                <ActionButton tone="danger" onClick={() => setBulkOpen(true)}>
+                  Deactivate selected ({selectedMasters.length})
+                </ActionButton>
+              )}
+            </Stack>
 
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-            <TextField
-              label="Search master entries"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              sx={{ flex: 1 }}
-            />
-            <TextField
-              select
-              label="Status"
-              value={statusFilter}
-              onChange={(event) =>
-                setStatusFilter(event.target.value as 'all' | 'active' | 'inactive')
-              }
-              sx={{ minWidth: 170 }}
-            >
-              <MenuItem value="all">All statuses</MenuItem>
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="inactive">Inactive</MenuItem>
-            </TextField>
-            {selectedMasters.length > 0 && (
-              <ActionButton tone="danger" onClick={() => setBulkOpen(true)}>
-                Deactivate selected ({selectedMasters.length})
-              </ActionButton>
+            {error !== null && (
+              <Notice severity="error" role="status">
+                {error}
+              </Notice>
             )}
-          </Stack>
+            {actionFailure !== null && (
+              <Notice severity="error" role="alert">
+                {actionFailure}
+              </Notice>
+            )}
 
-          {error !== null && (
-            <Notice severity="error" role="status">
-              {error}
-            </Notice>
-          )}
-          {actionFailure !== null && (
-            <Notice severity="error" role="alert">
-              {actionFailure}
-            </Notice>
-          )}
-
-          {loading ? (
-            <CircularProgress aria-label="Loading master data" />
-          ) : filteredMasters.length === 0 ? (
-            <Notice severity="info" role="status">
-              No entries match these filters.
-            </Notice>
-          ) : compact ? (
-            <Stack spacing={SPACING.md}>
-              {filteredMasters.map((master) => (
-                <Box
-                  key={master.id}
-                  sx={{
-                    border: `1px solid ${tokens.line}`,
-                    borderRadius: 2,
-                    padding: SPACING.md,
-                    backgroundColor: tokens.surface,
-                  }}
-                >
-                  <Stack spacing={SPACING.sm}>
-                    <Stack
-                      direction="row"
-                      spacing={SPACING.sm}
-                      sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
-                    >
+            {loading ? (
+              <CircularProgress aria-label="Loading master data" />
+            ) : filteredMasters.length === 0 ? (
+              <EmptyState
+                title="No entries match these filters"
+                description="Try a broader search or choose another master category."
+              />
+            ) : compact ? (
+              <Stack spacing={SPACING.md}>
+                {filteredMasters.map((master) => (
+                  <RecordCard
+                    key={master.id}
+                    title={
                       <Stack direction="row" spacing={SPACING.sm} sx={{ alignItems: 'center' }}>
                         {master.isActive && (
                           <Checkbox
@@ -426,87 +429,91 @@ export default function MasterDataPanel({ token }: { token: string }) {
                             onChange={() => toggleSelected(master.id)}
                           />
                         )}
-                        <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                          {master.label}
-                        </Typography>
+                        <span>{master.label}</span>
                       </Stack>
-                      {master.isActive ? (
+                    }
+                    subtitle={detailText(master)}
+                    badge={
+                      master.isActive ? (
                         <StatusBadge status="active" />
                       ) : (
                         <StatusBadge status="deactivated" label="Inactive" />
-                      )}
-                    </Stack>
-                    <Typography variant="caption" sx={{ color: tokens.muted }}>
-                      {detailText(master)}
-                    </Typography>
-                    {renderActions(master)}
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
-          ) : (
-            <TableContainer>
-              <Table aria-label="Master data">
-                <TableHead>
-                  <TableRow>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        slotProps={{
-                          input: { 'aria-label': 'Select all visible active master entries' },
-                        }}
-                        checked={
-                          selectableMasters.length > 0 &&
-                          selectableMasters.every((master) => selectedIds.has(master.id))
-                        }
-                        indeterminate={
-                          selectableMasters.some((master) => selectedIds.has(master.id)) &&
-                          !selectableMasters.every((master) => selectedIds.has(master.id))
-                        }
-                        onChange={(event) => {
-                          setSelectedIds(
-                            event.target.checked
-                              ? new Set(selectableMasters.map((master) => master.id))
-                              : new Set(),
-                          );
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>Label</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Details</TableCell>
-                    <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredMasters.map((master) => (
-                    <TableRow key={master.id} hover>
+                      )
+                    }
+                    actions={renderActions(master)}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              <TableContainer
+                sx={{
+                  overflowX: 'auto',
+                  border: `1px solid ${tokens.lineSoft}`,
+                  borderRadius: RADIUS.control,
+                }}
+              >
+                <Table aria-label="Master data">
+                  <TableHead>
+                    <TableRow>
                       <TableCell padding="checkbox">
-                        {master.isActive && (
-                          <Checkbox
-                            slotProps={{ input: { 'aria-label': `Select ${master.label}` } }}
-                            checked={selectedIds.has(master.id)}
-                            onChange={() => toggleSelected(master.id)}
-                          />
-                        )}
+                        <Checkbox
+                          slotProps={{
+                            input: { 'aria-label': 'Select all visible active master entries' },
+                          }}
+                          checked={
+                            selectableMasters.length > 0 &&
+                            selectableMasters.every((master) => selectedIds.has(master.id))
+                          }
+                          indeterminate={
+                            selectableMasters.some((master) => selectedIds.has(master.id)) &&
+                            !selectableMasters.every((master) => selectedIds.has(master.id))
+                          }
+                          onChange={(event) => {
+                            setSelectedIds(
+                              event.target.checked
+                                ? new Set(selectableMasters.map((master) => master.id))
+                                : new Set(),
+                            );
+                          }}
+                        />
                       </TableCell>
-                      <TableCell sx={{ fontWeight: 600 }}>{master.label}</TableCell>
-                      <TableCell>
-                        {master.isActive ? (
-                          <StatusBadge status="active" />
-                        ) : (
-                          <StatusBadge status="deactivated" label="Inactive" />
-                        )}
-                      </TableCell>
-                      <TableCell sx={{ color: tokens.muted }}>{detailText(master)}</TableCell>
-                      <TableCell align="right">{renderActions(master)}</TableCell>
+                      <TableCell>Label</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Details</TableCell>
+                      <TableCell align="right">Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Stack>
-      </CardContent>
+                  </TableHead>
+                  <TableBody>
+                    {filteredMasters.map((master) => (
+                      <TableRow key={master.id} hover>
+                        <TableCell padding="checkbox">
+                          {master.isActive && (
+                            <Checkbox
+                              slotProps={{ input: { 'aria-label': `Select ${master.label}` } }}
+                              checked={selectedIds.has(master.id)}
+                              onChange={() => toggleSelected(master.id)}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>{master.label}</TableCell>
+                        <TableCell>
+                          {master.isActive ? (
+                            <StatusBadge status="active" />
+                          ) : (
+                            <StatusBadge status="deactivated" label="Inactive" />
+                          )}
+                        </TableCell>
+                        <TableCell sx={{ color: tokens.muted }}>{detailText(master)}</TableCell>
+                        <TableCell align="right">{renderActions(master)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
 
       {edit !== null && (
         <Dialog
@@ -708,6 +715,6 @@ export default function MasterDataPanel({ token }: { token: string }) {
           </DialogActions>
         </Dialog>
       )}
-    </Card>
+    </Stack>
   );
 }

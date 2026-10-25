@@ -24,6 +24,7 @@ import {
   ActionButton,
   FONT_MONO,
   Notice,
+  RADIUS,
   SPACING,
   TOUCH_TARGET_MIN,
   tokens,
@@ -363,7 +364,7 @@ export default function VehiclePicker({
               right: 0,
               zIndex: 20,
               border: `1px solid ${tokens.line}`,
-              borderRadius: 2,
+              borderRadius: RADIUS.control,
               boxShadow: '0 12px 28px rgba(14, 29, 51, 0.18)',
               overflow: 'hidden',
             }}

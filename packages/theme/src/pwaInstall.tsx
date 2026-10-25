@@ -4,6 +4,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { SPACING } from './touchTargets.js';
 import { ActionButton } from './button.js';
+import { RADIUS } from './layout.js';
 import { tokens } from './tokens.js';
 
 /**
@@ -174,7 +175,7 @@ export function PwaInstallPrompt() {
         marginX: 'auto',
         marginY: SPACING.lg,
         border: `1px solid ${tokens.line}`,
-        borderRadius: 2,
+        borderRadius: RADIUS.control,
         backgroundColor: tokens.tint,
         padding: SPACING.md,
       }}

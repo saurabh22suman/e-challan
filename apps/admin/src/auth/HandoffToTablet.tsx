@@ -29,6 +29,27 @@ function configuredTabletOrigin(): string | null {
  * It asks the API for a one-time handoff code, then navigates to the tablet with
  * the code in the fragment. The session token itself is never placed in a URL.
  */
+/**
+ * Dev-only readiness handshake: Vite re-optimizes tablet dependencies on its
+ * first request. Wait for the tablet's readiness endpoint (bounded) before
+ * navigating so a one-time handoff never races a module rebuild. Production
+ * skips this; tests use the same handoff without a live dev server.
+ */
+async function waitForDevTablet(origin: string): Promise<void> {
+  if (!import.meta.env.DEV || import.meta.env.MODE === 'test') return;
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), 10_000);
+  try {
+    const response = await fetch(`${origin.replace(/\/+$/u, '')}/__echallan_ready`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error('tablet_not_ready');
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
 export default function HandoffToTablet() {
   const { token, signOut } = useSession();
   const [error, setError] = useState<string | null>(null);
@@ -45,8 +66,14 @@ export default function HandoffToTablet() {
     }
 
     void requestHandoff(token)
-      .then(({ code }) => {
+      .then(async ({ code }) => {
         const base = origin.replace(/\/+$/u, '');
+        try {
+          await waitForDevTablet(base);
+        } catch {
+          setError('The marshal tablet is still starting. Wait a moment, then sign in again.');
+          return;
+        }
         replaceLocation(`${base}/#handoff=${encodeURIComponent(code)}`);
       })
       .catch(() => {

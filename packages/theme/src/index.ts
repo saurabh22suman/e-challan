@@ -11,18 +11,47 @@ export type { AppThemeProviderProps } from './AppThemeProvider.js';
 export { createAppTheme, identifierStyle } from './createTheme.js';
 export type { AppSurface, AppTheme, CreateAppThemeOptions } from './createTheme.js';
 export { SPACING, SPACING_BASE, SPACING_PX, TOUCH_TARGET_MIN } from './touchTargets.js';
+export {
+  CARD_INSET,
+  LIST_CARD_BREAKPOINT,
+  NAV_RAIL_BREAKPOINT,
+  PAGE_GUTTER,
+  RADIUS,
+} from './layout.js';
+export type { RadiusToken } from './layout.js';
 export type { Spacing, TouchTargetMin } from './touchTargets.js';
 export { tokens } from './tokens.js';
 export type { ThemeTokens } from './tokens.js';
 export { challanStatusKind, statusLabel, statusTone, toneStyles } from './status.js';
 export type { ChallanStatus, StatusKind, Tone, ToneStyle } from './status.js';
 export { capturePwaInstallPrompt, isMobileOrTabletDevice, PwaInstallPrompt } from './pwaInstall.js';
-export { ErrorSummary, FormSection, Notice, SeverityChip, StatusBadge } from './primitives.js';
+export {
+  DetailGrid,
+  DetailItem,
+  EmptyState,
+  ErrorSummary,
+  FormSection,
+  MetricCard,
+  Notice,
+  PageHeader,
+  RecordCard,
+  SectionHeader,
+  SeverityChip,
+  StatusBadge,
+} from './primitives.js';
 export type {
   ErrorSummaryItem,
   ErrorSummaryProps,
   FormSectionProps,
   NoticeProps,
+  DetailGridProps,
+  DetailItemProps,
+  EmptyStateProps,
+  MetricCardProps,
+  PageHeaderProps,
+  RecordCardField,
+  RecordCardProps,
+  SectionHeaderProps,
   SeverityChipProps,
   StatusBadgeProps,
 } from './primitives.js';

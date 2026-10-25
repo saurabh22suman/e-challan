@@ -7,7 +7,7 @@ import {
   SignaturePadSchema,
   type SignaturePad as SignatureCapture,
 } from '@echallan/contracts';
-import { ActionButton, Notice, SPACING, StatusBadge, tokens } from '@echallan/theme';
+import { ActionButton, Notice, RADIUS, SPACING, StatusBadge, tokens } from '@echallan/theme';
 import SignaturePadLib from 'signature_pad';
 
 /**
@@ -382,7 +382,7 @@ export default function SignaturePadControl({
   return (
     <Stack spacing={SPACING.lg} data-testid="signature-pad">
       <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
-        <Typography component="h2" variant="h2" id="signature-heading">
+        <Typography component="h3" variant="h3" id="signature-heading">
           Driver signature
         </Typography>
         {confirmedLocal ? (
@@ -424,8 +424,8 @@ export default function SignaturePadControl({
             width: '100%',
             height: 250,
             background: tokens.surface,
-            border: `2px dashed ${tokens.muted}`,
-            borderRadius: 12,
+            border: `1px solid ${tokens.fieldLine}`,
+            borderRadius: RADIUS.card,
             touchAction: 'none',
             display: 'block',
           }}
@@ -438,6 +438,7 @@ export default function SignaturePadControl({
             data-testid="signature-confirm"
             disabled={confirmable === null || confirmedLocal}
             onClick={handleConfirm}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
             Confirm signature
           </ActionButton>

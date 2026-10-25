@@ -212,36 +212,78 @@ function TabletShell({
   return (
     <>
       <IdleLogoutGuard onIdle={() => void signOut()} />
-      <AppBar position="static">
-        <Toolbar sx={{ flexWrap: 'wrap', rowGap: SPACING.sm, py: SPACING.sm }}>
-          <Typography variant="h1" component="h1" sx={{ whiteSpace: 'normal' }}>
-            Create new safety violation
-          </Typography>
+      <AppBar position="sticky">
+        <Toolbar sx={{ minHeight: 64, gap: SPACING.md, py: SPACING.sm }}>
+          <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center', minWidth: 0 }}>
+            <Box
+              aria-hidden="true"
+              sx={{
+                width: 34,
+                height: 34,
+                display: 'grid',
+                placeItems: 'center',
+                border: `1px solid ${tokens.onNavy.border}`,
+                borderRadius: '8px',
+                color: tokens.surface,
+                fontFamily: 'IBM Plex Mono, monospace',
+                fontSize: 12,
+                fontWeight: 600,
+                flexShrink: 0,
+              }}
+            >
+              EC
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: tokens.onNavy.subtitle,
+                  letterSpacing: '0.12em',
+                  display: { xs: 'none', sm: 'block' },
+                }}
+              >
+                DMD SECURITY
+              </Typography>
+              <Typography
+                component="p"
+                sx={{
+                  margin: 0,
+                  color: tokens.surface,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  lineHeight: 1.2,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                e-Challan
+              </Typography>
+            </Box>
+          </Stack>
           <Stack
             direction="row"
-            spacing={SPACING.md}
+            spacing={SPACING.sm}
             sx={{
               marginLeft: 'auto',
               alignItems: 'center',
-              flexWrap: 'wrap',
-              rowGap: SPACING.sm,
+              flexWrap: 'nowrap',
             }}
           >
             {identity !== null && (
               <Stack
-                sx={{ alignItems: 'flex-end', display: { xs: 'none', sm: 'flex' } }}
+                sx={{ alignItems: 'flex-end', display: { xs: 'none', md: 'flex' } }}
                 spacing={0}
               >
-                <Typography variant="body2" sx={{ color: tokens.onNavy.strong }}>
-                  {identity.post?.label ?? identity.user.username}
+                <Typography variant="body2" sx={{ color: tokens.surface, fontWeight: 600 }}>
+                  {identity.user.username}
                 </Typography>
-                <Typography variant="caption" sx={{ color: tokens.onNavy.muted }}>
-                  {identity.user.username} · {identity.user.role}
+                <Typography variant="caption" sx={{ color: tokens.onNavy.subtitle }}>
+                  {identity.user.role}
                 </Typography>
               </Stack>
             )}
             <ActionButton
               tone="secondary"
+              size="sm"
               onClick={() => setProfileOpen(true)}
               disabled={token === null}
               sx={{
@@ -261,6 +303,7 @@ function TabletShell({
             </ActionButton>
             <ActionButton
               tone="secondary"
+              size="sm"
               onClick={() => void signOut()}
               sx={{
                 color: tokens.surface,
@@ -284,6 +327,46 @@ function TabletShell({
       <PwaInstallPrompt />
 
       <Container component="main" maxWidth={false} sx={{ py: 0, px: 0 }}>
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: 1200,
+            margin: '0 auto',
+            padding: { xs: `${SPACING.lg} ${SPACING.lg} 0`, md: `${SPACING.xl} ${SPACING.lg} 0` },
+          }}
+        >
+          <Typography
+            variant="overline"
+            sx={{ color: tokens.muted, fontWeight: 600, letterSpacing: '0.12em' }}
+          >
+            Field entry
+          </Typography>
+          <Typography
+            component="h1"
+            variant="h1"
+            sx={{ margin: 0, marginTop: SPACING.xs, color: tokens.ink }}
+          >
+            Create new safety violation
+          </Typography>
+          {identity !== null && (
+            <Stack
+              direction="row"
+              spacing={SPACING.sm}
+              sx={{ marginTop: SPACING.sm, flexWrap: 'wrap', color: tokens.muted }}
+            >
+              <Typography variant="body2" sx={{ color: 'inherit' }}>
+                {identity.post?.label ?? 'No post'}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'inherit' }} aria-hidden="true">
+                ·
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'inherit' }}>
+                {identity.shift?.label ?? 'No shift'}
+              </Typography>
+            </Stack>
+          )}
+        </Box>
+
         <Suspense
           fallback={
             <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>

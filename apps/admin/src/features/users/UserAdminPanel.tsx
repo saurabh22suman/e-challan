@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Checkbox from '@mui/material/Checkbox';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
@@ -22,8 +20,13 @@ import Typography from '@mui/material/Typography';
 import type { AdminUser } from '@echallan/contracts';
 import {
   ActionButton,
+  EmptyState,
   ErrorSummary,
+  LIST_CARD_BREAKPOINT,
   Notice,
+  PageHeader,
+  RADIUS,
+  RecordCard,
   SPACING,
   StatusBadge,
   ToneDialogTitle,
@@ -348,7 +351,10 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
       .finally(() => setDeactivating(false));
   }
 
-  const compact = useMediaQuery('(max-width:1199.95px)');
+  const compactQuery = `(max-width:${LIST_CARD_BREAKPOINT}px)`;
+  const compact = useMediaQuery(compactQuery, {
+    defaultMatches: typeof window !== 'undefined' && window.matchMedia(compactQuery).matches,
+  });
   const filteredUsers = useMemo(() => {
     const term = search.trim().toLowerCase();
     return users.filter((user) => {
@@ -460,138 +466,128 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
   }
 
   return (
-    <Card>
-      <CardHeader
-        title={
-          <Typography component="h2" variant="h2">
-            Users
-          </Typography>
+    <Stack spacing={SPACING.xl}>
+      <PageHeader
+        eyebrow="Administration"
+        title="Users"
+        titleComponent="h2"
+        description="Manage who can sign in. Removal is deactivation; accounts and history are retained."
+        actions={
+          <ActionButton tone="primary" onClick={() => setCreating(true)}>
+            Create user
+          </ActionButton>
         }
-        subheader="Create users, deactivate or reactivate them, and reset passwords."
       />
-      <CardContent>
-        <Stack spacing={SPACING.lg}>
-          <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
-            <ActionButton tone="primary" onClick={() => setCreating(true)}>
-              Create user
-            </ActionButton>
-            <Typography variant="body2" sx={{ color: tokens.muted }}>
-              Removal is deactivation: accounts and history are retained.
-            </Typography>
-          </Stack>
-
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-            <TextField
-              label="Search users"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              sx={{ flex: 1 }}
-            />
-            <TextField
-              select
-              label="Role"
-              value={roleFilter}
-              onChange={(event) => setRoleFilter(event.target.value as 'all' | AdminUser['role'])}
-              sx={{ minWidth: 160 }}
+      <Card>
+        <CardContent>
+          <Stack spacing={SPACING.lg}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              spacing={SPACING.md}
+              sx={{ alignItems: { md: 'flex-end' }, flexWrap: 'wrap' }}
             >
-              <MenuItem value="all">All roles</MenuItem>
-              <MenuItem value="Marshal">Marshal</MenuItem>
-              <MenuItem value="Supervisor">Supervisor</MenuItem>
-              <MenuItem value="Admin">Admin</MenuItem>
-            </TextField>
-            <TextField
-              select
-              label="Account status"
-              value={activeFilter}
-              onChange={(event) =>
-                setActiveFilter(event.target.value as 'all' | 'active' | 'inactive')
-              }
-              sx={{ minWidth: 170 }}
-            >
-              <MenuItem value="all">All accounts</MenuItem>
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="inactive">Deactivated</MenuItem>
-            </TextField>
-          </Stack>
-
-          {selectedUsers.length > 0 && (
-            <Stack direction="row" spacing={SPACING.md} sx={{ flexWrap: 'wrap' }}>
-              <Typography variant="body2" sx={{ color: tokens.muted, alignSelf: 'center' }}>
-                {selectedUsers.length} selected
-              </Typography>
-              <ActionButton
-                size="sm"
-                tone="danger"
-                disabled={selectedActive.length === 0}
-                onClick={() => {
-                  setBulkFailure(null);
-                  setBulkAction({
-                    verb: 'deactivate',
-                    ids: selectedActive.map((user) => user.id),
-                  });
-                }}
+              <TextField
+                label="Search users"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                sx={{ flex: { xs: '1 1 auto', md: '1 1 280px' }, minWidth: 0 }}
+              />
+              <TextField
+                select
+                label="Role"
+                value={roleFilter}
+                onChange={(event) => setRoleFilter(event.target.value as 'all' | AdminUser['role'])}
+                sx={{ minWidth: 160 }}
               >
-                Deactivate selected
-              </ActionButton>
-              <ActionButton
-                tone="secondary"
-                size="sm"
-                disabled={selectedInactive.length === 0}
-                onClick={() => {
-                  setBulkFailure(null);
-                  setBulkAction({
-                    verb: 'reactivate',
-                    ids: selectedInactive.map((user) => user.id),
-                  });
-                }}
+                <MenuItem value="all">All roles</MenuItem>
+                <MenuItem value="Marshal">Marshal</MenuItem>
+                <MenuItem value="Supervisor">Supervisor</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+              </TextField>
+              <TextField
+                select
+                label="Account status"
+                value={activeFilter}
+                onChange={(event) =>
+                  setActiveFilter(event.target.value as 'all' | 'active' | 'inactive')
+                }
+                sx={{ minWidth: 170 }}
               >
-                Reactivate selected
-              </ActionButton>
+                <MenuItem value="all">All accounts</MenuItem>
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Deactivated</MenuItem>
+              </TextField>
             </Stack>
-          )}
 
-          {error !== null && (
-            <Notice severity="error" role="status">
-              {error}
-            </Notice>
-          )}
-          {actionFailure !== null && (
-            <Notice severity="error" role="alert">
-              {actionFailure}
-            </Notice>
-          )}
-
-          {loading ? (
-            <CircularProgress aria-label="Loading users" />
-          ) : filteredUsers.length === 0 && error === null ? (
-            <Notice severity="info" role="status">
-              {users.length === 0 ? 'No users are recorded yet.' : 'No users match these filters.'}
-              <ActionButton
-                tone="primary"
-                onClick={() => setCreating(true)}
-                sx={{ ml: SPACING.md }}
-              >
-                Create user
-              </ActionButton>
-            </Notice>
-          ) : compact ? (
-            <Stack spacing={SPACING.md}>
-              {filteredUsers.map((user) => (
-                <Box
-                  key={user.id}
-                  sx={{
-                    border: `1px solid ${tokens.line}`,
-                    borderRadius: 2,
-                    padding: SPACING.md,
-                    backgroundColor: tokens.surface,
+            {selectedUsers.length > 0 && (
+              <Stack direction="row" spacing={SPACING.md} sx={{ flexWrap: 'wrap' }}>
+                <Typography variant="body2" sx={{ color: tokens.muted, alignSelf: 'center' }}>
+                  {selectedUsers.length} selected
+                </Typography>
+                <ActionButton
+                  size="sm"
+                  tone="danger"
+                  disabled={selectedActive.length === 0}
+                  onClick={() => {
+                    setBulkFailure(null);
+                    setBulkAction({
+                      verb: 'deactivate',
+                      ids: selectedActive.map((user) => user.id),
+                    });
                   }}
                 >
-                  <Stack spacing={SPACING.sm}>
-                    <Stack
-                      direction="row"
-                      spacing={SPACING.sm}
-                      sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
-                    >
+                  Deactivate selected
+                </ActionButton>
+                <ActionButton
+                  tone="secondary"
+                  size="sm"
+                  disabled={selectedInactive.length === 0}
+                  onClick={() => {
+                    setBulkFailure(null);
+                    setBulkAction({
+                      verb: 'reactivate',
+                      ids: selectedInactive.map((user) => user.id),
+                    });
+                  }}
+                >
+                  Reactivate selected
+                </ActionButton>
+              </Stack>
+            )}
+
+            {error !== null && (
+              <Notice severity="error" role="status">
+                {error}
+              </Notice>
+            )}
+            {actionFailure !== null && (
+              <Notice severity="error" role="alert">
+                {actionFailure}
+              </Notice>
+            )}
+
+            {loading ? (
+              <CircularProgress aria-label="Loading users" />
+            ) : filteredUsers.length === 0 && error === null ? (
+              <EmptyState
+                title={users.length === 0 ? 'No users recorded' : 'No users match these filters'}
+                description={
+                  users.length === 0
+                    ? 'Create the first account to let a supervisor or marshal sign in.'
+                    : 'Try a broader search or clear the role and status filters.'
+                }
+                action={
+                  <ActionButton tone="primary" onClick={() => setCreating(true)}>
+                    Create user
+                  </ActionButton>
+                }
+              />
+            ) : compact ? (
+              <Stack spacing={SPACING.md}>
+                {filteredUsers.map((user) => (
+                  <RecordCard
+                    key={user.id}
+                    title={
                       <Stack direction="row" spacing={SPACING.sm} sx={{ alignItems: 'center' }}>
                         {user.id !== currentUserId && (
                           <Checkbox
@@ -600,92 +596,99 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
                             onChange={() => toggleSelected(user.id)}
                           />
                         )}
-                        <Box>
-                          <Typography
-                            variant="body1"
-                            sx={{ fontFamily: 'monospace', fontWeight: 700 }}
-                          >
-                            {user.username}
-                          </Typography>
-                          <Typography variant="body2">{user.displayName}</Typography>
-                        </Box>
+                        <span style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                          {user.username}
+                        </span>
                       </Stack>
-                      <StatusBadge status={user.isActive ? 'active' : 'deactivated'} />
-                    </Stack>
-                    <Typography variant="caption" sx={{ color: tokens.muted }}>
-                      {user.role} ·{' '}
-                      {user.locationLabels.length === 0
-                        ? 'No locations'
-                        : user.locationLabels.join(', ')}
-                    </Typography>
-                    {renderActions(user)}
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
-          ) : (
-            <TableContainer>
-              <Table aria-label="Users">
-                <TableHead>
-                  <TableRow>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        slotProps={{ input: { 'aria-label': 'Select all visible users' } }}
-                        checked={
-                          selectableUsers.length > 0 &&
-                          selectableUsers.every((user) => selectedIds.has(user.id))
-                        }
-                        indeterminate={
-                          selectableUsers.some((user) => selectedIds.has(user.id)) &&
-                          !selectableUsers.every((user) => selectedIds.has(user.id))
-                        }
-                        onChange={(event) => {
-                          setSelectedIds(
-                            event.target.checked
-                              ? new Set(selectableUsers.map((user) => user.id))
-                              : new Set(),
-                          );
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>Username</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Role</TableCell>
-                    <TableCell>Active</TableCell>
-                    <TableCell>Locations</TableCell>
-                    <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user.id} hover>
+                    }
+                    subtitle={user.displayName}
+                    badge={<StatusBadge status={user.isActive ? 'active' : 'deactivated'} />}
+                    fields={[
+                      { label: 'Role', value: user.role },
+                      {
+                        label: 'Locations',
+                        value:
+                          user.locationLabels.length === 0
+                            ? 'No locations'
+                            : user.locationLabels.join(', '),
+                      },
+                    ]}
+                    actions={renderActions(user)}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              <TableContainer
+                sx={{
+                  overflowX: 'auto',
+                  border: `1px solid ${tokens.lineSoft}`,
+                  borderRadius: RADIUS.control,
+                }}
+              >
+                <Table aria-label="Users">
+                  <TableHead>
+                    <TableRow>
                       <TableCell padding="checkbox">
-                        {user.id !== currentUserId && (
-                          <Checkbox
-                            slotProps={{ input: { 'aria-label': `Select ${user.username}` } }}
-                            checked={selectedIds.has(user.id)}
-                            onChange={() => toggleSelected(user.id)}
-                          />
-                        )}
+                        <Checkbox
+                          slotProps={{ input: { 'aria-label': 'Select all visible users' } }}
+                          checked={
+                            selectableUsers.length > 0 &&
+                            selectableUsers.every((user) => selectedIds.has(user.id))
+                          }
+                          indeterminate={
+                            selectableUsers.some((user) => selectedIds.has(user.id)) &&
+                            !selectableUsers.every((user) => selectedIds.has(user.id))
+                          }
+                          onChange={(event) => {
+                            setSelectedIds(
+                              event.target.checked
+                                ? new Set(selectableUsers.map((user) => user.id))
+                                : new Set(),
+                            );
+                          }}
+                        />
                       </TableCell>
-                      <TableCell sx={{ fontFamily: 'monospace' }}>{user.username}</TableCell>
-                      <TableCell>{user.displayName}</TableCell>
-                      <TableCell>{user.role}</TableCell>
-                      <TableCell>
-                        <StatusBadge status={user.isActive ? 'active' : 'deactivated'} />
-                      </TableCell>
-                      <TableCell sx={{ color: tokens.muted }}>
-                        {user.locationLabels.length === 0 ? 'None' : user.locationLabels.join(', ')}
-                      </TableCell>
-                      <TableCell align="right">{renderActions(user)}</TableCell>
+                      <TableCell>Username</TableCell>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Role</TableCell>
+                      <TableCell>Active</TableCell>
+                      <TableCell>Locations</TableCell>
+                      <TableCell align="right">Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Stack>
-      </CardContent>
+                  </TableHead>
+                  <TableBody>
+                    {filteredUsers.map((user) => (
+                      <TableRow key={user.id} hover>
+                        <TableCell padding="checkbox">
+                          {user.id !== currentUserId && (
+                            <Checkbox
+                              slotProps={{ input: { 'aria-label': `Select ${user.username}` } }}
+                              checked={selectedIds.has(user.id)}
+                              onChange={() => toggleSelected(user.id)}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell sx={{ fontFamily: 'monospace' }}>{user.username}</TableCell>
+                        <TableCell>{user.displayName}</TableCell>
+                        <TableCell>{user.role}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={user.isActive ? 'active' : 'deactivated'} />
+                        </TableCell>
+                        <TableCell sx={{ color: tokens.muted }}>
+                          {user.locationLabels.length === 0
+                            ? 'None'
+                            : user.locationLabels.join(', ')}
+                        </TableCell>
+                        <TableCell align="right">{renderActions(user)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
 
       {creating && (
         <CreateUserDialog
@@ -784,6 +787,6 @@ export default function UserAdminPanel({ token, currentUserId, onSelfReset }: Us
           onConfirm={confirmDeactivate}
         />
       )}
-    </Card>
+    </Stack>
   );
 }

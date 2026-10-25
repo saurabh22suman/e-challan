@@ -16,12 +16,13 @@ import Typography from '@mui/material/Typography';
 import type { ChallanTrendResponse, ChallanTrendTotals } from '@echallan/contracts';
 import {
   ActionButton,
+  MetricCard,
   Notice,
+  PageHeader,
   SPACING,
   StatusBadge,
   tokens,
   type StatusKind,
-  type ToneStyle,
 } from '@echallan/theme';
 import { getChallanTrend, OperationsApiError } from '../../api/operations';
 import TrendChart from './TrendChart';
@@ -51,7 +52,7 @@ interface SeriesMeta {
   key: SeriesKey;
   label: string;
   status: StatusKind;
-  tone: ToneStyle;
+  tone: (typeof tokens.tone)[keyof typeof tokens.tone];
 }
 
 const SERIES: readonly SeriesMeta[] = [
@@ -62,38 +63,24 @@ const SERIES: readonly SeriesMeta[] = [
 
 function TrendTotals({ totals }: { totals: ChallanTrendTotals }) {
   return (
-    <Stack
+    <Box
       component="section"
       aria-label="Trend totals"
-      direction={{ xs: 'column', sm: 'row' }}
-      spacing={SPACING.md}
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+        gap: SPACING.md,
+      }}
     >
-      {SERIES.map(({ key, status, tone }) => (
-        <Card
+      {SERIES.map(({ key, status, label }) => (
+        <MetricCard
           key={key}
-          variant="outlined"
-          sx={{
-            flex: 1,
-            backgroundColor: tone.bg,
-            borderColor: tone.border,
-          }}
-        >
-          <CardContent sx={{ '&:last-child': { paddingBottom: SPACING.md } }}>
-            <Stack spacing={SPACING.xs} sx={{ alignItems: 'flex-start' }}>
-              <StatusBadge status={status} />
-              <Typography
-                component="p"
-                variant="h2"
-                data-testid={`trend-total-${key}`}
-                sx={{ color: tone.fg }}
-              >
-                {totals[key]}
-              </Typography>
-            </Stack>
-          </CardContent>
-        </Card>
+          label={label}
+          badge={<StatusBadge status={status} />}
+          value={<span data-testid={`trend-total-${key}`}>{totals[key]}</span>}
+        />
       ))}
-    </Stack>
+    </Box>
   );
 }
 
@@ -213,43 +200,34 @@ export default function TrendPanel({ token }: { token: string }) {
       aria-busy={loading}
       spacing={SPACING.lg}
     >
-      <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={SPACING.md}
-        sx={{ alignItems: { md: 'flex-start' }, justifyContent: 'space-between' }}
-      >
-        <Box>
-          <Typography id="trend-title" component="h2" variant="h2">
-            Challan trend
-          </Typography>
-          <Typography variant="body1" sx={{ color: tokens.muted, mt: SPACING.xs }}>
-            Issued, resolved and cancelled events in your authorised locations, using Asia/Kolkata
-            calendar days.
-          </Typography>
-          {trend !== null && (
-            <Typography
-              variant="body2"
-              data-testid="trend-period"
-              sx={{ color: tokens.muted, mt: SPACING.xs }}
-            >
-              {trendPeriodLabel(trend)}
-            </Typography>
-          )}
-        </Box>
-        <ToggleButtonGroup
-          size="small"
-          exclusive
-          value={preset}
-          onChange={selectPreset}
-          aria-label="Trend range"
-        >
-          {PRESETS.map((days) => (
-            <ToggleButton key={days} value={days}>
-              {days} days
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Stack>
+      <PageHeader
+        eyebrow="Reporting"
+        title="Challan trend"
+        titleComponent="h2"
+        description="Issued, resolved and cancelled records in your authorised locations."
+        meta={
+          trend !== null ? (
+            <span data-testid="trend-period">{trendPeriodLabel(trend)}</span>
+          ) : (
+            'Loading the selected range…'
+          )
+        }
+        actions={
+          <ToggleButtonGroup
+            size="small"
+            exclusive
+            value={preset}
+            onChange={selectPreset}
+            aria-label="Trend range"
+          >
+            {PRESETS.map((days) => (
+              <ToggleButton key={days} value={days}>
+                {days} days
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        }
+      />
 
       {loading && (
         <Box
@@ -300,7 +278,7 @@ export default function TrendPanel({ token }: { token: string }) {
                         Activity by {trend.granularity}
                       </Typography>
                       <Typography variant="body2" sx={{ color: tokens.muted }}>
-                        {formatTrendDay(trend.from)} to {formatTrendDay(trend.to)}
+                        Daily event counts for the selected range.
                       </Typography>
                     </Box>
                     <ActionButton

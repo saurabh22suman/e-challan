@@ -20,33 +20,32 @@ const ACCOUNTS = JSON.parse(
   ),
 ) as { admin: { username: string; password: string } };
 
+/**
+ * Narrow visual-assumption correction after the 2026-10-25 redesign: list cards
+ * no longer use a blue CardHeader, so the old card-vs-dialog chrome comparison is
+ * no longer a valid invariant. The dialog still keeps the shared blue default and
+ * a visibly distinct destructive tone; behavioural assertions are untouched.
+ */
+const DEFAULT_DIALOG_BLUE = 'rgb(10, 79, 175)';
+
 async function expectDialogTone(
-  page: Page,
+  _page: Page,
   dialog: ReturnType<Page['getByRole']>,
   tone: 'default' | 'danger',
 ): Promise<void> {
-  const card = page.locator('.MuiCardHeader-root').first();
   const title = dialog.locator('.MuiDialogTitle-root');
   await expect(title).toHaveAttribute('data-tone', tone);
 
-  const [cardChrome, dialogChrome] = await Promise.all([
-    card.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return { background: style.backgroundColor, color: style.color };
-    }),
-    title.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return { background: style.backgroundColor, color: style.color };
-    }),
-  ]);
+  const chrome = await title.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { background: style.backgroundColor, color: style.color };
+  });
 
-  // A normal dialog keeps the accepted blue card chrome. A destructive dialog
-  // must be visibly different before the user reaches its confirm button.
-  expect(dialogChrome.color).toBe('rgb(255, 255, 255)');
+  expect(chrome.color).toBe('rgb(255, 255, 255)');
   if (tone === 'default') {
-    expect(dialogChrome.background).toBe(cardChrome.background);
+    expect(chrome.background).toBe(DEFAULT_DIALOG_BLUE);
   } else {
-    expect(dialogChrome.background).not.toBe(cardChrome.background);
+    expect(chrome.background).not.toBe(DEFAULT_DIALOG_BLUE);
   }
 }
 

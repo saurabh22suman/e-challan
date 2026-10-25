@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -13,7 +14,7 @@ import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ProfileResponse } from '@echallan/contracts';
-import { ActionButton, Notice, SPACING, tokens } from '@echallan/theme';
+import { ActionButton, DetailGrid, DetailItem, Notice, SPACING, tokens } from '@echallan/theme';
 import { DRIVER_LANGUAGES, type DriverLanguage } from '../features/issuance/driverCopy';
 import { fetchProfile, ProfileApiError } from './api';
 
@@ -29,17 +30,6 @@ function formatInstant(value: string): string {
     timeStyle: 'short',
     timeZone: 'Asia/Kolkata',
   }).format(new Date(value));
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <Stack spacing={0.25}>
-      <Typography variant="caption" sx={{ color: tokens.muted }}>
-        {label}
-      </Typography>
-      <Typography variant="body1">{value}</Typography>
-    </Stack>
-  );
 }
 
 export default function ProfileDialog({
@@ -102,17 +92,20 @@ export default function ProfileDialog({
         )}
         {profile !== null && (
           <Stack spacing={SPACING.lg}>
-            <Stack
-              direction="row"
-              spacing={SPACING.xl}
-              sx={{ flexWrap: 'wrap', rowGap: SPACING.md }}
-            >
-              <Field label="Display name" value={profile.user.displayName} />
-              <Field label="Username" value={profile.user.username} />
-              <Field label="Employee ID" value={profile.user.employeeId ?? 'Not recorded'} />
-              <Field label="Role" value={profile.user.role} />
-              <Field label="Account status" value={profile.user.isActive ? 'Active' : 'Inactive'} />
-            </Stack>
+            <DetailGrid columns={2}>
+              <DetailItem label="Display name" value={profile.user.displayName} />
+              <DetailItem label="Username" value={profile.user.username} mono />
+              <DetailItem
+                label="Employee ID"
+                value={profile.user.employeeId ?? 'Not recorded'}
+                mono
+              />
+              <DetailItem label="Role" value={profile.user.role} />
+              <DetailItem
+                label="Account status"
+                value={profile.user.isActive ? 'Active' : 'Inactive'}
+              />
+            </DetailGrid>
             <Stack spacing={SPACING.sm}>
               <Typography component="h3" variant="h3">
                 Assigned locations
@@ -124,15 +117,23 @@ export default function ProfileDialog({
               </Typography>
             </Stack>
             <Divider />
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={highContrast}
-                  onChange={(event) => onHighContrastChange(event.target.checked)}
-                />
-              }
-              label="High-contrast outdoor mode"
-            />
+            <Box
+              sx={{
+                border: `1px solid ${tokens.line}`,
+                borderRadius: '10px',
+                padding: `${SPACING.xs} ${SPACING.md}`,
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={highContrast}
+                    onChange={(event) => onHighContrastChange(event.target.checked)}
+                  />
+                }
+                label="High-contrast outdoor mode"
+              />
+            </Box>
             <div>
               <InputLabel htmlFor="driver-language">Driver copy language</InputLabel>
               <Select
@@ -153,15 +154,14 @@ export default function ProfileDialog({
               <Typography component="h3" variant="h3">
                 Current session
               </Typography>
-              <Stack
-                direction="row"
-                spacing={SPACING.xl}
-                sx={{ flexWrap: 'wrap', rowGap: SPACING.md }}
-              >
-                <Field label="Post" value={profile.session.post?.label ?? 'Not bound'} />
-                <Field label="Shift" value={profile.session.shift?.label ?? 'Not bound'} />
-                <Field label="Session ends" value={formatInstant(profile.session.expiresAt)} />
-              </Stack>
+              <DetailGrid columns={3}>
+                <DetailItem label="Post" value={profile.session.post?.label ?? 'No active post'} />
+                <DetailItem
+                  label="Shift"
+                  value={profile.session.shift?.label ?? 'No active shift'}
+                />
+                <DetailItem label="Session ends" value={formatInstant(profile.session.expiresAt)} />
+              </DetailGrid>
             </Stack>
           </Stack>
         )}

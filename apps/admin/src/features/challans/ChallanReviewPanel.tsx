@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
@@ -39,7 +38,14 @@ import type {
 import {
   ActionButton,
   challanStatusKind,
+  EmptyState,
+  FONT_MONO,
+  LIST_CARD_BREAKPOINT,
+  MetricCard,
   Notice,
+  PageHeader,
+  RADIUS,
+  RecordCard,
   SPACING,
   StatusBadge,
   ToneDialogTitle,
@@ -97,68 +103,108 @@ const EMPTY_FILTERS: FilterState = {
 interface ChallanReviewPanelProps {
   token: string;
   role: Role;
+  userId: string;
 }
 
 type SortField = NonNullable<ChallanReportQuery['sort']>;
 type SortDirection = NonNullable<ChallanReportQuery['direction']>;
 
-interface SavedView {
+export interface SavedView {
   name: string;
   filters: FilterState;
   sortField: SortField;
   sortDirection: SortDirection;
 }
 
-const SAVED_VIEWS_KEY = 'echallan.admin.report-views.v1';
+export const SAVED_VIEWS_KEY = 'echallan.admin.report-views.v1';
+const SAVED_VIEWS_VERSION = 2;
 
-function loadSavedViews(): SavedView[] {
+interface SavedViewEnvelope {
+  schemaVersion: 2;
+  accounts: Record<string, SavedView[]>;
+}
+
+function savedViewAccountKey(userId: string, role: Role): string {
+  return `${userId}:${role}`;
+}
+
+function isSavedView(value: unknown): value is SavedView {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as SavedView).name === 'string' &&
+    typeof (value as SavedView).filters === 'object'
+  );
+}
+
+/**
+ * Saved views are a browser preference, not a shared terminal setting. The v1
+ * array is migrated into a per-account envelope; tokens and credentials are
+ * never written here.
+ */
+export function loadSavedViews(userId: string, role: Role): SavedView[] {
   try {
     const raw = window.localStorage.getItem(SAVED_VIEWS_KEY);
     if (raw === null) return [];
     const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed
-      .filter(
-        (item): item is SavedView =>
-          typeof item === 'object' &&
-          item !== null &&
-          typeof (item as SavedView).name === 'string' &&
-          typeof (item as SavedView).filters === 'object',
-      )
-      .map((item) => ({
+    const normalise = (views: unknown[]): SavedView[] =>
+      views.filter(isSavedView).map((item) => ({
         ...item,
         filters: { ...EMPTY_FILTERS, ...item.filters },
       }));
+    if (Array.isArray(parsed)) {
+      // Legacy views have no owner. Never infer ownership from the next login:
+      // discard them and replace the legacy array with an empty v2 envelope.
+      window.localStorage.setItem(
+        SAVED_VIEWS_KEY,
+        JSON.stringify({ schemaVersion: SAVED_VIEWS_VERSION, accounts: {} }),
+      );
+      return [];
+    }
+    if (typeof parsed === 'object' && parsed !== null) {
+      const envelope = parsed as Partial<SavedViewEnvelope>;
+      const views = envelope.accounts?.[savedViewAccountKey(userId, role)];
+      return Array.isArray(views) ? normalise(views) : [];
+    }
+    return [];
   } catch {
     return [];
   }
 }
 
-/** One summary tile in the reporting strip. */
-function Metric({ label, value, accent }: { label: string; value: number; accent: string }) {
-  return (
-    <Card sx={{ flex: '1 1 150px', minWidth: 0 }}>
-      <CardContent>
-        <Typography variant="caption" sx={{ color: accent, fontWeight: 700 }}>
-          {label}
-        </Typography>
-        <Typography
-          component="p"
-          variant="h1"
-          sx={{ fontVariantNumeric: 'tabular-nums', margin: 0 }}
-        >
-          {value}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+export function persistSavedViews(userId: string, role: Role, views: SavedView[]): void {
+  try {
+    const raw = window.localStorage.getItem(SAVED_VIEWS_KEY);
+    let envelope: SavedViewEnvelope = { schemaVersion: SAVED_VIEWS_VERSION, accounts: {} };
+    if (raw !== null) {
+      const parsed: unknown = JSON.parse(raw);
+      if (
+        typeof parsed === 'object' &&
+        parsed !== null &&
+        !Array.isArray(parsed) &&
+        typeof (parsed as SavedViewEnvelope).accounts === 'object'
+      ) {
+        envelope = {
+          schemaVersion: SAVED_VIEWS_VERSION,
+          accounts: (parsed as SavedViewEnvelope).accounts ?? {},
+        };
+      }
+    }
+    envelope.accounts[savedViewAccountKey(userId, role)] = views;
+    window.localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(envelope));
+  } catch {
+    /* storage unavailable: views last for this page only */
+  }
 }
 
-export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelProps) {
+export default function ChallanReviewPanel({ token, role, userId }: ChallanReviewPanelProps) {
   const { showToast } = useToast();
   const { challanId } = useParams();
   const navigate = useNavigate();
-  const compact = useMediaQuery('(max-width:1199.95px)');
+  const compactQuery = `(max-width:${LIST_CARD_BREAKPOINT}px)`;
+  const compact = useMediaQuery(compactQuery, {
+    defaultMatches: typeof window !== 'undefined' && window.matchMedia(compactQuery).matches,
+  });
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
   const [appliedFilters, setAppliedFilters] = useState<FilterState>(EMPTY_FILTERS);
   const [sortField, setSortField] = useState<SortField>('issuedAt');
@@ -176,7 +222,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
   const [violations, setViolations] = useState<MasterRecord[]>([]);
   const [marshals, setMarshals] = useState<AdminUser[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [savedViews, setSavedViews] = useState<SavedView[]>(loadSavedViews);
+  const [savedViews, setSavedViews] = useState<SavedView[]>(() => loadSavedViews(userId, role));
   const [selectedView, setSelectedView] = useState('');
   const [saveViewOpen, setSaveViewOpen] = useState(false);
   const [viewName, setViewName] = useState('');
@@ -187,12 +233,12 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
   }, [challanId]);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(savedViews));
-    } catch {
-      /* storage unavailable: views last for this page only */
-    }
-  }, [savedViews]);
+    setSavedViews(loadSavedViews(userId, role));
+  }, [role, userId]);
+
+  useEffect(() => {
+    persistSavedViews(userId, role, savedViews);
+  }, [role, savedViews, userId]);
 
   // Text filters apply after a short pause; selects apply immediately through
   // the same path so the server remains the only filter authority.
@@ -356,6 +402,17 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
     setFiltersOpen(false);
   };
 
+  const applyUnderReview = () => {
+    const next: FilterState = { ...EMPTY_FILTERS, status: 'Under Review' };
+    setFilters(next);
+    setAppliedFilters(next);
+    setSelectedView('');
+    setSortField('issuedAt');
+    setSortDirection('asc');
+    setPage(0);
+    setFiltersOpen(false);
+  };
+
   const saveCurrentView = () => {
     const name = viewName.trim();
     if (name === '') {
@@ -461,54 +518,103 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
     if (next !== undefined) navigate(`/challans/${next.id}`);
   };
 
+  const filtersPending = JSON.stringify(filters) !== JSON.stringify(appliedFilters);
+  const refreshing = report !== null && loading;
+  const initialLoading = report === null && loading;
+
   return (
-    <Stack spacing={SPACING.lg}>
-      <Stack direction="row" spacing={SPACING.md} sx={{ flexWrap: 'wrap', rowGap: SPACING.md }}>
-        <Metric label="Total" value={totals.total} accent={tokens.metric.total} />
-        <Metric label="Issued today" value={totals.issuedToday} accent={tokens.metric.pending} />
-        <Metric label="Pending" value={totals.pending} accent={tokens.metric.pending} />
-        <Metric label="Resolved" value={totals.resolved} accent={tokens.metric.resolved} />
-        <Metric
-          label="Repeat offenders (90 days)"
-          value={totals.repeatOffenders}
-          accent={tokens.metric.period}
-        />
-      </Stack>
+    <Stack spacing={SPACING.xl}>
+      <PageHeader
+        eyebrow="Review queue"
+        title="Challans"
+        titleComponent="h2"
+        description={
+          role === 'Admin'
+            ? 'Every location, newest issued first. Open a record to review evidence and record follow-up.'
+            : 'Your assigned locations, newest issued first. Open a record to review evidence and record follow-up.'
+        }
+        meta={report === null ? 'Loading records…' : `${total} records in this view`}
+        actions={
+          <>
+            <ActionButton tone="ghost" onClick={() => setReloadKey((value) => value + 1)}>
+              Refresh
+            </ActionButton>
+            <ActionButton
+              tone="primary"
+              onClick={() => void download()}
+              disabled={exporting || loading || filtersPending || report === null}
+            >
+              {exporting ? 'Preparing export…' : 'Export Excel'}
+            </ActionButton>
+          </>
+        }
+      />
+
+      <Box
+        aria-busy={loading}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', md: 'repeat(5, minmax(0, 1fr))' },
+          gap: SPACING.md,
+        }}
+      >
+        {report === null && initialLoading ? (
+          <>
+            {['Total', 'Issued today', 'Pending', 'Resolved', 'Repeat offenders'].map((label) => (
+              <MetricCard key={label} label={label} value="" loading />
+            ))}
+          </>
+        ) : report !== null ? (
+          <>
+            <MetricCard label="Total" value={totals.total} tone="neutral" />
+            <MetricCard label="Issued today" value={totals.issuedToday} tone="info" />
+            <MetricCard
+              label="Pending"
+              value={totals.pending}
+              tone="warning"
+              hint="Issued + under review"
+            />
+            <MetricCard label="Resolved" value={totals.resolved} tone="success" />
+            <MetricCard
+              label="Repeat offenders"
+              value={totals.repeatOffenders}
+              tone="neutral"
+              hint="Last 90 days"
+            />
+          </>
+        ) : null}
+      </Box>
+
+      {refreshing && (
+        <Typography
+          variant="caption"
+          role="status"
+          sx={{ color: tokens.muted, marginTop: `-${SPACING.sm}` }}
+        >
+          Updating results…
+        </Typography>
+      )}
 
       <Card>
-        <CardHeader
-          title={
-            <Typography component="h2" variant="h2">
-              Challans
-            </Typography>
-          }
-          subheader={
-            role === 'Admin'
-              ? 'Every location. Newest issued first.'
-              : 'Your assigned locations only. Newest issued first.'
-          }
-        />
         <CardContent>
           <Stack spacing={SPACING.lg}>
             <Box
               sx={{
-                padding: SPACING.md,
-                border: `1px solid ${tokens.lineSoft}`,
-                borderRadius: 2,
-                backgroundColor: tokens.surface,
+                paddingBottom: SPACING.lg,
+                borderBottom: `1px solid ${tokens.lineSoft}`,
               }}
             >
               <Stack
                 direction={{ xs: 'column', md: 'row' }}
                 spacing={SPACING.md}
-                sx={{ alignItems: { md: 'center' }, flexWrap: 'wrap' }}
+                sx={{ alignItems: { md: 'flex-end' }, flexWrap: 'wrap' }}
               >
                 <TextField
                   label="Search challans"
                   placeholder="Challan, vehicle, gate pass, driver or location"
                   value={filters.search}
                   onChange={(event) => setFilter('search', event.target.value)}
-                  sx={{ flex: '1 1 320px', maxWidth: { md: 460 } }}
+                  sx={{ flex: { xs: '1 1 auto', md: '1 1 280px' }, minWidth: 0 }}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -526,22 +632,12 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                   onChange={(event) => {
                     const name = event.target.value;
                     setSelectedView(name);
-                    if (name === 'Needs attention') {
-                      applyView({
-                        name,
-                        filters: { ...EMPTY_FILTERS, status: 'Under Review' },
-                        sortField: 'issuedAt',
-                        sortDirection: 'asc',
-                      });
-                      return;
-                    }
                     const view = savedViews.find((candidate) => candidate.name === name);
                     if (view !== undefined) applyView(view);
                   }}
                   sx={{ minWidth: 210 }}
                 >
                   <MenuItem value="">No saved view</MenuItem>
-                  <MenuItem value="Needs attention">Needs attention</MenuItem>
                   {savedViews.map((view) => (
                     <MenuItem key={view.name} value={view.name}>
                       {view.name}
@@ -561,23 +657,22 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                       ? `Filters (${activeChips.length})`
                       : 'Filters'}
                 </ActionButton>
-                <ActionButton tone="secondary" onClick={() => setSaveViewOpen(true)}>
+                <ActionButton tone="ghost" onClick={() => setSaveViewOpen(true)}>
                   Save current view
                 </ActionButton>
-                <ActionButton
-                  tone="secondary"
-                  onClick={() =>
-                    applyView({
-                      name: 'Needs attention',
-                      filters: { ...EMPTY_FILTERS, status: 'Under Review' },
-                      sortField: 'issuedAt',
-                      sortDirection: 'asc',
-                    })
-                  }
-                >
-                  Needs attention
+                <ActionButton tone="secondary" onClick={applyUnderReview}>
+                  Under review
                 </ActionButton>
               </Stack>
+              {filtersPending && (
+                <Typography
+                  variant="caption"
+                  role="status"
+                  sx={{ color: tokens.muted, mt: SPACING.sm }}
+                >
+                  Updating results with the latest filters…
+                </Typography>
+              )}
             </Box>
 
             {activeChips.length > 0 && (
@@ -634,7 +729,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                       Filters
                     </Typography>
                     <Typography variant="caption" sx={{ color: tokens.muted }}>
-                      Applied by the server across the authorised records.
+                      Results update as you choose filters.
                     </Typography>
                   </Box>
                   <ActionButton tone="ghost" size="sm" onClick={() => setFiltersOpen(false)}>
@@ -798,16 +893,14 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
               </Stack>
             </Drawer>
 
-            <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
-              <ActionButton tone="primary" onClick={() => void download()} disabled={exporting}>
-                {exporting ? 'Preparing export…' : 'Export Excel'}
-              </ActionButton>
-            </Stack>
-
             {error !== null && (
               <Notice severity="error" role="status">
                 <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
-                  <Typography variant="body1">{error}</Typography>
+                  <Typography variant="body1">
+                    {report === null
+                      ? error
+                      : 'Could not refresh this view. Showing the last loaded results.'}
+                  </Typography>
                   <ActionButton
                     tone="ghost"
                     size="sm"
@@ -819,116 +912,73 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
               </Notice>
             )}
 
-            {loading ? (
-              <CircularProgress aria-label="Loading challans" />
+            {initialLoading ? (
+              <Stack spacing={SPACING.md} role="status" aria-label="Loading challans">
+                <CircularProgress size={24} />
+                <Typography variant="body2" sx={{ color: tokens.muted }}>
+                  Loading records…
+                </Typography>
+              </Stack>
             ) : items.length === 0 && error === null ? (
-              <Notice severity="info" role="status">
-                <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center' }}>
-                  <Typography variant="body1">No challans match this filter.</Typography>
-                  {hasFilters && (
+              <EmptyState
+                title="No challans match this filter"
+                description="Try a broader search, clear a filter, or choose another saved view."
+                action={
+                  hasFilters ? (
                     <ActionButton
-                      tone="ghost"
-                      size="sm"
+                      tone="secondary"
                       onClick={() => {
                         setFilters(EMPTY_FILTERS);
                         setAppliedFilters(EMPTY_FILTERS);
+                        setSelectedView('');
                         setPage(0);
                       }}
                     >
-                      Clear filter
+                      Clear filters
                     </ActionButton>
-                  )}
-                </Stack>
-              </Notice>
+                  ) : undefined
+                }
+              />
             ) : (
               <>
                 {compact ? (
                   <Stack spacing={SPACING.md}>
                     {items.map((item: ChallanSummary) => (
-                      <Box
+                      <RecordCard
                         key={item.id}
-                        sx={{
-                          border: `1px solid ${tokens.line}`,
-                          borderRadius: 2,
-                          padding: SPACING.md,
-                          backgroundColor: tokens.surface,
-                        }}
-                      >
-                        <Stack spacing={SPACING.sm}>
-                          <Stack
-                            direction="row"
-                            spacing={SPACING.sm}
-                            sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
-                          >
-                            <Box sx={{ minWidth: 0 }}>
-                              <Typography
-                                variant="body1"
-                                sx={{ fontFamily: 'monospace', fontWeight: 700 }}
-                              >
-                                {item.challanNumber}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: tokens.muted }}>
-                                {item.locationLabel}
-                              </Typography>
-                            </Box>
-                            <StatusBadge status={challanStatusKind(item.status)} />
-                          </Stack>
-                          <Box
-                            sx={{
-                              display: 'grid',
-                              gridTemplateColumns: '1fr 1fr',
-                              gap: SPACING.sm,
-                            }}
-                          >
-                            <Box>
-                              <Typography variant="caption" sx={{ color: tokens.muted }}>
-                                Vehicle
-                              </Typography>
-                              <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                                {item.vehicleRegistrationNumber}
-                              </Typography>
-                              <Typography variant="caption" sx={{ color: tokens.muted }}>
-                                {item.gatePassNumber}
-                              </Typography>
-                            </Box>
-                            <Box>
-                              <Typography variant="caption" sx={{ color: tokens.muted }}>
-                                Driver
-                              </Typography>
-                              <Typography variant="body2">{item.driverName}</Typography>
-                            </Box>
-                            <Box>
-                              <Typography variant="caption" sx={{ color: tokens.muted }}>
-                                Severity
-                              </Typography>
-                              <Typography variant="body2">{item.severity}</Typography>
-                            </Box>
-                            <Box>
-                              <Typography variant="caption" sx={{ color: tokens.muted }}>
-                                Issued
-                              </Typography>
-                              <Typography variant="body2">
-                                {formatIssuedAt(item.issuedAt)}
-                              </Typography>
-                            </Box>
-                          </Box>
+                        title={
+                          <span style={{ fontFamily: FONT_MONO, letterSpacing: '0.01em' }}>
+                            {item.challanNumber}
+                          </span>
+                        }
+                        subtitle={item.locationLabel}
+                        badge={<StatusBadge status={challanStatusKind(item.status)} />}
+                        fields={[
+                          { label: 'Vehicle', value: item.vehicleRegistrationNumber, mono: true },
+                          { label: 'Driver', value: item.driverName },
+                          { label: 'Severity', value: item.severity },
+                          { label: 'Issued', value: formatIssuedAt(item.issuedAt) },
+                          { label: 'Gate pass', value: item.gatePassNumber, mono: true },
+                        ]}
+                        actions={
                           <ActionButton
                             tone="secondary"
                             size="sm"
                             aria-label={`Open ${item.challanNumber}`}
                             onClick={() => navigate(`/challans/${item.id}`)}
-                            sx={{ alignSelf: 'flex-start' }}
                           >
                             Open challan
                           </ActionButton>
-                        </Stack>
-                      </Box>
+                        }
+                      />
                     ))}
                   </Stack>
                 ) : (
                   <TableContainer
                     sx={{
-                      overflow: 'visible',
+                      overflowX: 'auto',
+                      border: `1px solid ${tokens.lineSoft}`,
+                      borderRadius: RADIUS.control,
                       '& thead th': { position: 'sticky', top: 0, zIndex: 2 },
                     }}
                   >
@@ -948,7 +998,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                           </TableCell>
                           <TableCell>Vehicle</TableCell>
                           <TableCell>Driver</TableCell>
-                          <TableCell>Location</TableCell>
+                          <TableCell sx={{ minWidth: 170 }}>Location</TableCell>
                           <TableCell
                             sortDirection={sortField === 'severity' ? sortDirection : false}
                           >
@@ -986,7 +1036,9 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                       <TableBody>
                         {items.map((item: ChallanSummary) => (
                           <TableRow key={item.id} hover>
-                            <TableCell sx={{ fontFamily: 'monospace' }}>
+                            <TableCell
+                              sx={{ fontFamily: 'monospace', whiteSpace: 'nowrap', fontSize: 12.5 }}
+                            >
                               {item.challanNumber}
                             </TableCell>
                             <TableCell>
@@ -998,7 +1050,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
                               </Typography>
                             </TableCell>
                             <TableCell>{item.driverName}</TableCell>
-                            <TableCell>{item.locationLabel}</TableCell>
+                            <TableCell sx={{ maxWidth: 220 }}>{item.locationLabel}</TableCell>
                             <TableCell>{item.severity}</TableCell>
                             <TableCell>
                               <StatusBadge status={challanStatusKind(item.status)} />
@@ -1072,7 +1124,7 @@ export default function ChallanReviewPanel({ token, role }: ChallanReviewPanelPr
               setViewError(null);
             }}
             error={viewError !== null}
-            helperText={viewError ?? 'Saved in this browser for quick access.'}
+            helperText={viewError ?? 'Saved for this account on this device.'}
             fullWidth
             sx={{ mt: SPACING.sm }}
           />

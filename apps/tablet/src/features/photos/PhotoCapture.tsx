@@ -13,7 +13,7 @@ import {
   wouldExceedPhotoLimit,
   type PhotoCapture,
 } from '@echallan/contracts';
-import { ActionButton, Notice, SPACING, StatusBadge, tokens } from '@echallan/theme';
+import { ActionButton, Notice, RADIUS, SPACING, StatusBadge, tokens } from '@echallan/theme';
 import { encodeJpegToBudget } from './encoder.js';
 
 /**
@@ -334,7 +334,7 @@ export default function PhotoCapture({
   return (
     <Stack spacing={SPACING.lg} data-testid="photo-capture">
       <Stack direction="row" spacing={SPACING.md} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
-        <Typography component="h2" variant="h2">
+        <Typography component="h3" variant="h3">
           Evidence photos
         </Typography>
         <StatusBadge label={`${store.acceptedCount} of ${MAX_PHOTOS} captured`} tone="info" />
@@ -364,10 +364,10 @@ export default function PhotoCapture({
       )}
       <Box
         sx={{
-          borderRadius: 3,
-          border: streaming ? 'none' : `2px dashed ${tokens.line}`,
+          borderRadius: RADIUS.card,
+          border: streaming ? 'none' : `1px dashed ${tokens.line}`,
           backgroundColor: streaming ? tokens.mediaSurface : tokens.canvas,
-          minHeight: 260,
+          minHeight: 220,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -383,7 +383,7 @@ export default function PhotoCapture({
           muted
           style={{
             width: '100%',
-            maxHeight: 360,
+            maxHeight: 320,
             backgroundColor: tokens.mediaSurface,
             display: streaming ? 'block' : 'none',
           }}
@@ -437,10 +437,10 @@ export default function PhotoCapture({
               key={photo.id}
               spacing={SPACING.sm}
               sx={{
-                width: 176,
+                width: 154,
                 padding: SPACING.md,
                 border: `1px solid ${tokens.line}`,
-                borderRadius: 3,
+                borderRadius: RADIUS.control,
                 backgroundColor: tokens.surface,
               }}
               data-testid="photo-thumb"
@@ -448,7 +448,7 @@ export default function PhotoCapture({
               <img
                 src={photo.dataUrl}
                 alt={`Evidence photo ${index + 1} of ${MAX_PHOTOS}`}
-                style={{ width: '100%', borderRadius: 8 }}
+                style={{ width: '100%', borderRadius: 6 }}
               />
               <Typography variant="body2" sx={{ color: tokens.muted }}>
                 {photo.width}×{photo.height} · {Math.round(photo.bytes / 1024)} KB
@@ -458,7 +458,7 @@ export default function PhotoCapture({
                 onClick={() => handleDelete(photo.id)}
                 data-testid="photo-retake"
               >
-                Retake
+                Remove
               </ActionButton>
             </Stack>
           ))}

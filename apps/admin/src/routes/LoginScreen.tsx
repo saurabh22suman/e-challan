@@ -1,7 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
@@ -71,91 +69,82 @@ export default function LoginScreen() {
   };
 
   return (
-    <Card sx={{ width: '100%', maxWidth: 460 }}>
-      <Box
-        sx={{
-          backgroundColor: tokens.navy,
-          borderBottom: `3px solid ${tokens.blue}`,
-          padding: `${SPACING.xl} ${SPACING.xl} ${SPACING.lg}`,
-        }}
-      >
+    <Box sx={{ width: '100%', maxWidth: 420 }}>
+      <Box sx={{ mb: SPACING.xxl }}>
         <Typography
           variant="overline"
-          sx={{ color: tokens.onNavy.strong, fontWeight: 700, letterSpacing: '0.12em' }}
+          sx={{ color: tokens.muted, fontWeight: 600, letterSpacing: '0.12em' }}
         >
-          E-Challan · Secure sign-in
+          Authorised access
         </Typography>
-        <Typography component="h1" variant="h1" sx={{ color: tokens.surface }}>
+        <Typography component="h1" variant="h1" sx={{ color: tokens.ink, mt: SPACING.sm }}>
           Sign in
         </Typography>
-        <Typography variant="body2" sx={{ color: tokens.onNavy.subtitle, mt: SPACING.xs }}>
+        <Typography variant="body2" sx={{ color: tokens.muted, mt: SPACING.sm }}>
           Use your assigned account. Marshals continue to the tablet; Supervisors and Admins
           continue to the dashboard.
         </Typography>
       </Box>
-      <CardContent sx={{ padding: SPACING.xl }}>
-        <form noValidate onSubmit={(event) => void submit(event)}>
-          <Stack spacing={SPACING.lg}>
-            <div>
-              <InputLabel htmlFor="username">Username</InputLabel>
-              <TextField
-                id="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                autoComplete="username"
-                fullWidth
-              />
-            </div>
+      <form noValidate onSubmit={(event) => void submit(event)}>
+        <Stack spacing={SPACING.lg}>
+          <Box>
+            <InputLabel htmlFor="username">Username</InputLabel>
+            <TextField
+              id="username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              autoComplete="username"
+              fullWidth
+            />
+          </Box>
 
-            <div>
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <TextField
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
-                fullWidth
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label={showPassword ? 'Hide password' : 'Show password'}
-                          onClick={() => setShowPassword((previous) => !previous)}
-                          edge="end"
-                          sx={{
-                            minWidth: TOUCH_TARGET_MIN.desktopAction,
-                            minHeight: TOUCH_TARGET_MIN.desktopAction,
-                          }}
-                        >
-                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </div>
+          <Box>
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <TextField
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
+              fullWidth
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        onClick={() => setShowPassword((previous) => !previous)}
+                        edge="end"
+                        sx={{
+                          minWidth: TOUCH_TARGET_MIN.desktopAction,
+                          minHeight: TOUCH_TARGET_MIN.desktopAction,
+                        }}
+                      >
+                        {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Box>
 
-            {(error ?? notice) !== null && (
-              <Notice tone="danger" role="alert">
-                {error ?? notice}
-              </Notice>
-            )}
+          {(error ?? notice) !== null && (
+            <Notice tone="danger" role="alert">
+              {error ?? notice}
+            </Notice>
+          )}
 
-            <ActionButton type="submit" tone="primary" disabled={submitting}>
-              {submitting ? 'Signing in…' : 'Sign in'}
-            </ActionButton>
+          <ActionButton type="submit" tone="primary" disabled={submitting} fullWidth>
+            {submitting ? 'Signing in…' : 'Sign in'}
+          </ActionButton>
 
-            <Typography variant="caption" color="text.secondary">
-              Marshal sessions end after {IDLE_TIMEOUT_SECONDS.Marshal / 60} minutes without
-              activity; Supervisor and Admin sessions end after{' '}
-              {IDLE_TIMEOUT_SECONDS.Supervisor / 60} minutes.
-            </Typography>
-          </Stack>
-        </form>
-      </CardContent>
-    </Card>
+          <Typography variant="caption" sx={{ color: tokens.muted, lineHeight: 1.55 }}>
+            Marshal sessions end after {IDLE_TIMEOUT_SECONDS.Marshal / 60} minutes without activity;
+            Supervisor and Admin sessions end after {IDLE_TIMEOUT_SECONDS.Supervisor / 60} minutes.
+          </Typography>
+        </Stack>
+      </form>
+    </Box>
   );
 }

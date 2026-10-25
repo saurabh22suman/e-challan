@@ -154,14 +154,20 @@ export function MarshalCallout({
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
         alignItems: { xs: 'flex-start', sm: 'center' },
-        gap: { xs: SPACING.md, md: SPACING.lg },
+        gap: { xs: SPACING.sm, md: SPACING.md },
         padding: { xs: SPACING.md, md: SPACING.lg },
-        border: `2px solid ${palette.border}`,
-        borderRadius: 2,
+        border: `1px solid ${palette.border}`,
+        borderRadius: '10px',
         backgroundColor: palette.bg,
       }}
     >
-      <Box sx={{ width: { xs: 84, sm: 108, md: 132 }, flexShrink: 0 }}>
+      <Box
+        sx={{
+          width: { xs: 48, sm: 56, md: 64 },
+          flexShrink: 0,
+          display: { xs: 'none', sm: 'block' },
+        }}
+      >
         <MarshalCharacter
           kind={character}
           {...(motionKey === undefined ? {} : { motionKey })}
@@ -169,7 +175,7 @@ export function MarshalCallout({
         />
       </Box>
       <Stack spacing={SPACING.xs} sx={{ minWidth: 0, flex: 1 }}>
-        <Typography variant="body1" sx={{ fontWeight: 700, color: palette.fg }}>
+        <Typography variant="body2" sx={{ fontWeight: 700, color: palette.fg }}>
           {title}
         </Typography>
         {children !== undefined && (

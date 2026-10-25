@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ChallanEvidenceResponse } from '@echallan/contracts';
-import { ActionButton, Notice, SPACING, tokens } from '@echallan/theme';
+import { ActionButton, Notice, RADIUS, SPACING, tokens } from '@echallan/theme';
 import {
   fetchEvidenceBlob,
   fetchSignatureBlob,
@@ -101,7 +101,7 @@ export default function ChallanEvidencePanel({
         <>
           {evidence.photos.length === 0 && evidence.signature === null && (
             <Notice severity="info" role="status">
-              No photos or signature are recorded for this synthetic history record.
+              No photos or signature are recorded for this challan.
             </Notice>
           )}
           {evidence.photos.length > 0 && (
@@ -123,7 +123,7 @@ export default function ChallanEvidencePanel({
                     sx={{
                       padding: 0,
                       border: `1px solid ${tokens.line}`,
-                      borderRadius: 2,
+                      borderRadius: RADIUS.control,
                       overflow: 'hidden',
                       background: 'transparent',
                       cursor: 'zoom-in',
@@ -172,7 +172,7 @@ export default function ChallanEvidencePanel({
                   width: '100%',
                   maxWidth: 520,
                   border: `1px solid ${tokens.line}`,
-                  borderRadius: 2,
+                  borderRadius: RADIUS.control,
                   overflow: 'hidden',
                   background: tokens.surface,
                   cursor: 'zoom-in',

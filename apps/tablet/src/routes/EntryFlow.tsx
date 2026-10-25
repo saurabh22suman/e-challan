@@ -1067,7 +1067,10 @@ export default function EntryFlow({
 
   if (issued !== null) {
     return (
-      <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+      <Container
+        maxWidth={false}
+        sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}
+      >
         <Stack spacing={SPACING.lg} sx={{ width: '100%' }}>
           <StepStrip activeIndex={2} />
           <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
@@ -1147,7 +1150,10 @@ export default function EntryFlow({
 
   if (catalogues.state.kind === 'loading') {
     return (
-      <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+      <Container
+        maxWidth={false}
+        sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}
+      >
         <LoadingPanel label="Loading master data…" />
       </Container>
     );
@@ -1155,7 +1161,10 @@ export default function EntryFlow({
   if (catalogues.state.kind === 'error') {
     if (catalogues.state.reason === 'unauthenticated') {
       return (
-        <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+        <Container
+          maxWidth={false}
+          sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}
+        >
           <Notice severity="error" role="alert">
             {catalogues.state.message}
           </Notice>
@@ -1164,7 +1173,10 @@ export default function EntryFlow({
     }
     if (catalogues.state.reason === 'service_error') {
       return (
-        <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+        <Container
+          maxWidth={false}
+          sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}
+        >
           <MarshalCallout
             character="error"
             tone="error"
@@ -1184,7 +1196,10 @@ export default function EntryFlow({
     }
     if (catalogues.state.reason === 'network') {
       return (
-        <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+        <Container
+          maxWidth={false}
+          sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}
+        >
           <MarshalCallout
             character="connection"
             tone="error"
@@ -1202,7 +1217,10 @@ export default function EntryFlow({
       );
     }
     return (
-      <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+      <Container
+        maxWidth={false}
+        sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}
+      >
         <Notice severity="error" role="alert">
           {catalogues.state.message}
           <ActionButton
@@ -1218,39 +1236,9 @@ export default function EntryFlow({
   }
 
   return (
-    <Container maxWidth={false} sx={{ py: SPACING.xl, px: SPACING.lg }}>
+    <Container maxWidth={false} sx={{ maxWidth: 1200, mx: 'auto', py: SPACING.xl, px: SPACING.lg }}>
       <Stack spacing={SPACING.lg} sx={{ width: '100%' }}>
         <StepStrip activeIndex={activeStepIndex} />
-
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: SPACING.md,
-            padding: `${SPACING.sm} ${SPACING.lg}`,
-            border: `1px solid ${tokens.line}`,
-            borderRadius: 2,
-            backgroundColor: tokens.surface,
-          }}
-          role="status"
-        >
-          <Typography variant="body2" sx={{ color: tokens.muted }}>
-            Post
-          </Typography>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            {locationLabel}
-          </Typography>
-          <Typography variant="body2" sx={{ color: tokens.muted }}>
-            ·
-          </Typography>
-          <Typography variant="body2" sx={{ color: tokens.muted }}>
-            Shift
-          </Typography>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            {shiftLabel}
-          </Typography>
-        </Box>
 
         {step === 'form' && (
           <MarshalCallout
@@ -1301,13 +1289,14 @@ export default function EntryFlow({
         )}
 
         {preview !== null && (
-          <Notice severity="warning" role="status">
-            <strong>Occurrence {preview.occurrenceNumber}.</strong> This gate pass appears{' '}
-            {preview.occurrenceNumber} {preview.occurrenceNumber === 1 ? 'time' : 'times'} in the
-            last 90 days, counting this entry. Recommended action:{' '}
-            {ACTION_LABELS[preview.recommendedAction]}. This is a recommendation only — no action
-            has been taken yet.
-          </Notice>
+          <Box sx={{ order: { xs: 2, md: 0 } }}>
+            <Notice severity="warning" role="status">
+              <strong>Occurrence {preview.occurrenceNumber}.</strong> Seen{' '}
+              {preview.occurrenceNumber} {preview.occurrenceNumber === 1 ? 'time' : 'times'} in the
+              last 90 days. Recommended action: {ACTION_LABELS[preview.recommendedAction]}.
+              Recommendation only; no action has been taken.
+            </Notice>
+          </Box>
         )}
 
         {(preview?.duplicateWarning.required === true || duplicatePending) && (
@@ -1354,6 +1343,19 @@ export default function EntryFlow({
           <Stack spacing={SPACING.lg}>
             <FormSection title="Vehicle & driver" titleId="entry-flow-form">
               <Stack spacing={SPACING.lg}>
+                <VehiclePicker
+                  value={draft.vehicleRegistration}
+                  mode={vehicleMode}
+                  lookup={lookup}
+                  error={errors.vehicleRegistration}
+                  openSignal={pickerOpenSignal}
+                  onTextChange={handleVehicleText}
+                  onBlurNormalise={normaliseRegistration}
+                  onChoose={chooseMatch}
+                  onEnterNewVehicle={enterNewVehicle}
+                  carriedDetails={manualCarried}
+                  onSwitchToRegistry={switchToRegistry}
+                />
                 {recentMatches.length > 0 && (
                   <Stack spacing={SPACING.sm}>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -1413,19 +1415,6 @@ export default function EntryFlow({
                     </Box>
                   </Stack>
                 )}
-                <VehiclePicker
-                  value={draft.vehicleRegistration}
-                  mode={vehicleMode}
-                  lookup={lookup}
-                  error={errors.vehicleRegistration}
-                  openSignal={pickerOpenSignal}
-                  onTextChange={handleVehicleText}
-                  onBlurNormalise={normaliseRegistration}
-                  onChoose={chooseMatch}
-                  onEnterNewVehicle={enterNewVehicle}
-                  carriedDetails={manualCarried}
-                  onSwitchToRegistry={switchToRegistry}
-                />
 
                 <div>
                   <TextField
@@ -1440,7 +1429,7 @@ export default function EntryFlow({
                       )
                     }
                     error={(errors.gatePassNumber ?? '') !== ''}
-                    helperText={errors.gatePassNumber ?? ' '}
+                    helperText={errors.gatePassNumber}
                     fullWidth
                     slotProps={{
                       htmlInput: {
@@ -1470,7 +1459,7 @@ export default function EntryFlow({
                       )
                     }
                     error={(errors.driverName ?? '') !== ''}
-                    helperText={errors.driverName ?? ' '}
+                    helperText={errors.driverName}
                     fullWidth
                   />
                   {lookup.field === 'driverName' && (
@@ -1596,86 +1585,96 @@ export default function EntryFlow({
         )}
 
         {step === 'summary' && (
-          <Stack spacing={SPACING.lg}>
-            <MarshalCallout character="check-details" title={copy.checkTitle}>
-              {copy.checkBody}
-            </MarshalCallout>
-            <FormSection title={copy.summaryTitle} titleId="entry-flow-summary">
-              <Stack spacing={SPACING.lg}>
-                <Typography variant="body1">{copy.summaryIntro}</Typography>
-                <Box component="dl" sx={{ margin: 0 }}>
-                  <SummaryRow label={copy.driver}>{draft.driverName}</SummaryRow>
-                  <SummaryRow label={copy.vehicle} mono>
-                    {draft.vehicleRegistration}
-                  </SummaryRow>
-                  <SummaryRow label={copy.gatePass} mono>
-                    {draft.gatePassNumber}
-                  </SummaryRow>
-                  <SummaryRow label={copy.department}>
-                    {departments.find((option) => option.id === draft.departmentId)?.label ?? '—'}
-                  </SummaryRow>
-                  {draft.contractorId !== '' && (
-                    <SummaryRow label={copy.contractor}>
-                      {contractors.find((option) => option.id === draft.contractorId)?.label ?? '—'}
+          <Stack spacing={SPACING.lg} sx={{ order: { xs: 1, md: 0 } }}>
+            <Box sx={{ order: { xs: 2, md: 0 } }}>
+              <MarshalCallout character="check-details" title={copy.checkTitle}>
+                {copy.checkBody}
+              </MarshalCallout>
+            </Box>
+            <Box sx={{ order: { xs: 1, md: 0 }, minWidth: 0 }}>
+              <FormSection title={copy.summaryTitle} titleId="entry-flow-summary">
+                <Stack spacing={SPACING.lg}>
+                  <Box component="dl" sx={{ margin: 0 }}>
+                    <SummaryRow label={copy.driver}>{draft.driverName}</SummaryRow>
+                    <SummaryRow label={copy.vehicle} mono>
+                      {draft.vehicleRegistration}
                     </SummaryRow>
+                    <SummaryRow label={copy.violations}>
+                      {selectedViolations.map((v) => v.label).join(', ')}
+                    </SummaryRow>
+                    <SummaryRow label={copy.severity}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: SPACING.md }}>
+                        <SeverityChip
+                          severity={preview?.severity ?? derivedSeverity ?? 'Minor'}
+                          label={
+                            copy.severityValues[preview?.severity ?? derivedSeverity ?? 'Minor']
+                          }
+                        />
+                        {vehicleMode === 'new' && (
+                          <StatusBadge label={copy.manualEntry} tone="info" />
+                        )}
+                      </Box>
+                    </SummaryRow>
+                    <SummaryRow label={copy.gatePass} mono>
+                      {draft.gatePassNumber}
+                    </SummaryRow>
+                    <SummaryRow label={copy.department}>
+                      {departments.find((option) => option.id === draft.departmentId)?.label ?? '—'}
+                    </SummaryRow>
+                    {draft.contractorId !== '' && (
+                      <SummaryRow label={copy.contractor}>
+                        {contractors.find((option) => option.id === draft.contractorId)?.label ??
+                          '—'}
+                      </SummaryRow>
+                    )}
+                    <SummaryRow label={copy.vehicleType}>
+                      {vehicleTypes.find((option) => option.id === draft.vehicleTypeId)?.label ??
+                        '—'}
+                    </SummaryRow>
+                    {draft.remarks.trim() !== '' && (
+                      <SummaryRow label={copy.remarks}>{draft.remarks}</SummaryRow>
+                    )}
+                    <SummaryRow label={copy.locationShift}>
+                      {locationLabel} · {shiftLabel}
+                    </SummaryRow>
+                  </Box>
+                  <Typography variant="body2" sx={{ color: tokens.muted }}>
+                    {copy.summaryIntro}
+                  </Typography>
+                  <Typography variant="body2" role="status">
+                    Evidence photos: {photoStore.acceptedCount} of {MAX_PHOTOS} (minimum 1).
+                  </Typography>
+                  {signature !== null && (
+                    <Notice severity="success" role="status">
+                      Driver signature captured.
+                    </Notice>
                   )}
-                  <SummaryRow label={copy.vehicleType}>
-                    {vehicleTypes.find((option) => option.id === draft.vehicleTypeId)?.label ?? '—'}
-                  </SummaryRow>
-                  <SummaryRow label={copy.violations}>
-                    {selectedViolations.map((v) => v.label).join(', ')}
-                  </SummaryRow>
-                  {draft.remarks.trim() !== '' && (
-                    <SummaryRow label={copy.remarks}>{draft.remarks}</SummaryRow>
+                  {refusal !== null && (
+                    <Notice severity="success" role="status">
+                      Refusal recorded with witness {refusal.value.witnessName} (
+                      {refusal.value.witnessStaffId}).
+                    </Notice>
                   )}
-                  <SummaryRow label={copy.severity}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: SPACING.md }}>
-                      <SeverityChip
-                        severity={preview?.severity ?? derivedSeverity ?? 'Minor'}
-                        label={copy.severityValues[preview?.severity ?? derivedSeverity ?? 'Minor']}
-                      />
-                      {vehicleMode === 'new' && (
-                        <StatusBadge label={copy.manualEntry} tone="info" />
-                      )}
-                    </Box>
-                  </SummaryRow>
-                  <SummaryRow label={copy.locationShift}>
-                    {locationLabel} · {shiftLabel}
-                  </SummaryRow>
-                </Box>
-                <Typography variant="body2" role="status">
-                  Evidence photos: {photoStore.acceptedCount} of {MAX_PHOTOS} (minimum 1).
-                </Typography>
-                {signature !== null && (
-                  <Notice severity="success" role="status">
-                    Driver signature captured.
-                  </Notice>
-                )}
-                {refusal !== null && (
-                  <Notice severity="success" role="status">
-                    Refusal recorded with witness {refusal.value.witnessName} (
-                    {refusal.value.witnessStaffId}).
-                  </Notice>
-                )}
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
-                  <ActionButton
-                    tone="secondary"
-                    onClick={() => setStep('form')}
-                    sx={{ width: { xs: '100%', sm: 'auto' } }}
-                  >
-                    Change details
-                  </ActionButton>
-                  <ActionButton
-                    tone="primary"
-                    onClick={() => setStep('signature')}
-                    disabled={preview === null}
-                    sx={{ width: { xs: '100%', sm: 'auto' } }}
-                  >
-                    Continue to photos
-                  </ActionButton>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
+                    <ActionButton
+                      tone="secondary"
+                      onClick={() => setStep('form')}
+                      sx={{ width: { xs: '100%', sm: 'auto' } }}
+                    >
+                      Change details
+                    </ActionButton>
+                    <ActionButton
+                      tone="primary"
+                      onClick={() => setStep('signature')}
+                      disabled={preview === null}
+                      sx={{ width: { xs: '100%', sm: 'auto' } }}
+                    >
+                      Continue to photos
+                    </ActionButton>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </FormSection>
+              </FormSection>
+            </Box>
           </Stack>
         )}
 
@@ -1794,30 +1793,54 @@ function CommitPanel({
   onCommit: () => void;
 }) {
   return (
-    <Stack spacing={SPACING.md}>
-      {error !== null && (
-        <Notice severity="error" role="alert">
-          {error}
-        </Notice>
-      )}
-      <ActionButton
-        tone="commit"
-        fullWidth
-        data-testid="commit-challan"
-        onClick={onCommit}
-        disabled={disabled}
-        loading={submitting}
-        loadingLabel="Issuing challan…"
-      >
-        Generate challan
-      </ActionButton>
-      {disabled && !submitting && (
+    <Box
+      sx={{
+        position: 'sticky',
+        bottom: 0,
+        zIndex: 3,
+        marginTop: SPACING.lg,
+        padding: SPACING.lg,
+        backgroundColor: tokens.surface,
+        border: `1px solid ${tokens.line}`,
+        borderRadius: '12px',
+        boxShadow: '0 -8px 24px rgba(14, 29, 51, 0.06)',
+      }}
+    >
+      <Stack spacing={SPACING.md}>
+        <Box>
+          <Typography
+            variant="overline"
+            sx={{ color: tokens.muted, fontWeight: 600, letterSpacing: '0.12em' }}
+          >
+            Final step
+          </Typography>
+          <Typography component="h3" variant="h3" sx={{ marginTop: SPACING.xs }}>
+            Issue the challan
+          </Typography>
+        </Box>
+        {error !== null && (
+          <Notice severity="error" role="alert">
+            {error}
+          </Notice>
+        )}
+        <ActionButton
+          tone="commit"
+          fullWidth
+          data-testid="commit-challan"
+          onClick={onCommit}
+          disabled={disabled}
+          loading={submitting}
+          loadingLabel="Issuing challan…"
+        >
+          Generate challan
+        </ActionButton>
         <Typography variant="body2" sx={{ color: tokens.muted }}>
-          Capture at least one evidence photo and confirm the driver signature or record a refusal
-          before issuing.
+          {disabled && !submitting
+            ? 'Capture at least one evidence photo and confirm the driver signature or record a refusal before issuing.'
+            : 'This commits the record and assigns its challan number.'}
         </Typography>
-      )}
-    </Stack>
+      </Stack>
+    </Box>
   );
 }
 
@@ -1835,13 +1858,14 @@ function StepStrip({ activeIndex }: { activeIndex: number }) {
     <>
       <Stack
         direction="row"
-        spacing={SPACING.sm}
         component="ol"
         sx={{
           listStyle: 'none',
           margin: 0,
           padding: 0,
-          display: { xs: 'none', md: 'flex' },
+          display: { xs: 'none', md: 'grid' },
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+          borderBottom: `1px solid ${tokens.line}`,
         }}
         aria-label="Entry progress"
       >
@@ -1856,36 +1880,32 @@ function StepStrip({ activeIndex }: { activeIndex: number }) {
               spacing={SPACING.sm}
               sx={{
                 alignItems: 'center',
-                padding: `${SPACING.sm} ${SPACING.lg}`,
-                borderRadius: 999,
-                border: `1px solid ${active || done ? tokens.blue : tokens.line}`,
-                backgroundColor: active ? tokens.navy : tokens.surface,
-                color: active ? tokens.surface : tokens.muted,
-                flex: 1,
-                minHeight: TOUCH_TARGET_MIN.interactive,
+                padding: `${SPACING.sm} ${SPACING.md}`,
+                borderBottom: `3px solid ${active ? tokens.blue : 'transparent'}`,
+                color: active ? tokens.ink : tokens.muted,
+                minHeight: 44,
               }}
               aria-current={active ? 'step' : undefined}
             >
               <Box
+                aria-hidden="true"
                 sx={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                  fontSize: 14,
-                  backgroundColor: active || done ? tokens.blue : tokens.lineSoft,
-                  color: active || done ? tokens.surface : tokens.muted,
+                  width: 24,
+                  height: 24,
+                  display: 'grid',
+                  placeItems: 'center',
+                  borderRadius: '6px',
+                  backgroundColor: active ? tokens.navy : done ? tokens.tint : tokens.canvas,
+                  color: active ? tokens.surface : done ? tokens.blue : tokens.muted,
+                  fontFamily: FONT_MONO,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  flexShrink: 0,
                 }}
               >
                 {index + 1}
               </Box>
-              <Typography
-                variant="body2"
-                sx={{ fontWeight: active ? 700 : 500, color: 'inherit', whiteSpace: 'nowrap' }}
-              >
+              <Typography variant="body2" sx={{ fontWeight: active ? 600 : 500, color: 'inherit' }}>
                 {label}
               </Typography>
             </Stack>
@@ -1906,12 +1926,12 @@ function StepStrip({ activeIndex }: { activeIndex: number }) {
           component="li"
           aria-current="step"
           sx={{
-            padding: `${SPACING.sm} ${SPACING.lg}`,
-            borderRadius: 2,
-            border: `1px solid ${tokens.blue}`,
-            backgroundColor: tokens.navy,
-            color: tokens.surface,
-            fontWeight: 700,
+            padding: `${SPACING.sm} ${SPACING.md}`,
+            borderRadius: '10px',
+            border: `1px solid ${tokens.line}`,
+            backgroundColor: tokens.surface,
+            color: tokens.ink,
+            fontWeight: 600,
             minHeight: TOUCH_TARGET_MIN.interactive,
             display: 'flex',
             alignItems: 'center',

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { ProfileResponse } from '@echallan/contracts';
-import { Notice, SPACING, StatusBadge, tokens } from '@echallan/theme';
+import { DetailGrid, DetailItem, Notice, PageHeader, SPACING, StatusBadge } from '@echallan/theme';
 import { getProfile, OperationsApiError } from '../../api/operations';
 
 /**
@@ -22,17 +22,6 @@ function formatInstant(value: string): string {
     timeStyle: 'short',
     timeZone: 'Asia/Kolkata',
   }).format(new Date(value));
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <Stack spacing={0.25}>
-      <Typography variant="caption" sx={{ color: tokens.muted }}>
-        {label}
-      </Typography>
-      <Typography variant="body1">{value}</Typography>
-    </Stack>
-  );
 }
 
 export default function ProfilePanel({ token }: { token: string }) {
@@ -65,71 +54,76 @@ export default function ProfilePanel({ token }: { token: string }) {
   }, [token]);
 
   return (
-    <Card>
-      <CardHeader
-        title={
-          <Typography component="h2" variant="h2">
-            Profile
-          </Typography>
-        }
-        subheader="Your login and assignment details."
+    <Stack spacing={SPACING.xl}>
+      <PageHeader
+        eyebrow="Account"
+        title="Profile"
+        titleComponent="h2"
+        description="Your account, assigned locations and current session."
       />
-      <CardContent>
-        {loading && <CircularProgress aria-label="Loading profile" />}
-        {error !== null && (
-          <Notice severity="error" role="status">
-            {error}
-          </Notice>
-        )}
-        {profile !== null && (
-          <Stack spacing={SPACING.lg}>
-            <Stack
-              direction="row"
-              spacing={SPACING.xl}
-              sx={{ flexWrap: 'wrap', rowGap: SPACING.md }}
-            >
-              <Field label="Username" value={profile.user.username} />
-              <Field label="Display name" value={profile.user.displayName} />
-              <Field label="Employee ID" value={profile.user.employeeId ?? 'Not recorded'} />
-              <Field label="Role" value={profile.user.role} />
-              <Stack spacing={0.25}>
-                <Typography variant="caption" sx={{ color: tokens.muted }}>
-                  Account status
+      <Card>
+        <CardContent>
+          {loading && <CircularProgress aria-label="Loading profile" />}
+          {error !== null && (
+            <Notice severity="error" role="status">
+              {error}
+            </Notice>
+          )}
+          {profile !== null && (
+            <Stack spacing={SPACING.xl}>
+              <DetailGrid columns={3}>
+                <DetailItem label="Username" value={profile.user.username} mono />
+                <DetailItem label="Display name" value={profile.user.displayName} />
+                <DetailItem
+                  label="Employee ID"
+                  value={profile.user.employeeId ?? 'Not recorded'}
+                  mono
+                />
+                <DetailItem label="Role" value={profile.user.role} />
+                <DetailItem
+                  label="Account status"
+                  value={<StatusBadge status={profile.user.isActive ? 'active' : 'deactivated'} />}
+                />
+              </DetailGrid>
+
+              <Divider />
+
+              <Box>
+                <Typography component="h3" variant="h3" sx={{ marginBottom: SPACING.md }}>
+                  Assigned locations
                 </Typography>
-                <StatusBadge status={profile.user.isActive ? 'active' : 'deactivated'} />
-              </Stack>
-            </Stack>
+                <Typography variant="body1">
+                  {profile.user.locationLabels.length === 0
+                    ? 'No locations assigned.'
+                    : profile.user.locationLabels.join(', ')}
+                </Typography>
+              </Box>
 
-            <Stack spacing={SPACING.sm}>
-              <Typography component="h3" variant="h3">
-                Assigned locations
-              </Typography>
-              <Typography variant="body1">
-                {profile.user.locationLabels.length === 0
-                  ? 'No locations assigned.'
-                  : profile.user.locationLabels.join(', ')}
-              </Typography>
-            </Stack>
+              <Divider />
 
-            <Divider />
-
-            <Stack spacing={SPACING.sm}>
-              <Typography component="h3" variant="h3">
-                Current session
-              </Typography>
-              <Stack
-                direction="row"
-                spacing={SPACING.xl}
-                sx={{ flexWrap: 'wrap', rowGap: SPACING.md }}
-              >
-                <Field label="Post" value={profile.session.post?.label ?? 'Not bound'} />
-                <Field label="Shift" value={profile.session.shift?.label ?? 'Not bound'} />
-                <Field label="Session ends" value={formatInstant(profile.session.expiresAt)} />
-              </Stack>
+              <Box>
+                <Typography component="h3" variant="h3" sx={{ marginBottom: SPACING.md }}>
+                  Current session
+                </Typography>
+                <DetailGrid columns={3}>
+                  <DetailItem
+                    label="Post"
+                    value={profile.session.post?.label ?? 'No active post'}
+                  />
+                  <DetailItem
+                    label="Shift"
+                    value={profile.session.shift?.label ?? 'No active shift'}
+                  />
+                  <DetailItem
+                    label="Session ends"
+                    value={formatInstant(profile.session.expiresAt)}
+                  />
+                </DetailGrid>
+              </Box>
             </Stack>
-          </Stack>
-        )}
-      </CardContent>
-    </Card>
+          )}
+        </CardContent>
+      </Card>
+    </Stack>
   );
 }

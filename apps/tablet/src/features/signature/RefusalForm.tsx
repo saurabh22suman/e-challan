@@ -163,9 +163,9 @@ export default function RefusalForm({ summaryRevision, onChange, onInvalidate }:
         minRows={3}
         required
         error={errors.reason !== undefined}
-        helperText={errors.reason ?? ' '}
+        helperText={errors.reason}
       />
-      <Typography variant="caption" sx={{ color: tokens.muted }}>
+      <Typography variant="caption" sx={{ color: tokens.muted, marginTop: `-${SPACING.sm}` }}>
         {reason.length}/{REFUSAL_REASON_MAX_LENGTH}
       </Typography>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={SPACING.md}>
@@ -181,7 +181,7 @@ export default function RefusalForm({ summaryRevision, onChange, onInvalidate }:
           fullWidth
           required
           error={errors.witnessName !== undefined}
-          helperText={errors.witnessName ?? ' '}
+          helperText={errors.witnessName}
         />
         <TextField
           id="refusal-witness-staff-id"
@@ -195,7 +195,7 @@ export default function RefusalForm({ summaryRevision, onChange, onInvalidate }:
           fullWidth
           required
           error={errors.witnessStaffId !== undefined}
-          helperText={errors.witnessStaffId ?? ' '}
+          helperText={errors.witnessStaffId}
         />
       </Stack>
       <Stack direction="row" spacing={SPACING.md}>
@@ -204,6 +204,7 @@ export default function RefusalForm({ summaryRevision, onChange, onInvalidate }:
           onClick={handleSubmit}
           data-testid="refusal-confirm"
           disabled={confirmed !== null && confirmed.reason === reason}
+          sx={{ width: { xs: '100%', sm: 'auto' } }}
         >
           Confirm refusal
         </ActionButton>

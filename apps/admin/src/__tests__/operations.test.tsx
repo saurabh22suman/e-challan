@@ -331,7 +331,7 @@ describe('Supervisor review surface', () => {
     });
     await user.clear(search);
 
-    await user.click(screen.getByRole('button', { name: 'Needs attention' }));
+    await user.click(screen.getByRole('button', { name: 'Under review' }));
     await waitFor(() => {
       expect(calls.listUrls.at(-1)).toContain('status=Under');
     });
